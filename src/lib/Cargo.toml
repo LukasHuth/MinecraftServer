@@ -1,0 +1,10 @@
+[package]
+name  = "packet_api"
+version = "0.0.1"
+
+[lib]
+name = "packet_api"
+path = "lib.rs"
+
+[dependencies]
+regex = "1.10.3"

@@ -1,0 +1,9 @@
+[package]
+name = "minecraft_server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies.packet_api]
+path = "src/lib"
+
+[dependencies]
