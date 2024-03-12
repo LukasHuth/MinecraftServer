@@ -6,8 +6,8 @@ pub trait Necesary {
     fn write(&self, arr: &mut Vec<u8>);
     fn get_value(&self) -> Self::Value;
 }
-const SEGMENT_BITS: u8 = 0x7F;
-const CONTINUE_BITS: u8 = 0x80;
+pub const SEGMENT_BITS: u8 = 0x7F;
+pub const CONTINUE_BITS: u8 = 0x80;
 impl Necesary for Int {
     type Value = i32;
 
@@ -230,11 +230,17 @@ impl Necesary for BitSet {
     type Value = Vec<Long>;
 
     fn new(value: Self::Value) -> Self {
-        Self(VarInt::new(value.len() as i32), value)
+        let mut v = 1;
+        let mut n = value.len();
+        while n/128 > 0 {
+            v += 1;
+            n /= 128;
+        }
+        Self(VarInt::new(v, value.len() as i32), value)
     }
 
     fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>) where I: Iterator<Item = &'a u8> {
-        let mut length = VarInt::new(0);
+        let mut length = VarInt::new(0,0);
         length.read(arr, None);
         let result: Vec<Long> = (0..length.get_value()).map(|_| Long::read(arr)).collect();
         self.0 = length;
@@ -274,7 +280,7 @@ impl Necesary for FixedBitSet {
 }
 impl VarInt {
     pub fn read<'a, I>(arr: &mut I) -> Self where I: Iterator<Item = &'a u8> {
-        let mut s = VarInt::new(0);
+        let mut s = VarInt::new(0,0);
         s.read(arr, None);
         s
     }
@@ -283,7 +289,13 @@ impl Necesary for String {
     type Value = std::string::String;
 
     fn new(value: Self::Value) -> Self {
-        Self(VarInt::new(value.len() as i32),  value)
+        let mut n = value.len();
+        let mut v = 1;
+        while n/128 > 1{
+            n /=128;
+            v+=1;
+        }
+        Self(VarInt::new(v,value.len() as i32),  value)
     }
 
     fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>) where I: Iterator<Item = &'a u8> {

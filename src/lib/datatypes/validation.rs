@@ -1,7 +1,7 @@
 extern crate regex;
 use self::regex::Regex;
 
-use super::*;
+use super::datastructs::Identifier;
 
 pub trait Validation {
     fn validate(&self) -> bool;
@@ -10,7 +10,7 @@ pub trait Validation {
 
 impl Validation for Identifier {
     fn validate(&self) -> bool {
-        let s = self.0.clone();
+        let s = self.get_value();
         let namespace_regex: Regex = Regex::new(r"[a-z0-9.-_]+").expect("Namespace regex could not be build");
         let value_regex: Regex = Regex::new(r"[a-z0-9.-_/]+").expect("Value regex could not be build");
         if s.contains(":") {

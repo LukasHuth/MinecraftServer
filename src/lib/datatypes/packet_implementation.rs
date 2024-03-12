@@ -2,8 +2,7 @@ use std::{net::TcpStream, io::{BufReader, Read, BufRead}};
 
 use self::packets::LegacyPing;
 
-use super::{necesary::Necesary, VarInt};
-
+use super::datastructs::VarInt;
 pub enum HandshakeState {
     Status, Login
 }
@@ -30,7 +29,7 @@ impl VarInt {
             assert!(position < 32, "VarInt is too big");
         }
         let bytes = position / 7 + 1;
-        Self(bytes, value)
+        Self::new(bytes, value)
     }
 }
 pub enum Packet {
@@ -78,7 +77,7 @@ impl<'a> PacketAnalyzer<'a> {
             }
             let length = VarInt::read_reader(&mut self.reader);
             let packet_id = VarInt::read_reader(&mut self.reader);
-            let mut data = vec![0;(length.get_value() - packet_id.0 as i32) as usize];
+            let mut data = vec![0;(length.get_value() - packet_id.get_bytes() as i32) as usize];
             self.reader.read_exact(&mut data).expect("Failed to load packet Data");
             return Packet::None;
         }
