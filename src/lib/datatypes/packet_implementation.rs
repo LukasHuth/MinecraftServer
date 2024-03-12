@@ -1,10 +1,19 @@
 use std::{net::TcpStream, io::{BufReader, Read, BufRead}};
-
 use self::packets::LegacyPing;
+use super::datastructs::{VarInt, String, UnsignedShort};
+use crate::datatypes::{datastructs::necesary::Necesary as _, packet_implementation::packets::{Handshake, Packet as _}};
 
-use super::datastructs::VarInt;
-pub enum HandshakeState {
-    Status, Login
+pub mod packets;
+
+const CURRENT_PROTOCOL_VERSION: i32 = 765;
+
+#[derive(Debug)]
+pub enum ClientHandlerState {
+    Handshaking,
+    Status,
+    Login,
+    Configuration,
+    Play,
 }
 pub enum Answer {
     None,
@@ -12,6 +21,7 @@ pub enum Answer {
 }
 pub struct PacketAnalyzer<'a> {
     reader: BufReader<&'a mut TcpStream>,
+    status: ClientHandlerState,
 }
 const SEGMENT_BITS: u8 = 0x7F;
 const CONTINUE_BITS: u8 = 0x80;
@@ -34,52 +44,67 @@ impl VarInt {
 }
 pub enum Packet {
     LegacyPing(LegacyPing),
+    StatusRequest,
     None,
 }
 fn bytes_to_short(arr: [u8;2]) -> u16 {
     ((arr[0] as u16) << 8) + arr[1] as u16
 }
-pub mod packets;
 impl<'a> PacketAnalyzer<'a> {
     pub fn new(client: &'a mut TcpStream) -> Self {
         let reader = BufReader::new(client);
-        Self { reader }
+        Self { reader, status: ClientHandlerState::Handshaking }
     }
-    fn handle_legacy_ping(&mut self) -> Packet {
-        let mut info_bytes = [0;3];
-        self.reader.read_exact(&mut info_bytes).expect("Could not read the info bytes");
-        let mut string_length = [0;2];
-        self.reader.read_exact(&mut string_length).expect("Failed to load string length");
-        let length = bytes_to_short(string_length) * 2;
-        let mut string = vec![0;length as usize];
-        self.reader.read_exact(&mut string).expect("Failed to load String");
-        let mut following_size = [0;2];
-        self.reader.read_exact(&mut following_size).expect("Failed to load followup size");
-        let mut data = vec![0; bytes_to_short(following_size) as usize];
-        self.reader.read_exact(&mut data).expect("Failed to load to remaining legacy ping data");
-        let ping = LegacyPing::new();
-        println!("Got Ping");
-        Packet::LegacyPing(ping)
+    fn next_handshake_packet(&mut self) -> Packet {
+        let mut peek_buffer = [0; 3];
+        match self.reader.fill_buf() {
+            Ok(buf) => {
+                let bytes_to_peek = std::cmp::min(buf.len(), 3);
+                peek_buffer[..bytes_to_peek].copy_from_slice(&buf[..bytes_to_peek]);
+                if bytes_to_peek < 3 { panic!("Too few bytes to peek"); }
+            },
+            Err(_) => panic!("Error occured on peek"),
+        }
+        if peek_buffer[0] == 0xFE && peek_buffer[1] == 0x01 && peek_buffer[2] == 0xFA {
+            println!("Legacy Ping");
+            return Packet::LegacyPing(LegacyPing::read(&mut self.reader).expect("Could not read the Legacy Ping request"));
+        }
+        println!("Normal Ping");
+        let handshake_packet = Handshake::read(&mut self.reader).expect("Could not read the handshake packet");
+        if handshake_packet.protocol_version.get_value() < CURRENT_PROTOCOL_VERSION { panic!("Client is using outdated packet protocol "); }
+        match handshake_packet.next_state.get_value() {
+            1 => self.status = ClientHandlerState::Status,
+            2 => self.status = ClientHandlerState::Login,
+            _ => panic!("Unknown enum id")
+        }
+        println!("{:?}", self.status);
+        return Packet::None;
+    }
+    fn next_login_packet(&mut self) -> Packet {
+        Packet::None
+    }
+    fn next_status_packet(&mut self) -> Packet {
+        let length = VarInt::read(&mut self.reader, None);
+        let packet_id = VarInt::read(&mut self.reader, None);
+        match packet_id.get_value() {
+            0 => Packet::StatusRequest,
+            1 => unimplemented!(),
+            _ => Packet::None,
+        }
+    }
+    fn next_configuration_packet(&mut self) -> Packet {
+        Packet::None
+    }
+    fn next_play_packet(&mut self) -> Packet {
+        Packet::None
     }
     pub fn next_packet(&mut self) -> Packet {
-        loop {
-            let mut peek_buffer = [0; 3];
-            match self.reader.fill_buf() {
-                Ok(buf) => {
-                    let bytes_to_peek = std::cmp::min(buf.len(), 3);
-                    peek_buffer[..bytes_to_peek].copy_from_slice(&buf[..bytes_to_peek]);
-                    if bytes_to_peek < 3 { continue; }
-                },
-                Err(_) => continue,
-            }
-            if peek_buffer[0] == 0xFE && peek_buffer[1] == 0x01 && peek_buffer[2] == 0xFA {
-                return self.handle_legacy_ping();
-            }
-            let length = VarInt::read_reader(&mut self.reader);
-            let packet_id = VarInt::read_reader(&mut self.reader);
-            let mut data = vec![0;(length.get_value() - packet_id.get_bytes() as i32) as usize];
-            self.reader.read_exact(&mut data).expect("Failed to load packet Data");
-            return Packet::None;
+        match self.status {
+            ClientHandlerState::Handshaking => self.next_handshake_packet(),
+            ClientHandlerState::Status => self.next_status_packet(),
+            ClientHandlerState::Login => self.next_login_packet(),
+            ClientHandlerState::Configuration => self.next_configuration_packet(),
+            ClientHandlerState::Play => self.next_play_packet(),
         }
     }
 }

@@ -1,8 +1,10 @@
+use std::{io::{BufReader, Read}, net::TcpStream};
+
 use super::*;
 pub trait Necesary {
     type Value;
     fn new(value: Self::Value) -> Self;
-    fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>) where I: Iterator<Item = &'a u8>;
+    fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self;
     fn write(&self, arr: &mut Vec<u8>);
     fn get_value(&self) -> Self::Value;
 }
@@ -15,12 +17,15 @@ impl Necesary for Int {
         Self(value)
     }
 
-    fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>) where I: Iterator<Item = &'a u8> {
-        self.0 = 0;
-        for _ in 0..4 {
-            self.0 <<= 8;
-            self.0 |= *arr.next().expect("Expected byte to read") as i32;
+    fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
+        let mut data = [0;4];
+        reader.read_exact(&mut data);
+        let mut value = 0;
+        for v in data {
+            value <<= 8;
+            value += v as u32;
         }
+        Self(value as i32)
     }
 
     fn write(&self, _arr: &mut Vec<u8>) {
@@ -42,18 +47,22 @@ impl Necesary for VarInt {
         assert!(i <= 5, "VarInt is too big");
         Self(i,value)
     }
-    fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>)
-    where I: Iterator<Item = &'a u8>{
-        self.1 = 0;
+    fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
+        let mut v0 = 0;
+        let mut v1 = 0;
+        v1 = 0;
         let mut position = 0;
         loop {
-            let current_byte = arr.next().unwrap_or(&0);
-            self.1 |= ((current_byte & SEGMENT_BITS) as i32) << position;
+            // let current_byte = reader.bytes().next().transpose().unwrap_or(Some(0)).unwrap_or(0);
+            let current_byte = read_byte!(reader);
+            // let current_byte = read_byte!(reader_clone).unwrap_or(Some(0)).unwrap_or(0);
+            v1 |= ((current_byte & SEGMENT_BITS) as i32) << position;
             if (current_byte&CONTINUE_BITS) == 0 { break; }
             position += 7;
             assert!(position < 32, "VarInt is too big");
         }
-        self.0 = position / 7 + 1;
+        v0 = position / 7 + 1;
+        Self(v0, v1)
     }
     fn write(&self, arr: &mut Vec<u8>) {
         let mut value = self.1;
@@ -82,20 +91,21 @@ impl Necesary for VarLong {
         assert!(i <= 5, "VarInt is too big");
         Self(i,value)
     }
-    fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>)
-    where I: Iterator<Item = &'a u8>{
-        self.1 = 0;
+    fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
+        let mut v0 = 0;
+        let mut v1 = 0;
         let mut position = 0;
         loop {
-            let current_byte = arr.next().unwrap_or(&0);
-            self.1 |= ((current_byte & SEGMENT_BITS) as i64) << position;
+            let current_byte = read_byte!(reader);
+            v1 |= ((current_byte & SEGMENT_BITS) as i64) << position;
             println!("Hello!");
             println!("{}|{}|{}", current_byte, CONTINUE_BITS, current_byte&CONTINUE_BITS);
             if (current_byte&CONTINUE_BITS) == 0 { break; }
             position += 7;
             assert!(position < 64, "VarLong is too big");
         }
-        self.0 = position / 7 + 1;
+        v0 = position / 7 + 1;
+        Self(v0, v1)
     }
     fn write(&self, arr: &mut Vec<u8>) {
         let mut value = self.1;
@@ -120,7 +130,8 @@ impl Necesary for Identifier {
         Self(value)
     }
 
-    fn read<'a, I>(&mut self, _arr: &mut I, length: Option<u64>) where I: Iterator<Item = &'a u8> {
+    fn read(reader: &mut BufReader<&mut TcpStream>, length: Option<u64>) -> Self {
+    // fn read<'a, I>(&mut self, _arr: &mut I, length: Option<u64>) where I: Iterator<Item = &'a u8> {
         let _length = length.expect("No length specified");
         todo!();
     }
@@ -143,14 +154,15 @@ impl Necesary for Position {
         Self(x, z, y)
     }
 
-    fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>) where I: Iterator<Item = &'a u8> {
+    fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
+    // fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>) where I: Iterator<Item = &'a u8> {
         const X_LENGTH: u8 = 26;
         const Y_LENGTH: u8 = 12;
         const Z_LENGTH: u8 = 26;
         let mut long: u64 = 0;
         for _ in 0..4 {
             long <<= 8;
-            long |= *arr.next().expect("Expected an byte to read") as u64;
+            long |= read_byte!(reader) as u64;
         }
         // <x><z><y>
         let x = long >> (Y_LENGTH + Z_LENGTH);
@@ -159,9 +171,7 @@ impl Necesary for Position {
         let x = I26::new(x as i32).expect("Couldn't build x variable");
         let y = I12::new(y as i16).expect("Couldn't build y variable");
         let z = I26::new(z as i32).expect("Couldn't build z variable");
-        self.0 = x;
-        self.1 = z;
-        self.2 = y;
+        Self(x, z, y)
     }
 
     fn write(&self, _arr: &mut Vec<u8>) {
@@ -172,24 +182,19 @@ impl Necesary for Position {
         todo!()
     }
 }
-impl Long {
-    pub fn read<'a, I>(arr: &mut I) -> Self where I: Iterator<Item = &'a u8> {
-        let mut long: u64 = 0;
-        for _ in 0..4 {
-            long <<= 8;
-            long |= *arr.next().expect("Expected another byte") as u64;
-        }
-        Self(long as i64)
-    }
-}
 impl Necesary for Long {
     type Value = i64;
     fn new(value: Self::Value) -> Self {
         Self(value)
     }
 
-    fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>) where I: Iterator<Item = &'a u8> {
-        self.0 = Self::read(arr).0;
+    fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
+        let mut long = 0;
+        for _ in 0..8 {
+            long >>= 8;
+            long += read_byte!(reader) as u64;
+        }
+        Self(long as i64)
     }
 
     fn write(&self, arr: &mut Vec<u8>) {
@@ -203,19 +208,14 @@ impl Necesary for Long {
         self.0
     }
 }
-impl Byte {
-    pub fn read<'a, I>(arr: &mut I) -> Self where I: Iterator<Item = &'a u8> {
-        Self(*arr.next().expect("Expected a byte to read") as i8)
-    }
-}
 impl Necesary for Byte {
     type Value = i8;
     fn new(value: Self::Value) -> Self {
         Self(value)
     }
 
-    fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>) where I: Iterator<Item = &'a u8> {
-        self.0 = Self::read(arr).0;
+    fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
+        Self(read_byte!(reader) as i8)
     }
 
     fn write(&self, arr: &mut Vec<u8>) {
@@ -239,12 +239,10 @@ impl Necesary for BitSet {
         Self(VarInt::new(v, value.len() as i32), value)
     }
 
-    fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>) where I: Iterator<Item = &'a u8> {
-        let mut length = VarInt::new(0,0);
-        length.read(arr, None);
-        let result: Vec<Long> = (0..length.get_value()).map(|_| Long::read(arr)).collect();
-        self.0 = length;
-        self.1 = result;
+    fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
+        let length = VarInt::read(reader, None);
+        let result: Vec<Long> = (0..length.get_value()).map(|_| Long::read(reader, None)).collect();
+        Self(length, result)
     }
 
     fn write(&self, arr: &mut Vec<u8>) {
@@ -263,11 +261,10 @@ impl Necesary for FixedBitSet {
         Self(value.0, value.1)
     }
 
-    fn read<'a, I>(&mut self, arr: &mut I, length: Option<u64>) where I: Iterator<Item = &'a u8> {
+    fn read(reader: &mut BufReader<&mut TcpStream>, length: Option<u64>) -> Self {
         let length = length.expect("Expected a given length");
-        let result: Vec<Byte> = (0..length).map(|_| Byte::read(arr)).collect();
-        self.0 = length;
-        self.1 = result;
+        let result: Vec<Byte> = (0..length).map(|_| Byte::read(reader, None)).collect();
+        Self(length, result)
     }
 
     fn write(&self, arr: &mut Vec<u8>) {
@@ -276,13 +273,6 @@ impl Necesary for FixedBitSet {
 
     fn get_value(&self) -> Self::Value {
         (self.0, self.1.clone())
-    }
-}
-impl VarInt {
-    pub fn read<'a, I>(arr: &mut I) -> Self where I: Iterator<Item = &'a u8> {
-        let mut s = VarInt::new(0,0);
-        s.read(arr, None);
-        s
     }
 }
 impl Necesary for String {
@@ -298,18 +288,15 @@ impl Necesary for String {
         Self(VarInt::new(v,value.len() as i32),  value)
     }
 
-    fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>) where I: Iterator<Item = &'a u8> {
-        let length = VarInt::read(arr);
+    fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
+        let length = VarInt::read(reader, None);
         println!("String length: {}", length.get_value());
         let mut data = vec![];
         for _ in 0..length.get_value() {
-            data.push(*arr.next().expect("Expected a byte to read"));
-            data.push(*arr.next().expect("Expected a byte to read"));
+            data.push(read_byte!(reader));
         }
-        let data_as_arr: &[u8] = &data;
-        let st = std::string::String::from_utf16be(data_as_arr).expect("Could not convert data to utf16 string");
-        self.0 = length;
-        self.1 = st;
+        let st = std::string::String::from_utf8(data).expect("Could not convert data to utf8 string");
+        Self(length, st)
     }
 
     fn write(&self, arr: &mut Vec<u8>) {
@@ -322,5 +309,30 @@ impl Necesary for String {
 
     fn get_value(&self) -> Self::Value {
         self.1.clone()
+    }
+}
+impl Necesary for UnsignedShort {
+    type Value = u16;
+
+    fn new(value: Self::Value) -> Self {
+        Self(value)
+    }
+
+    fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
+        let mut v = 0;
+        for _ in 0..2 {
+            v <<= 8;
+            v += read_byte!(reader) as u16;
+        }
+        Self(v)
+    }
+
+    fn write(&self, arr: &mut Vec<u8>) {
+        arr.push((self.0 >> 8) as u8);
+        arr.push((self.0 & 0xFF) as u8);
+    }
+
+    fn get_value(&self) -> Self::Value {
+        self.0
     }
 }

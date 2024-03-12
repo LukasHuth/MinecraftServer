@@ -1,10 +1,10 @@
 use std::{net::TcpListener, sync::{Arc, Mutex}, io::Write};
 
-use packet_api::datatypes::packet_implementation::{PacketAnalyzer, Packet, packets::Pong};
+use packet_api::datatypes::packet_implementation::{PacketAnalyzer, Packet, packets::LegacyPong};
 
 use packet_api::datatypes::packet_implementation::packets::Packet as _;
 
-const SERVER_VERSION: &str = "1.20.1";
+const SERVER_VERSION: &str = "1.20.4";
 const MOTD: &str = "A Cool Rust Server";
 const MAX_PLAYERS: u16 = 100;
 
@@ -21,11 +21,13 @@ fn main() {
                 let packet = client_connection.next_packet();
                 match packet {
                     Packet::LegacyPing(_) => {
-                        let pong = Pong::new(SERVER_VERSION, MOTD, *player_count_clone.lock().unwrap(), MAX_PLAYERS);
+                        let pong = LegacyPong::new(SERVER_VERSION, MOTD, *player_count_clone.lock().unwrap(), MAX_PLAYERS);
                         let data = pong.to_bytes();
                         client.write_all(&data).expect("Could not send Pong Packet");
                         client.shutdown(std::net::Shutdown::Both).expect("Could not close the connection");
                         break;
+                    },
+                    Packet::StatusRequest => {
                     },
                     Packet::None => (),
                 }

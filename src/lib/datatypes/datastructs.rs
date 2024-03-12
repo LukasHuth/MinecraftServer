@@ -42,4 +42,4 @@ impl VarInt {
         self.0
     }
 }
-mod necesary;
+pub mod necesary;
