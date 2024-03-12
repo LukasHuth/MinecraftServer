@@ -1,16 +1,13 @@
 #![feature(str_from_utf16_endian)]
-use std::net::TcpListener;
 
 use datatypes::necesary::Necesary;
-use crate::datatypes::{Identifier, VarInt, UncompressedPacket, Packet, CompressedPacket, packet_implementation::Server};
+use crate::datatypes::{Identifier, VarInt};
 
-mod datatypes;
+#[allow(dead_code)]
+pub mod datatypes;
 #[cfg(test)]
 mod test;
 
-enum PacketState {
-    Compressed, Uncompressed
-}
 pub fn test() {
     let test: [u8;5] = [0x80, 0x80, 0x80, 0x80, 0x08];
     let mut vl = VarInt::new(0);
@@ -22,11 +19,4 @@ pub fn test() {
     println!("{:?}", arr);
     let ident = Identifier::new(String::from("hallo"));
     println!("{}", ident.get_value());
-    let packet_type = PacketState::Uncompressed;
-    let listener = TcpListener::bind("127.0.0.1:25565").unwrap();
-    for stream in listener.incoming() {
-        let client = stream.unwrap();
-        let mut server = Server::new(25565, "127.0.0.1", client);
-        server.run();
-    }
 }

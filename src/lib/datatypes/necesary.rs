@@ -23,7 +23,7 @@ impl Necesary for Int {
         }
     }
 
-    fn write(&self, arr: &mut Vec<u8>) {
+    fn write(&self, _arr: &mut Vec<u8>) {
         todo!()
     }
 
@@ -120,12 +120,12 @@ impl Necesary for Identifier {
         Self(value)
     }
 
-    fn read<'a, I>(&mut self, arr: &mut I, length: Option<u64>) where I: Iterator<Item = &'a u8> {
-        let length = length.expect("No length specified");
+    fn read<'a, I>(&mut self, _arr: &mut I, length: Option<u64>) where I: Iterator<Item = &'a u8> {
+        let _length = length.expect("No length specified");
         todo!();
     }
 
-    fn write(&self, arr: &mut Vec<u8>) {
+    fn write(&self, _arr: &mut Vec<u8>) {
         todo!()
     }
 
@@ -164,7 +164,7 @@ impl Necesary for Position {
         self.2 = y;
     }
 
-    fn write(&self, arr: &mut Vec<u8>) {
+    fn write(&self, _arr: &mut Vec<u8>) {
         todo!()
     }
 
@@ -289,7 +289,6 @@ impl Necesary for String {
     fn read<'a, I>(&mut self, arr: &mut I, _: Option<u64>) where I: Iterator<Item = &'a u8> {
         let length = VarInt::read(arr);
         println!("String length: {}", length.get_value());
-        println!("{:?}", arr.collect::<Vec<_>>());
         let mut data = vec![];
         for _ in 0..length.get_value() {
             data.push(*arr.next().expect("Expected a byte to read"));

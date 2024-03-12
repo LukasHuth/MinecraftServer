@@ -55,20 +55,9 @@ pub enum Datatype {
     Enum(Enum),
     ByteArray(ByteArray),
 }
-pub struct CompressedPacket {
-    packet_length: VarInt,
-    data_length: VarInt,
-    packet_id: Option<VarInt>,
-    data: Option<ByteArray>,
-}
-pub struct UncompressedPacket {
-    length: VarInt,
-    packet_id: VarInt,
-    data: ByteArray,
-}
-pub enum Packet {
-    Compressed(CompressedPacket),
-    Uncompressed(UncompressedPacket)
+pub enum PacketData {
+    Ping,
+    Handshake,
 }
 pub mod validation;
 pub mod necesary;
