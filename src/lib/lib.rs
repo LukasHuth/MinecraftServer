@@ -1,4 +1,5 @@
 #![feature(str_from_utf16_endian)]
+#![feature(buf_read_has_data_left)]
 extern crate serde;
 macro_rules! read_byte {
     ($var:expr) => {
@@ -6,7 +7,6 @@ macro_rules! read_byte {
     };
 }
 
-#[allow(dead_code)]
 pub mod datatypes;
 
 #[cfg(test)]

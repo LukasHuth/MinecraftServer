@@ -15,9 +15,14 @@ mod legacy_ping;
 mod legacy_pong;
 mod handshake;
 mod status_response;
+mod ping_request;
+mod pong_response;
 
 // exporting
 
 pub use self::legacy_ping::LegacyPing;
 pub use self::legacy_pong::LegacyPong;
 pub use self::handshake::Handshake;
+pub use self::status_response::StatusResponse;
+pub use self::ping_request::PingRequest;
+pub use self::pong_response:: PongResponse;

@@ -26,6 +26,11 @@ pub struct FixedBitSet(u64, Vec<Byte>); //TODO:
 pub struct Optional(Option<u8>); //TODO: u8 is a placeholder
 pub struct Array<I>(Vec<I>);
 pub struct ByteArray(Vec<Byte>);
+#[derive(Clone)]
+pub struct Player {
+    pub username: std::string::String,
+    pub uuid: std::string::String,
+}
 impl Identifier {
     pub fn get_value(&self) -> std::string::String {
         self.0.clone()
@@ -42,4 +47,16 @@ impl VarInt {
         self.0
     }
 }
+impl From<i32> for VarInt {
+    fn from(value: i32) -> Self {
+        let mut v = value;
+        let mut n = 1;
+        while v/128 > 1 {
+            v /= 128;
+            n+=1;
+        }
+        Self::new(n, value)
+    }
+}
+#[allow(unused_variables)]
 pub mod necesary;

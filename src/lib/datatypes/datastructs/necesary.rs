@@ -19,7 +19,7 @@ impl Necesary for Int {
 
     fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
         let mut data = [0;4];
-        reader.read_exact(&mut data);
+        reader.read_exact(&mut data).expect("Expected bytes to read");
         let mut value = 0;
         for v in data {
             value <<= 8;
@@ -198,10 +198,11 @@ impl Necesary for Long {
     }
 
     fn write(&self, arr: &mut Vec<u8>) {
-        arr.push(((self.0 >> 48) & 0xFF) as u8);
-        arr.push(((self.0 >> 32) & 0xFF) as u8);
-        arr.push(((self.0 >> 16) & 0xFF) as u8);
-        arr.push(((self.0 >> 00) & 0xFF) as u8);
+        let mut offset = 56;
+        for _ in 0..8 {
+            arr.push(((self.0 >> offset) & 0xFF) as u8);
+            offset-=8;
+        }
     }
 
     fn get_value(&self) -> Self::Value {

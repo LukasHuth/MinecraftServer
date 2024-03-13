@@ -1,6 +1,6 @@
-use std::{net::TcpStream, io::{BufReader, Read, BufRead}};
-use self::packets::LegacyPing;
-use super::datastructs::{VarInt, String, UnsignedShort};
+use std::{io::{BufReader, BufRead}, net::TcpStream};
+use self::packets::{LegacyPing, PingRequest};
+use super::datastructs::VarInt;
 use crate::datatypes::{datastructs::necesary::Necesary as _, packet_implementation::packets::{Handshake, Packet as _}};
 
 pub mod packets;
@@ -22,29 +22,12 @@ pub enum Answer {
 pub struct PacketAnalyzer<'a> {
     reader: BufReader<&'a mut TcpStream>,
     status: ClientHandlerState,
-}
-const SEGMENT_BITS: u8 = 0x7F;
-const CONTINUE_BITS: u8 = 0x80;
-impl VarInt {
-    fn read_reader(stream: &mut BufReader<&mut TcpStream>) -> Self {
-        let mut position = 0;
-        let mut value: i32 = 0;
-        loop {
-            let mut bytes = [0u8; 1];
-            stream.read_exact(&mut bytes).expect("Failed to read bytes for the varint");
-            let current_byte = bytes[0];
-            value |= ((current_byte & SEGMENT_BITS) as i32) << position;
-            if (current_byte&CONTINUE_BITS) == 0 { break; }
-            position += 7;
-            assert!(position < 32, "VarInt is too big");
-        }
-        let bytes = position / 7 + 1;
-        Self::new(bytes, value)
-    }
+    handled_status: bool,
 }
 pub enum Packet {
     LegacyPing(LegacyPing),
     StatusRequest,
+    Ping(PingRequest),
     None,
 }
 fn bytes_to_short(arr: [u8;2]) -> u16 {
@@ -53,7 +36,7 @@ fn bytes_to_short(arr: [u8;2]) -> u16 {
 impl<'a> PacketAnalyzer<'a> {
     pub fn new(client: &'a mut TcpStream) -> Self {
         let reader = BufReader::new(client);
-        Self { reader, status: ClientHandlerState::Handshaking }
+        Self { reader, status: ClientHandlerState::Handshaking, handled_status: false }
     }
     fn next_handshake_packet(&mut self) -> Packet {
         let mut peek_buffer = [0; 3];
@@ -84,11 +67,17 @@ impl<'a> PacketAnalyzer<'a> {
         Packet::None
     }
     fn next_status_packet(&mut self) -> Packet {
-        let length = VarInt::read(&mut self.reader, None);
+        let _length = VarInt::read(&mut self.reader, None);
         let packet_id = VarInt::read(&mut self.reader, None);
         match packet_id.get_value() {
-            0 => Packet::StatusRequest,
-            1 => unimplemented!(),
+            0 => {
+                if self.handled_status { panic!("Already recieved status request"); }
+                self.handled_status = true;
+                Packet::StatusRequest
+            },
+            1 => {
+                Packet::Ping(PingRequest::read(&mut self.reader).expect("Could not read the ping packet"))
+            },
             _ => Packet::None,
         }
     }
@@ -99,6 +88,8 @@ impl<'a> PacketAnalyzer<'a> {
         Packet::None
     }
     pub fn next_packet(&mut self) -> Packet {
+        let has_data_left = self.reader.has_data_left().unwrap_or(false);
+        if !has_data_left { return Packet::None; }
         match self.status {
             ClientHandlerState::Handshaking => self.next_handshake_packet(),
             ClientHandlerState::Status => self.next_status_packet(),

@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use crate::datatypes::datastructs::{VarInt, String, UnsignedShort, necesary::Necesary as _, UUID};
+use crate::datatypes::datastructs::{Player, VarInt, necesary::Necesary};
 
 use super::Packet;
 
@@ -8,40 +8,81 @@ const IMAGE_BASE64: &str = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAABGdB
 
 #[derive(Serialize, Deserialize)]
 pub struct StatusResponseVersion {
-    pub name: std::string::String,
+    pub name: String,
     pub protocol: u16,
 }
 #[derive(Serialize, Deserialize)]
 pub struct StatusResponsePlayer {
-    pub name: std::string::String,
-    pub id: std::string::String,
+    pub name: String,
+    pub id: String,
 }
 #[derive(Serialize, Deserialize)]
 pub struct StatusResponsePlayers {
     pub max: u16,
     pub online: u16,
-    pub sample: Vec<StatusResponsePlayer>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sample: Option<Vec<StatusResponsePlayer>>,
 }
 #[derive(Serialize, Deserialize)]
 pub struct StatusResponseDescription {
-    pub text: std::string::String,
+    pub text: String,
 }
+#[allow(non_snake_case)]
 #[derive(Serialize, Deserialize)]
 pub struct StatusResponse {
     pub version: StatusResponseVersion,
     pub players: StatusResponsePlayers,
     pub description: StatusResponseDescription,
-    pub favicon: std::string::String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub favicon: Option<String>,
     pub enforcesSecureChar: bool,
     pub previewsChar: bool,
 }
 
 impl Packet for StatusResponse {
-    fn read(stream: &mut std::io::BufReader<&mut std::net::TcpStream>) -> Option<Self> where Self: Sized {
+    fn read(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>) -> Option<Self> where Self: Sized {
         unreachable!()
     }
 
     fn to_bytes(&self) -> Vec<u8> {
-        serde_json::to_string(self).expect("").to_string().as_bytes().to_vec()
+        let mut result = vec![];
+        let json_str = serde_json::to_string(self).expect("Failed to convert data to json string").to_string();
+        let packet_id = VarInt::from(0);
+        let json_length = VarInt::from(json_str.len() as i32);
+        let packet_length = VarInt::from(json_str.len() as i32 + json_length.get_bytes() as i32 + packet_id.get_bytes() as i32);
+        packet_length.write(&mut result);
+        packet_id.write(&mut result);
+        json_length.write(&mut result);
+        let mut json_bytes = json_str.as_bytes().to_vec();
+        result.append(&mut json_bytes);
+        result
+    }
+}
+impl StatusResponse {
+    pub fn new(version_name: String, protocol_version: u16, max_players: u16, players: Vec<Player>, server_description: std::string::String) -> Self {
+        let sample = if players.len() == 0 { None } else {
+            Some(players.iter().map(|p|StatusResponsePlayer { name: p.username.clone(), id: p.uuid.clone() }).collect())
+        };
+        let version = StatusResponseVersion {
+            name: version_name, protocol: protocol_version,
+        };
+        let players = StatusResponsePlayers {
+            max: max_players,
+            online: players.len() as u16,
+            sample 
+        };
+        let description = StatusResponseDescription {
+            text: server_description,
+        };
+        let favicon = Some(format!("data:image/png;base64,{}", IMAGE_BASE64));
+        // let favicon = None;
+        Self {
+            version,
+            players,
+            description,
+            favicon,
+            enforcesSecureChar: true,
+            previewsChar: true,
+        }
     }
 }
