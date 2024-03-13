@@ -17,6 +17,13 @@ mod handshake;
 mod status_response;
 mod ping_request;
 mod pong_response;
+mod login_disconnect;
+mod login_encription_request;
+mod login_success;
+mod login_start;
+mod login_encription_response;
+// plugin messages on login ignored
+mod login_acknowledged;
 
 // exporting
 
@@ -26,3 +33,9 @@ pub use self::handshake::Handshake;
 pub use self::status_response::StatusResponse;
 pub use self::ping_request::PingRequest;
 pub use self::pong_response:: PongResponse;
+pub use self::login_disconnect::LoginDisconnect;
+pub use self::login_encription_request::LoginEncriptionRequest;
+pub use self::login_success::LoginSuccess;
+pub use self::login_start::LoginStart;
+pub use self::login_encription_response::LoginEncriptionResponse;
+pub use self::login_acknowledged::LoginAcknowledged;

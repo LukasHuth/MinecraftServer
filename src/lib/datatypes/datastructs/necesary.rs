@@ -65,9 +65,12 @@ impl Necesary for VarInt {
         Self(v0, v1)
     }
     fn write(&self, arr: &mut Vec<u8>) {
+        println!("writing!");
         let mut value = self.1;
+        println!("value: {value}");
         for i in 0..self.0 {
             let mut v = value & SEGMENT_BITS as i32;
+            println!("v: {v}");
             value >>= 7;
             if i != self.0-1 {
                 v = v | CONTINUE_BITS as i32;
@@ -231,13 +234,7 @@ impl Necesary for BitSet {
     type Value = Vec<Long>;
 
     fn new(value: Self::Value) -> Self {
-        let mut v = 1;
-        let mut n = value.len();
-        while n/128 > 0 {
-            v += 1;
-            n /= 128;
-        }
-        Self(VarInt::new(v, value.len() as i32), value)
+        Self(VarInt::from(value.len() as i32), value)
     }
 
     fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
@@ -280,13 +277,7 @@ impl Necesary for String {
     type Value = std::string::String;
 
     fn new(value: Self::Value) -> Self {
-        let mut n = value.len();
-        let mut v = 1;
-        while n/128 > 1{
-            n /=128;
-            v+=1;
-        }
-        Self(VarInt::new(v,value.len() as i32),  value)
+        Self(VarInt::from(value.len() as i32),  value)
     }
 
     fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
@@ -335,5 +326,57 @@ impl Necesary for UnsignedShort {
 
     fn get_value(&self) -> Self::Value {
         self.0
+    }
+}
+impl Necesary for UUID {
+    type Value = u128;
+
+    fn new(value: Self::Value) -> Self {
+        Self((value >> 64) as u64, value as u64)
+    }
+
+    fn read(reader: &mut BufReader<&mut TcpStream>, _: Option<u64>) -> Self {
+        let mut data = 0;
+        for _ in 0..16 {
+            data <<= 8;
+            data |= read_byte!(reader) as u128;
+        }
+        Self::new(data)
+    }
+    fn write(&self, arr: &mut Vec<u8>) {
+        let mut offset = 56;
+        for _ in 0..8 {
+            arr.push(((self.0 >> offset) & 0xFF) as u8);
+        }
+        offset = 56;
+        for _ in 0..8 {
+            arr.push(((self.1 >> offset) & 0xFF) as u8);
+        }
+    }
+
+    fn get_value(&self) -> Self::Value {
+        ((self.0 as u128) << 64) + self.1 as u128
+    }
+}
+impl Necesary for ByteArray {
+    type Value = Vec<u8>;
+
+    fn new(value: Self::Value) -> Self {
+        Self(value.iter().map(|b|Byte::new(*b as i8)).collect())
+    }
+
+    fn read(reader: &mut BufReader<&mut TcpStream>, length: Option<u64>) -> Self {
+        let length = length.expect("ByteArray needs an specified length to read");
+        let mut data = vec![0; length as usize];
+        reader.read_exact(&mut data);
+        Self::new(data)
+    }
+
+    fn write(&self, arr: &mut Vec<u8>) {
+        arr.append(&mut self.0.iter().map(|b|b.0 as u8).collect());
+    }
+
+    fn get_value(&self) -> Self::Value {
+        self.0.iter().map(|b|b.0 as u8).collect()
     }
 }

@@ -1,7 +1,7 @@
 use std::{io::{BufReader, BufRead}, net::TcpStream};
-use self::packets::{LegacyPing, PingRequest};
+use self::packets::{LegacyPing, PingRequest, LoginStart};
 use super::datastructs::VarInt;
-use crate::datatypes::{datastructs::necesary::Necesary as _, packet_implementation::packets::{Handshake, Packet as _}};
+use crate::datatypes::{datastructs::necesary::Necesary, packet_implementation::packets::{Handshake, Packet as _}};
 
 pub mod packets;
 
@@ -23,12 +23,19 @@ pub struct PacketAnalyzer<'a> {
     reader: BufReader<&'a mut TcpStream>,
     status: ClientHandlerState,
     handled_status: bool,
+    login_state: LoginState,
+}
+enum LoginState {
+    Start,
+    EncRes,
+    LogAck,
 }
 pub enum Packet {
     LegacyPing(LegacyPing),
     StatusRequest,
     Ping(PingRequest),
     None,
+    LoginStart(LoginStart),
 }
 fn bytes_to_short(arr: [u8;2]) -> u16 {
     ((arr[0] as u16) << 8) + arr[1] as u16
@@ -36,7 +43,14 @@ fn bytes_to_short(arr: [u8;2]) -> u16 {
 impl<'a> PacketAnalyzer<'a> {
     pub fn new(client: &'a mut TcpStream) -> Self {
         let reader = BufReader::new(client);
-        Self { reader, status: ClientHandlerState::Handshaking, handled_status: false }
+        Self { reader, status: ClientHandlerState::Handshaking, handled_status: false, login_state: LoginState::Start }
+    }
+    pub fn skip_authentication(&mut self) {
+        self.login_state = LoginState::LogAck;
+    }
+    fn switch_to_login(&mut self) {
+        self.login_state =LoginState::Start;
+        self.status = ClientHandlerState::Login;
     }
     fn next_handshake_packet(&mut self) -> Packet {
         let mut peek_buffer = [0; 3];
@@ -57,14 +71,32 @@ impl<'a> PacketAnalyzer<'a> {
         if handshake_packet.protocol_version.get_value() < CURRENT_PROTOCOL_VERSION { panic!("Client is using outdated packet protocol "); }
         match handshake_packet.next_state.get_value() {
             1 => self.status = ClientHandlerState::Status,
-            2 => self.status = ClientHandlerState::Login,
+            2 => self.switch_to_login(),
             _ => panic!("Unknown enum id")
         }
         println!("{:?}", self.status);
         return Packet::None;
     }
     fn next_login_packet(&mut self) -> Packet {
-        Packet::None
+        let _length = VarInt::read(&mut self.reader, None);
+        let packet_id = VarInt::read(&mut self.reader, None);
+        match self.login_state {
+            LoginState::Start => {
+                assert_eq!(packet_id.get_value(), 0x00);
+                self.login_state = LoginState::EncRes;
+                Packet::LoginStart(LoginStart::read(&mut self.reader).expect("Cound not load the login start packet"))
+            },
+            LoginState::EncRes => {
+                assert_eq!(packet_id.get_value(), 0x01);
+                println!("EncRes");
+                self.login_state = LoginState::LogAck;
+                Packet::None
+            },
+            LoginState::LogAck => {
+                assert_eq!(packet_id.get_value(), 0x03); // 0x02 is the ignored login plugin response
+                Packet::None
+            }
+        }
     }
     fn next_status_packet(&mut self) -> Packet {
         let _length = VarInt::read(&mut self.reader, None);

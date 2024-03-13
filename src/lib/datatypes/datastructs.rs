@@ -49,12 +49,14 @@ impl VarInt {
 }
 impl From<i32> for VarInt {
     fn from(value: i32) -> Self {
+        println!("value: {value}");
         let mut v = value;
         let mut n = 1;
-        while v/128 > 1 {
-            v /= 128;
+        while v > 127 {
+            v >>= 7;
             n+=1;
         }
+        println!("n: {n}");
         Self::new(n, value)
     }
 }
