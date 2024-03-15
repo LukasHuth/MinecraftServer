@@ -1,0 +1,8 @@
+[package]
+name = "server_structure"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+packet_api = { path = "../packet_api" }
+uuid = { version = "1.7.0", features = ["v4"] }

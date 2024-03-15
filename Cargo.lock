@@ -18,6 +18,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "derives"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -52,17 +60,21 @@ version = "0.1.0"
 dependencies = [
  "packet_api",
  "rand",
+ "server_structure",
+ "uuid",
 ]
 
 [[package]]
 name = "packet_api"
 version = "0.0.1"
 dependencies = [
+ "derives",
  "rand",
  "regex",
  "serde",
  "serde_bytes",
  "serde_json",
+ "uuid",
 ]
 
 [[package]]
@@ -195,6 +207,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "server_structure"
+version = "0.1.0"
+dependencies = [
+ "packet_api",
+ "uuid",
+]
+
+[[package]]
 name = "syn"
 version = "2.0.52"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -210,6 +230,15 @@ name = "unicode-ident"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
+
+[[package]]
+name = "uuid"
+version = "1.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f00cc9702ca12d3c81455259621e676d0f7251cec66a21e98fe2e9a37db93b2a"
+dependencies = [
+ "getrandom",
+]
 
 [[package]]
 name = "wasi"

@@ -1,12 +1,7 @@
+extern crate uuid;
 use std::{net::TcpListener, sync::{Arc, Mutex}};
 
-use client_handling::handle_client;
-
-use server::Server;
-
-mod client_handling;
-mod server;
-
+use server_structure::{server::Server, client_handler::ClientHandler};
 
 fn main() {
     packet_api::test();
@@ -19,7 +14,7 @@ fn main() {
         // let player_count_clone = Arc::clone(&player_count);
         let server_clone = Arc::clone(&server);
         let thread = std::thread::spawn(move || {
-            handle_client(stream, server_clone)
+            ClientHandler::run(stream, server_clone)
         });
         threads.push(thread);
     }

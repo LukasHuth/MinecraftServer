@@ -1,0 +1,14 @@
+/prog/rust/minecraft_server/server_structure/target/debug/deps/libuuid-880070ce2966eac0.rmeta: /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/lib.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/builder.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/error.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/parser.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/fmt.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/timestamp.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/v4.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/rng.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/external.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/macros.rs
+
+/prog/rust/minecraft_server/server_structure/target/debug/deps/uuid-880070ce2966eac0.d: /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/lib.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/builder.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/error.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/parser.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/fmt.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/timestamp.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/v4.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/rng.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/external.rs /home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/macros.rs
+
+/home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/lib.rs:
+/home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/builder.rs:
+/home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/error.rs:
+/home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/parser.rs:
+/home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/fmt.rs:
+/home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/timestamp.rs:
+/home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/v4.rs:
+/home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/rng.rs:
+/home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/external.rs:
+/home/lukas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.7.0/src/macros.rs:

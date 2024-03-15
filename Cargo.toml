@@ -4,7 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies.packet_api]
-path = "src/lib"
+path = "packet_api"
+
+[dependencies.server_structure]
+path = "server_structure"
 
 [dependencies]
 rand = "0.8.5"
+uuid = "1.7.0"
