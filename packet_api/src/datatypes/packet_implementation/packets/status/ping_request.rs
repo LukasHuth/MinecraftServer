@@ -14,4 +14,8 @@ impl Packet for PingRequest {
     fn to_bytes(&self) -> Vec<u8> {
         unreachable!("This packet should never be sent")
     }
+
+    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: crate::datatypes::datastructs::VarInt) -> Option<Self> where Self: Sized {
+        unreachable!()
+    }
 }

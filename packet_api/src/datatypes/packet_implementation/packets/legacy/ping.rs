@@ -26,4 +26,8 @@ impl Packet for LegacyPing {
     fn to_bytes(&self) -> Vec<u8> {
         unreachable!("Legacy Ping should never be decoded to bytes")
     }
+
+    fn read_length(_stream: &mut BufReader<&mut TcpStream>, _length: crate::datatypes::datastructs::VarInt) -> Option<Self> where Self: Sized {
+        unreachable!()
+    }
 }

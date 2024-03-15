@@ -23,6 +23,10 @@ impl Packet for PongResponse {
         self.data.write(&mut response);
         response
     }
+
+    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: VarInt) -> Option<Self> where Self: Sized {
+        unreachable!()
+    }
 }
 impl PongResponse {
     pub fn new(pr: PingRequest) -> Self {

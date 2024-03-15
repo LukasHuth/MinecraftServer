@@ -51,4 +51,8 @@ impl Packet for LoginEncriptionRequest {
         println!("verify_token: {:?}", &res[data_size..]);
         res
     }
+
+    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: VarInt) -> Option<Self> where Self: Sized {
+        unreachable!()
+    }
 }

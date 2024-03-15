@@ -19,4 +19,8 @@ impl Packet for LoginStart {
     fn to_bytes(&self) -> Vec<u8> {
         unreachable!("Not needed")
     }
+
+    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: crate::datatypes::datastructs::VarInt) -> Option<Self> where Self: Sized {
+        unreachable!()
+    }
 }

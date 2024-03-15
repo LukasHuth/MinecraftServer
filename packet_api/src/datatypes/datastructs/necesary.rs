@@ -97,9 +97,9 @@ impl VarLong {
 impl Necesary for Identifier {
     type Value = std::string::String;
 
-    fn read(reader: &mut BufReader<&mut TcpStream>, length: Option<u64>) -> Self {
-        let _length = length.expect("No length specified");
-        todo!();
+    fn read(reader: &mut BufReader<&mut TcpStream>, _length: Option<u64>) -> Self {
+        let value = String::read(reader, None);
+        Self(value.get_value().clone())
     }
 
     fn write(&self, _arr: &mut Vec<u8>) {
@@ -193,7 +193,18 @@ impl Necesary for String {
         let length = VarInt::read(reader, None);
         let mut data = vec![];
         for _ in 0..length.get_value() {
-            data.push(read_byte!(reader));
+            let byte = read_byte!(reader);
+            data.push(byte);
+            let size = match byte {
+                0b0000_0000..=0b0111_1111 => 1,
+                0b1100_0000..=0b1101_1111 => 2,
+                0b1110_0000..=0b1110_1111 => 3,
+                0b1111_0000..=0b1111_0111 => 4,
+                _ => panic!("Error in the UTF8 coding"),
+            };
+            for _ in 1..size {
+                data.push(read_byte!(reader));
+            }
         }
         let st = std::string::String::from_utf8(data).expect("Could not convert data to utf8 string");
         Self { data: st }
@@ -247,7 +258,7 @@ impl Necesary for ByteArray {
     fn read(reader: &mut BufReader<&mut TcpStream>, length: Option<u64>) -> Self {
         let length = length.expect("ByteArray needs an specified length to read");
         let mut data = vec![0; length as usize];
-        reader.read_exact(&mut data);
+        reader.read_exact(&mut data).expect("Failed to read provided amount of bytes");
         Self::new(data.iter().map(|b| Byte::new(*b as i8)).collect())
     }
 

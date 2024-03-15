@@ -58,6 +58,10 @@ impl Packet for StatusResponse {
         result.append(&mut json_bytes);
         result
     }
+
+    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: VarInt) -> Option<Self> where Self: Sized {
+        unreachable!()
+    }
 }
 impl StatusResponse {
     pub fn new(version_name: String, protocol_version: u16, max_players: u16, players: Vec<Player>, server_description: std::string::String) -> Self {

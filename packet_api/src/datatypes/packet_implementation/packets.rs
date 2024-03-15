@@ -1,8 +1,11 @@
 use std::{net::TcpStream, io::BufReader};
 
+use crate::datatypes::datastructs::VarInt;
+
 
 pub trait Packet: Send {
     fn read(stream: &mut BufReader<&mut TcpStream>) -> Option<Self> where Self: Sized;
+    fn read_length(_stream: &mut BufReader<&mut TcpStream>, _length: VarInt) -> Option<Self> where Self: Sized;
     fn to_bytes(&self) -> Vec<u8>;
 }
 fn write_string(arr: &mut Vec<u8>, str: &str) {
@@ -25,4 +28,5 @@ create_packet!(
     handshake, Handshake,
     login, *,
     status, *,
+    configuration, *,
     );

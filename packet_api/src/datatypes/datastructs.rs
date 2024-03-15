@@ -25,6 +25,10 @@ pub struct String{
     data: std::string::String
 }
 #[derive(TestNeccessaryTrait)]
+pub struct TextComponent{
+    tag: NBTTag,
+}
+#[derive(TestNeccessaryTrait)]
 pub struct JSONTextComponent(std::string::String);// TODO:
 #[derive(TestNeccessaryTrait)]
 pub struct Identifier(std::string::String);// TODO:

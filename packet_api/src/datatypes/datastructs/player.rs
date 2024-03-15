@@ -1,5 +1,5 @@
 use crate::datatypes::packet_implementation::packets::Packet;
-use std::{collections::VecDeque, cell::RefCell, rc::Rc, sync::{Mutex, Arc}};
+use std::{collections::VecDeque, sync::{Mutex, Arc}};
 
 use super::UUID;
 
@@ -16,7 +16,7 @@ impl Player {
     pub fn send_packet(&mut self, packet: Arc<Mutex<dyn Packet>>) {
         self.queue.push_back(packet);
     }
-    pub fn send_message(&mut self, message: &String) {
+    pub fn send_message(&mut self, _message: &String) {
         // TODO: create Message Packet
     }
 }

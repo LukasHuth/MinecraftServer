@@ -47,4 +47,8 @@ impl<'a> Packet for LegacyPong<'a> {
         write_string(&mut result, &max_players_str);
         result
     }
+
+    fn read_length(_stream: &mut BufReader<&mut TcpStream>, _length: crate::datatypes::datastructs::VarInt) -> Option<Self> where Self: Sized {
+        unreachable!()
+    }
 }

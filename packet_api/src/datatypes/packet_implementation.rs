@@ -5,7 +5,7 @@ use self::uuid::Uuid;
 
 use self::packets::{LegacyPing, PingRequest, LoginStart};
 use super::datastructs::{VarInt, player::Player, UUID, String};
-use crate::datatypes::{datastructs::necesary::Necesary, packet_implementation::packets::{Handshake, Packet as _, LoginAcknowledged}};
+use crate::datatypes::{datastructs::necesary::Necesary, packet_implementation::packets::{Handshake, Packet as _}};
 use crate::TestNeccessaryTrait;
 
 pub mod packets;

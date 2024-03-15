@@ -1,6 +1,6 @@
 use crate::datatypes::datastructs::JSONTextComponent;
 
 pub struct LoginDisconnect {
-    reason: JSONTextComponent,
+    pub reason: JSONTextComponent,
 }
 // sent as { "text": <reason> } ig (JSONTextComponent)

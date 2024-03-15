@@ -42,6 +42,10 @@ impl Packet for LoginSuccess {
         real_reponse.append(&mut response);
         real_reponse
     }
+
+    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: VarInt) -> Option<Self> where Self: Sized {
+        unreachable!()
+    }
 }
 impl LoginSuccess {
     pub fn new(uuid: UUID, username: String) -> Self {
