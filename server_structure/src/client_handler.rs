@@ -53,7 +53,7 @@ impl<'a> ClientHandler {
                     let server = server.lock().unwrap();
                     let player_count = server.players.len();
                     let settings = &server.server_settings;
-                    let pong = LegacyPong::new(settings.version, settings.motd, player_count as u16, settings.max_players);
+                    let pong = LegacyPong::new(settings.version, &settings.motd, player_count as u16, settings.max_players);
                     let data = pong.to_bytes();
                     streamwrite!(stream, &data, client_connection);
                     match stream.shutdown(std::net::Shutdown::Both) {

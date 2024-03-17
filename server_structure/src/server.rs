@@ -1,29 +1,31 @@
+use std::net::TcpListener;
+
 use uuid::Uuid;
 
 use crate::player::Player;
 
-const SERVER_VERSION: &str = "1.20.4";
-const MOTD: &str = "A Cool Rust Server";
-const MAX_PLAYERS: u16 = 100;
-const PROTOCOL_VERSION: u16 = 765;
-const OFFLINE_MODE: bool = true;
+use self::config::Configuration;
+
+pub mod config;
 
 #[derive(Clone)]
 pub struct ServerSettings {
     pub version: &'static str,
-    pub motd: &'static str,
+    pub motd: String,
     pub max_players: u16,
     pub protocol_version: u16,
     pub offline_mode: bool,
+    pub port: u16,
 }
 impl ServerSettings {
-    pub fn new() -> Self {
+    pub fn new(config: config::Configuration) -> Self {
         Self {
-            max_players: MAX_PLAYERS,
-            motd: MOTD,
-            version: SERVER_VERSION,
-            protocol_version: PROTOCOL_VERSION,
-            offline_mode: OFFLINE_MODE,
+            max_players: config.max_players,
+            motd: config.motd.clone(),
+            version: config::SERVER_VERSION,
+            protocol_version: config::PROTOCOL_VERSION,
+            offline_mode: config.offline_mode,
+            port: config.port,
         }
     }
 }
@@ -39,7 +41,8 @@ pub enum ServerEvent {
 pub enum HandleEvent {}
 impl Server {
     pub fn new() -> Self {
-        Self {players: Vec::new(), server_settings: ServerSettings::new() }
+        let config = Configuration::load();
+        Self {players: Vec::new(), server_settings: ServerSettings::new(config) }
     }
     #[allow(dead_code)]
     pub fn handle(&self, _event: HandleEvent) {
@@ -71,5 +74,11 @@ impl Server {
                 }
             }
         }
+    }
+    pub fn start_server() -> (Server, TcpListener) {
+        let server = Server::new();
+        let listener = TcpListener::bind(format!("0.0.0.0:{}", server.server_settings.port)).unwrap();
+        println!("Starting server on port {}", server.server_settings.port);
+        (server, listener)
     }
 }

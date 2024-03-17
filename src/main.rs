@@ -6,10 +6,12 @@ use server_structure::{server::Server, client_handler::ClientHandler};
 #[tokio::main]
 async fn main() {
     packet_api::test();
-    let listener = TcpListener::bind("82.165.0.111:25565").unwrap();
+    let (server, listener) = Server::start_server();
+    // let listener = TcpListener::bind("82.165.0.111:25565").unwrap();
     // let player_count = Arc::new(Mutex::new(0));
     // let players = Arc::new(Mutex::new(Vec::<Player>::new()));
-    let server = Arc::new(Mutex::new(Server::new()));
+    // let server = Arc::new(Mutex::new(Server::new()));
+    let server = Arc::new(Mutex::new(server));
     // let mut threads = vec![];
     while let Ok((stream, _)) = listener.accept() {
         let server_clone = Arc::clone(&server);

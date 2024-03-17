@@ -1,0 +1,5 @@
+[configuration]
+port = 25565
+motd = "A Cool Rust Minecraft Server"
+max_players = 100
+offline_mode = false

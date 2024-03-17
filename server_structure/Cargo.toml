@@ -5,4 +5,6 @@ edition = "2021"
 
 [dependencies]
 packet_api = { path = "../packet_api" }
+serde = { version = "1.0.197", features = ["derive"] }
+toml = "0.8.11"
 uuid = { version = "1.7.0", features = ["v4"] }
