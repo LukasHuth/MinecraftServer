@@ -1,7 +1,7 @@
 use crate::datatypes::datastructs::{String, VarInt, ByteArray, necesary::Necesary};
 
 use crate::datatypes::packet_implementation::packets::Packet;
-use crate::TestNeccessaryTrait;
+use crate::{TestNeccessaryTrait, DatastructError};
 
 pub struct LoginEncriptionRequest {
     server_id: String,
@@ -11,7 +11,7 @@ pub struct LoginEncriptionRequest {
     verify_token: ByteArray,
 }
 impl Packet for LoginEncriptionRequest {
-    fn read(_: &mut std::io::BufReader<&mut std::net::TcpStream>) -> Option<Self> where Self: Sized {
+    fn read(_: &mut std::io::BufReader<&mut std::net::TcpStream>) -> Result<LoginEncriptionRequest, DatastructError> where Self: Sized {
         unreachable!("This function should never be called")
     }
     fn to_bytes(&self) -> Vec<u8> {
@@ -52,7 +52,7 @@ impl Packet for LoginEncriptionRequest {
         res
     }
 
-    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: VarInt) -> Option<Self> where Self: Sized {
+    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: VarInt) -> Result<LoginEncriptionRequest, DatastructError> where Self: Sized {
         unreachable!()
     }
 }

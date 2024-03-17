@@ -1,7 +1,7 @@
 use crate::datatypes::datastructs::{String, VarInt, UUID, Boolean, necesary::Necesary};
 
 use crate::datatypes::packet_implementation::packets::Packet;
-use crate::TestNeccessaryTrait;
+use crate::{TestNeccessaryTrait, DatastructError};
 
 const SKIN: &str = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmM5NmExNGRjMWNiOTQzYjhmZjNjOTJhYWNiMDEwMmMyMzg5ZWVkZWY1MGQzNmI3MTRkMGRiOThiMjdhIn19fQ";
 
@@ -19,7 +19,7 @@ pub struct LoginSuccess {
     properties: Vec<Property>,
 }
 impl Packet for LoginSuccess {
-    fn read(_: &mut std::io::BufReader<&mut std::net::TcpStream>) -> Option<Self> where Self: Sized {
+    fn read(_: &mut std::io::BufReader<&mut std::net::TcpStream>) -> Result<LoginSuccess, DatastructError> where Self: Sized {
         unreachable!()
     }
 
@@ -43,7 +43,7 @@ impl Packet for LoginSuccess {
         real_reponse
     }
 
-    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: VarInt) -> Option<Self> where Self: Sized {
+    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: VarInt) -> Result<LoginSuccess, DatastructError> where Self: Sized {
         unreachable!()
     }
 }
@@ -51,7 +51,6 @@ impl LoginSuccess {
     pub fn new(uuid: UUID, username: String) -> Self {
         let property = Property {
             name: String::new(std::string::String::from("texture")),
-            // value: String::new(std::string::String::from(SKIN)),
             value: String::new(format!("data:image/png;base64,{}", SKIN)),
             is_signed: Boolean::new(false),
             signature: None,

@@ -1,9 +1,9 @@
-use crate::datatypes::packet_implementation::packets::Packet;
+use crate::{datatypes::packet_implementation::packets::Packet, DatastructError};
 
 pub struct LoginAcknowledged {
 }
 impl Packet for LoginAcknowledged {
-    fn read(_: &mut std::io::BufReader<&mut std::net::TcpStream>) -> Option<Self> where Self: Sized {
+    fn read(_: &mut std::io::BufReader<&mut std::net::TcpStream>) -> Result<LoginAcknowledged, DatastructError> where Self: Sized {
         unreachable!()
     }
 
@@ -11,7 +11,7 @@ impl Packet for LoginAcknowledged {
         todo!()
     }
 
-    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: crate::datatypes::datastructs::VarInt) -> Option<Self> where Self: Sized {
+    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: crate::datatypes::datastructs::VarInt) -> Result<LoginAcknowledged, DatastructError> where Self: Sized {
         unreachable!()
     }
 }

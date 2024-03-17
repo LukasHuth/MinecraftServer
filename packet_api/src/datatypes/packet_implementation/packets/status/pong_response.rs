@@ -3,13 +3,13 @@ use crate::datatypes::datastructs::{Long, necesary::Necesary, VarInt};
 use super::ping_request::PingRequest;
 
 use crate::datatypes::packet_implementation::packets::Packet;
-use crate::TestNeccessaryTrait;
+use crate::{TestNeccessaryTrait, DatastructError};
 
 pub struct PongResponse {
     data: Long,
 }
 impl Packet for PongResponse {
-    fn read(_: &mut std::io::BufReader<&mut std::net::TcpStream>) -> Option<Self> where Self: Sized {
+    fn read(_: &mut std::io::BufReader<&mut std::net::TcpStream>) -> Result<PongResponse, DatastructError> where Self: Sized {
         unreachable!("This packet should never be read")
     }
 
@@ -24,7 +24,7 @@ impl Packet for PongResponse {
         response
     }
 
-    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: VarInt) -> Option<Self> where Self: Sized {
+    fn read_length(_stream: &mut std::io::BufReader<&mut std::net::TcpStream>, _length: VarInt) -> Result<PongResponse, DatastructError> where Self: Sized {
         unreachable!()
     }
 }

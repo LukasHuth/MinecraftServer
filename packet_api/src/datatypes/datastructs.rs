@@ -26,7 +26,7 @@ pub struct String{
 }
 #[derive(TestNeccessaryTrait)]
 pub struct TextComponent{
-    tag: NBTTag,
+    tag: String,
 }
 #[derive(TestNeccessaryTrait)]
 pub struct JSONTextComponent(std::string::String);// TODO:
@@ -44,7 +44,7 @@ pub struct NBT();// TODO:
 pub struct Position(I26, I26, I12);
 #[derive(TestNeccessaryTrait)]
 pub struct Angle(u8);
-#[derive(Clone, TestNeccessaryTrait)]
+#[derive(Clone, TestNeccessaryTrait, PartialEq, Eq)]
 pub struct UUID(u128); // FIRST MOST then LEAST
 pub struct BitSet(VarInt, Vec<Long>); //TODO:
 pub struct FixedBitSet(u64, Vec<Byte>); //TODO:

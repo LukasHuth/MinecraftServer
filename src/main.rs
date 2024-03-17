@@ -3,13 +3,26 @@ use std::{net::TcpListener, sync::{Arc, Mutex}};
 
 use server_structure::{server::Server, client_handler::ClientHandler};
 
-fn main() {
+#[tokio::main]
+async fn main() {
     packet_api::test();
     let listener = TcpListener::bind("82.165.0.111:25565").unwrap();
     // let player_count = Arc::new(Mutex::new(0));
     // let players = Arc::new(Mutex::new(Vec::<Player>::new()));
     let server = Arc::new(Mutex::new(Server::new()));
-    let mut threads = vec![];
+    // let mut threads = vec![];
+    while let Ok((stream, _)) = listener.accept() {
+        let server_clone = Arc::clone(&server);
+        tokio::spawn(async move {
+            if let Err(err) = ClientHandler::run(stream, &server_clone).await {
+                eprintln!("Error with the client");
+                if let Some(player) = err.player {
+                    server_clone.lock().unwrap().remove_player(player);
+                }
+            }
+        });
+    }
+    /*
     for stream in listener.incoming() {
         // let player_count_clone = Arc::clone(&player_count);
         let server_clone = Arc::clone(&server);
@@ -18,7 +31,5 @@ fn main() {
         });
         threads.push(thread);
     }
-    for thread in threads {
-        thread.join().unwrap();
-    }
+    */
 }

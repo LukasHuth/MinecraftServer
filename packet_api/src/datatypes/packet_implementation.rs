@@ -11,6 +11,11 @@ use crate::TestNeccessaryTrait;
 pub mod packets;
 
 const CURRENT_PROTOCOL_VERSION: i32 = 765;
+pub enum PacketAnalyserError {
+    PacketConstruction(std::prelude::v1::String),
+    UnknownHandshakeEnum,
+    FailedToPeekBuffer,
+}
 
 #[derive(Debug, Clone)]
 pub enum ClientHandlerState {
@@ -49,6 +54,11 @@ pub enum Packet {
 fn bytes_to_short(arr: [u8;2]) -> u16 {
     ((arr[0] as u16) << 8) + arr[1] as u16
 }
+macro_rules! packet_creation_fail {
+    () => {
+        format!("Failed to construct Packet at {}:{}", file!(), line!())
+    };
+}
 impl<'a> PacketAnalyzer<'a> {
     pub fn get_player(&self) -> Option<Player> {
         self.player.clone()
@@ -74,81 +84,120 @@ impl<'a> PacketAnalyzer<'a> {
         self.login_state =LoginState::Start;
         self.status = ClientHandlerState::Login;
     }
-    fn next_handshake_packet(&mut self) -> Packet {
+    fn next_handshake_packet(&mut self) -> Result<Packet, PacketAnalyserError> {
         let mut peek_buffer = [0; 3];
         match self.reader.fill_buf() {
             Ok(buf) => {
                 let bytes_to_peek = std::cmp::min(buf.len(), 3);
                 peek_buffer[..bytes_to_peek].copy_from_slice(&buf[..bytes_to_peek]);
-                if bytes_to_peek < 3 { panic!("Too few bytes to peek"); }
+                if bytes_to_peek < 3 { return Err(PacketAnalyserError::FailedToPeekBuffer); }
             },
-            Err(_) => panic!("Error occured on peek"),
+            Err(_) => return Err(PacketAnalyserError::FailedToPeekBuffer),
         }
         if peek_buffer[0] == 0xFE && peek_buffer[1] == 0x01 && peek_buffer[2] == 0xFA {
             println!("Legacy Ping");
-            return Packet::LegacyPing(LegacyPing::read(&mut self.reader).expect("Could not read the Legacy Ping request"));
+            return Ok(match LegacyPing::read(&mut self.reader) {
+                Ok(legacy_ping) => Ok(Packet::LegacyPing(legacy_ping)),
+                Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!())),
+            }?)
         }
         println!("Normal Ping");
-        let handshake_packet = Handshake::read(&mut self.reader).expect("Could not read the handshake packet");
+        let handshake_packet = match Handshake::read(&mut self.reader) {
+            Ok(handshake) => Ok(handshake),
+            Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!())),
+        }?;
         if handshake_packet.protocol_version.get_value() < CURRENT_PROTOCOL_VERSION { panic!("Client is using outdated packet protocol "); }
         match handshake_packet.next_state.get_value() {
             1 => self.status = ClientHandlerState::Status,
             2 => self.switch_to_login(),
-            _ => panic!("Unknown enum id")
+            _ => return Err(PacketAnalyserError::UnknownHandshakeEnum)
         }
         println!("{:?}", self.status);
-        return Packet::None;
+        return Ok(Packet::None);
     }
-    fn next_login_packet(&mut self) -> Packet {
-        let _length = VarInt::read(&mut self.reader, None);
-        let packet_id = VarInt::read(&mut self.reader, None);
+    fn next_login_packet(&mut self) -> Result<Packet, PacketAnalyserError> {
+        let _length = match VarInt::read(&mut self.reader, None) {
+            Ok(length) => Ok(length),
+            Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!())),
+        }?;
+        let packet_id = match VarInt::read(&mut self.reader, None) {
+            Ok(packet_id) => Ok(packet_id),
+            Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!())),
+        }?;
         match self.login_state {
             LoginState::Start => {
                 println!("Login start revieved");
                 assert_eq!(packet_id.get_value(), 0x00);
                 self.login_state = LoginState::EncRes;
-                Packet::LoginStart(LoginStart::read(&mut self.reader).expect("Cound not load the login start packet"))
+                Ok(match LoginStart::read(&mut self.reader) {
+                    Ok(login_start) => Ok(Packet::LoginStart(login_start)),
+                    Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!()))
+                }?)
+                // Packet::LoginStart(LoginStart::read(&mut self.reader).expect("Cound not load the login start packet"))
             },
             LoginState::EncRes => {
                 assert_eq!(packet_id.get_value(), 0x01);
                 println!("EncRes");
                 self.login_state = LoginState::LogAck;
-                Packet::None
+                Ok(Packet::None)
             },
             LoginState::LogAck => {
                 println!("Login Ack Recieved");
                 assert_eq!(packet_id.get_value(), 0x03);
                 self.status = ClientHandlerState::Configuration;
-                Packet::LoginAck
+                Ok(Packet::LoginAck)
             }
         }
     }
-    fn next_status_packet(&mut self) -> Packet {
-        let _length = VarInt::read(&mut self.reader, None);
-        let packet_id = VarInt::read(&mut self.reader, None);
+    fn next_status_packet(&mut self) -> Result<Packet, PacketAnalyserError> {
+        let _length = match VarInt::read(&mut self.reader, None) {
+            Ok(length) => Ok(length),
+            Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!())),
+        }?;
+        let packet_id = match VarInt::read(&mut self.reader, None) {
+            Ok(packet_id) => Ok(packet_id),
+            Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!())),
+        }?;
         match packet_id.get_value() {
             0 => {
                 if self.handled_status { panic!("Already recieved status request"); }
                 self.handled_status = true;
-                Packet::StatusRequest
+                Ok(Packet::StatusRequest)
             },
             1 => {
-                Packet::Ping(PingRequest::read(&mut self.reader).expect("Could not read the ping packet"))
+                Ok(Packet::Ping(match PingRequest::read(&mut self.reader) {
+                    Ok(ping_request) => Ok(ping_request),
+                    Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!())),
+                }?))
             },
-            _ => Packet::None,
+            _ => Ok(Packet::None),
         }
     }
-    fn next_configuration_packet(&mut self) -> Packet {
-        let _length = VarInt::read(&mut self.reader, None);
-        let packet_id = VarInt::read(&mut self.reader, None);
-        Packet::None
+    fn next_configuration_packet(&mut self) -> Result<Packet, PacketAnalyserError> {
+        let _length = match VarInt::read(&mut self.reader, None) {
+            Ok(length) => Ok(length),
+            Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!())),
+        }?;
+        let _packet_id = match VarInt::read(&mut self.reader, None) {
+            Ok(packet_id) => Ok(packet_id),
+            Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!())),
+        }?;
+        Ok(Packet::None)
     }
-    fn next_play_packet(&mut self) -> Packet {
-        Packet::None
+    fn next_play_packet(&mut self) -> Result<Packet, PacketAnalyserError> {
+        let _length = match VarInt::read(&mut self.reader, None) {
+            Ok(length) => Ok(length),
+            Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!())),
+        }?;
+        let _packet_id = match VarInt::read(&mut self.reader, None) {
+            Ok(packet_id) => Ok(packet_id),
+            Err(_) => Err(PacketAnalyserError::PacketConstruction(packet_creation_fail!())),
+        }?;
+        Ok(Packet::None)
     }
-    pub fn next_packet(&mut self) -> Packet {
+    pub fn next_packet(&mut self) -> Result<Packet, PacketAnalyserError> {
         let has_data_left = self.reader.has_data_left().unwrap_or(false);
-        if !has_data_left { return Packet::None; }
+        if !has_data_left { return Ok(Packet::None); }
         match self.status {
             ClientHandlerState::Handshaking => self.next_handshake_packet(),
             ClientHandlerState::Status => self.next_status_packet(),

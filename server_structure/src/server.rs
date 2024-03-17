@@ -54,6 +54,9 @@ impl Server {
         self.players.iter()
             .filter(|p|p.uuid.to_uuid().eq(&uuid)).next().expect("")
     }
+    pub fn remove_player(&mut self, player: packet_api::datatypes::datastructs::player::Player) {
+        self.players.retain(|p|p.uuid != player.uuid);
+    }
     pub fn trigger(&mut self, event: ServerEvent) {
         match event {
             ServerEvent::PlayerJoined(player) => {

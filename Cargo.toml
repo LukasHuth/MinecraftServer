@@ -11,4 +11,5 @@ path = "server_structure"
 
 [dependencies]
 rand = "0.8.5"
+tokio = { version = "1.36.0", features = ["full"] }
 uuid = "1.7.0"

@@ -1,6 +1,6 @@
 use std::{io::BufReader, net::TcpStream};
 
-use crate::datatypes::packet_implementation::packets::{Packet, write_string};
+use crate::{datatypes::packet_implementation::packets::{Packet, write_string}, DatastructError};
 
 pub struct LegacyPong<'a> {
     protocol_version: u8,
@@ -16,7 +16,7 @@ impl<'a> LegacyPong<'a> {
     }
 }
 impl<'a> Packet for LegacyPong<'a> {
-    fn read(_: &mut BufReader<&mut TcpStream>) -> Option<Self> where Self: Sized {
+    fn read(_: &mut BufReader<&mut TcpStream>) -> Result<LegacyPong<'a>, DatastructError> where Self: Sized {
         unreachable!("Legacy Pong should never be read")
     }
     fn to_bytes(&self) -> Vec<u8> {
@@ -48,7 +48,7 @@ impl<'a> Packet for LegacyPong<'a> {
         result
     }
 
-    fn read_length(_stream: &mut BufReader<&mut TcpStream>, _length: crate::datatypes::datastructs::VarInt) -> Option<Self> where Self: Sized {
+    fn read_length(_stream: &mut BufReader<&mut TcpStream>, _length: crate::datatypes::datastructs::VarInt) -> Result<LegacyPong<'a>, DatastructError> where Self: Sized {
         unreachable!()
     }
 }
