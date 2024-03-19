@@ -10,6 +10,11 @@ mod login;
 mod status;
 mod configuration;
 mod playing;
+pub use handshake::*;
+pub use login::*;
+pub use status::*;
+pub use configuration::*;
+pub use playing::*;
 trait PacketEnum: Sized {
     fn new(data: VarInt) -> Result<Self>;
 }
@@ -25,7 +30,7 @@ pub enum ServerboundPackets {
     LegacyPing,
 }
 impl ServerboundPackets {
-    pub fn read(reader: &mut (impl Read + BufRead), state: State) -> Result<Self> {
+    pub fn read(reader: &mut (impl Read + BufRead), state: &mut State) -> Result<Self> {
         match reader.has_data_left() {
             Ok(v) => match v {
                 false => return Ok(ServerboundPackets::None),

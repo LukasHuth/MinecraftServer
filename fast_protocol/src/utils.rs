@@ -56,6 +56,6 @@ pub trait DataReader {
 pub trait DataWriter {
     fn write(&self, writer: &mut impl Write) -> Result<()>;
 }
-pub trait LengthedDataReader {
-    fn read(reader: &mut impl Read, length: u64) -> Result<Self> where Self: Sized;
+pub trait ListDataReader {
+    fn read_list(reader: &mut impl Read, length: usize) -> Result<Self> where Self: Sized;
 }

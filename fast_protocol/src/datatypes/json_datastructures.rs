@@ -10,7 +10,7 @@ pub(crate) struct Version {
     protocol: u16,
 }
 #[derive(Serialize, Deserialize)]
-pub(crate) struct Player {
+pub struct Player {
     name: std::string::String,
     id: std::string::String,
 }

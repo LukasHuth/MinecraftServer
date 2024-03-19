@@ -7,11 +7,11 @@ pub enum WritingError {
     FailedToWrite,
 }
 pub trait DataReader {
-    fn read(reader: &mut impl Read) -> Result<Self, ReadingError> where Self: Sized;
+    fn read<T>(reader: &mut impl Read) -> std::result::Result<Self, T> where Self: Sized;
 }
 pub trait DataWriter {
-    fn write(&self, writer: &mut impl Write) -> Result<(), WritingError>;
+    fn write<T>(&self, writer: &mut impl Write) -> std::result::Result<(), T>;
 }
 pub trait LengthedDataReader {
-    fn read(reader: &mut impl Read, length: u64) -> Result<Self, ReadingError> where Self: Sized;
+    fn read<T>(reader: &mut impl Read, length: u64) -> std::result::Result<Self, T> where Self: Sized;
 }
