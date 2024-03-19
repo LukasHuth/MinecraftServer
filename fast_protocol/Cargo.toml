@@ -1,0 +1,11 @@
+[package]
+name = "fast_protocol"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+fastnbt = { version = "2.5.0", features = ["arbitrary", "arbitrary1"] }
+entmet_lib = { path = "../entmet_lib" }
+slot_lib = { path = "../slot_lib" }
+serde_json = "1.0.114"
+serde = "1.0.197"
