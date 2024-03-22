@@ -1,0 +1,10 @@
+[package]
+name = "fast_server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0.197", features = ["derive"] }
+tokio = { version = "1.36.0", features = ["rt", "sync", "net", "full"] }
+toml = "0.8.12"
+fast_protocol = { path = "../fast_protocol" }

@@ -1,15 +1,16 @@
 use serde::{Serialize, Deserialize};
+use tokio::io::AsyncWrite;
 
 use crate::utils::DataWriter;
 use crate::errors::Error;
-use super::datatype_definition::String;
+use super::datatype_definition::{String, ImportantFunctions as _};
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct Version {
     name: std::string::String,
     protocol: u16,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Player {
     name: std::string::String,
     id: std::string::String,
@@ -44,9 +45,9 @@ impl StatusResponseJSON {
     }
 }
 impl DataWriter for StatusResponseJSON {
-    fn write(&self, writer: &mut impl std::io::prelude::Write) -> crate::errors::Result<()> {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> crate::errors::Result<()> {
         let data = String::new(match serde_json::to_string(self) { Ok(v) => Ok(v), Err(_) => Error::FailedToWrite.into()}?);
-        data.write(writer)?;
+        data.write(writer).await?;
         Ok(())
     }
 }

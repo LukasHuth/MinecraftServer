@@ -9,5 +9,6 @@ entmet_lib = { path = "../entmet_lib" }
 slot_lib = { path = "../slot_lib" }
 serde_json = "1.0.114"
 serde = "1.0.197"
-tokio = "1.36.0"
+tokio = { version = "1.36.0", features = ["io-util"] }
 openssl = "0.10.64"
+bytes = "1.5.0"

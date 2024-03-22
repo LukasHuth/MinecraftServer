@@ -1,7 +1,7 @@
 use crate::{ImportantEnumTrait, errors::Error};
 
-#[derive(Debug)]
-pub(crate) enum HandshakeNextState {
+#[derive(Debug, Clone)]
+pub enum HandshakeNextState {
     Status,
     Login,
 }

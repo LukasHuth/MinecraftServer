@@ -26,7 +26,7 @@ pub struct String{
 }
 #[derive(TestNeccessaryTrait)]
 pub struct TextComponent{
-    tag: String,
+    tag: fastnbt::Value,
 }
 #[derive(TestNeccessaryTrait)]
 pub struct JSONTextComponent(std::string::String);// TODO:

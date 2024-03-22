@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
-pub const SERVER_VERSION: &str = "1.20.4";
-pub const PROTOCOL_VERSION: u16 = 765;
+pub const SERVER_VERSION: &str = "1.20.2";
+pub const PROTOCOL_VERSION: u16 = 764;
 
 #[derive(Deserialize)]
 struct Data {

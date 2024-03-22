@@ -9,6 +9,9 @@ path = "packet_api"
 [dependencies.server_structure]
 path = "server_structure"
 
+[dependencies.fast_server]
+path = "fast_server"
+
 [dependencies]
 rand = "0.8.5"
 tokio = { version = "1.36.0", features = ["full"] }
