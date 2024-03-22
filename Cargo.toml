@@ -3,12 +3,6 @@ name = "minecraft_server"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies.packet_api]
-path = "packet_api"
-
-[dependencies.server_structure]
-path = "server_structure"
-
 [dependencies.fast_server]
 path = "fast_server"
 
