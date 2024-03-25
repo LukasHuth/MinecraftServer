@@ -2,8 +2,9 @@
 This is a project to learn, how to implement an documented packet (And possibly create a fully working Minecraft server).
 
 ## To-Do
-- [ ] fix Login Success Packet
 - [ ] implementing all the login packets
+  - [x] packet implementation
+  - [ ] packet usage (encrypted)
 - [ ] implementing all the configuration packets
 - [ ] implementint all the playing packets
   - [ ] implementing server handling (events redstone ticks etc.)
