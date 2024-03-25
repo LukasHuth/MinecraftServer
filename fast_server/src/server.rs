@@ -1,39 +1,71 @@
-use std::{sync::{Arc, Mutex}, cell::RefCell};
-
 use self::server_settings::ServerSettings;
 
-use crate::{player::Player, connection_handler::{ConnectionHandler, self, ConnectionHandlerError}};
+use crate::{player::Player, connection_handler::ConnectionHandler};
 
-use tokio::sync::mpsc;
-use tokio::net::TcpListener;
+use openssl::pkey::Private;
+use tokio::{net::TcpListener, sync::{mpsc, oneshot}};
 
-mod server_settings;
-#[derive(Clone)]
+pub(crate) mod server_settings;
 pub struct Server {
     pub players: Vec<Player>,
     pub settings: ServerSettings,
+    pub rsa_key: openssl::rsa::Rsa<Private>,
+}
+pub(crate) enum ServerMessage {
+    RemovePlayer(u128),
+    GetPlayers(oneshot::Sender<Vec<Player>>),
+    GetPlayerAmount(oneshot::Sender<u16>),
+    AddPlayer(Option<Player>),
 }
 impl Server {
-    fn new() -> Self {
-        let settings = ServerSettings::default();
-        Self { players: Vec::new(), settings }
+    fn new(settings: ServerSettings) -> Self {
+        let rsa_key = openssl::rsa::Rsa::generate(1024).unwrap();
+        Self { players: Vec::new(), settings, rsa_key }
+    }
+    async fn server_manager(server_settings: ServerSettings, mut receiver: mpsc::Receiver<ServerMessage>) {
+        let mut server = Server::new(server_settings);
+        while let Some(message) = receiver.recv().await {
+            match message {
+                ServerMessage::RemovePlayer(uuid) => {
+                    server.players.retain(|p| p.uuid != uuid);
+                }
+                ServerMessage::GetPlayers(sender) => {
+                    let _ = sender.send(server.players.clone());
+                }
+                ServerMessage::GetPlayerAmount(sender) => {
+                    let _ = sender.send(server.players.len() as u16);
+                }
+                ServerMessage::AddPlayer(player) => {
+                    if let Some(player) = player {
+                        server.players.push(player);
+                    }
+                }
+            }
+        }
     }
     pub async fn start() -> Result<(), Box<dyn std::error::Error>> {
-        let server = Server::new();
-        let address = format!("0.0.0.0:{}", server.settings.port);
+        let server_settings = ServerSettings::default();
+        let (sender, receiver) = mpsc::channel::<ServerMessage>(32);
+        let _manager_task = tokio::spawn(Server::server_manager(server_settings.clone(), receiver));
+        let address = format!("0.0.0.0:{}", server_settings.port);
         let listener = TcpListener::bind(address).await?;
-        println!("Starting server on port {}", server.settings.port);
-        let server_arc = Arc::new(server);
-        
+        println!("Starting server on port {}", server_settings.port);
         loop {
-            let (socket, _) = listener.accept().await?;
-            let server_clone = Arc::clone(&server_arc);
-            tokio::spawn(async move {
-                if let Err(err) = ConnectionHandler::run(socket, server_clone).await {
-                    eprintln!("Error handling connection: {:?}", err);
-                }
-
-            });
+            if let Ok((socket, _)) = listener.accept().await {
+                let sender_clone = sender.clone();
+                let server_settings_clone = server_settings.clone();
+                tokio::spawn(async move {
+                    if let Err(err) = ConnectionHandler::run(socket, sender_clone.clone(), server_settings_clone).await {
+                        if err.1.is_some() {
+                            let player = err.1.unwrap();
+                            let _ = sender_clone.send(ServerMessage::RemovePlayer(player.uuid)).await;
+                            eprintln!("Error handling connection: {:?}", err.0);
+                        }
+                        // if the player is none the player wasn't connected yet so the error is
+                        // unneccessary
+                    }
+                });
+            }
         }
     }
 }

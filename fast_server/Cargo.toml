@@ -8,3 +8,6 @@ serde = { version = "1.0.197", features = ["derive"] }
 tokio = { version = "1.36.0", features = ["rt", "sync", "net", "full"] }
 toml = "0.8.12"
 fast_protocol = { path = "../fast_protocol" }
+openssl = "0.10.64"
+rand = "0.8.5"
+reqwest = "0.12.1"
