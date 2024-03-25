@@ -43,25 +43,25 @@ impl DataWriter for LegacyPongPacket {
 impl DataReader for LegacyPingPacket {
     async fn read(reader: &mut (impl AsyncRead + Unpin)) -> crate::errors::Result<Self> {
         let mut data = [0; 3];
-        match reader.read_exact(&mut data).await { Ok(_) => Ok(()), Err(_) => Error::NotEnoughtBytes.into()}?;
+        match reader.read_exact(&mut data).await { Ok(_) => Ok(()), Err(_) => Error::NotEnoughtBytes(format!("{}:{}", file!(), line!())).into()}?;
         println!("data: {:?}", data);
         let length = ((data[1] as u16) << 8) | data[2] as u16;
         let length = length;
         println!("length: {length}");
         for i in 0..length {
             println!("i: {i}");
-            consume_utf16be_char(reader).await?;
+            consume_utf16be_char(reader, line!(), file!()).await?;
         }
         println!("Chars consumed");
         let mut length = [0;2];
-        match reader.read_exact(&mut length).await { Ok(_) => Ok(()), Err(_) => Error::NotEnoughtBytes.into()}?;
+        match reader.read_exact(&mut length).await { Ok(_) => Ok(()), Err(_) => Error::NotEnoughtBytes(format!("{}:{}", file!(), line!())).into()}?;
         let length = ((length[0] as u16) << 8) | length[1] as u16;
         let mut data_buf = vec![0; length as usize];
         match reader.read_exact(&mut data_buf).await {
             Ok(_) => (),
             Err(e) => {
                 eprintln!("Error: {:?}", e);
-                return Error::NotEnoughtBytes.into()
+                return Error::NotEnoughtBytes(format!("{}:{}", file!(), line!())).into()
             }
         }
         println!("bytes to consume: {length}");

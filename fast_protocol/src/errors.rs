@@ -2,7 +2,7 @@
 pub enum Error {
     InvalidId,
     InvalidStructure,
-    NotEnoughtBytes,
+    NotEnoughtBytes(String),
     FailedToWrite,
 }
 pub type Result<T> = std::result::Result<T, Error>;

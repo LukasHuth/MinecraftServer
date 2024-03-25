@@ -28,6 +28,7 @@ pub enum ClientboundPackets {
     Status(StatusResponsePacket),
     LoginSuccess(LoginSuccess),
     LoginDisconnect(LoginDisconnect),
+    LoginEncryptionRequest(LoginEncryptionRequest),
 }
 impl DataWriter for ClientboundPackets {
     async fn write(&self, writer: &mut (impl tokio::io::AsyncWrite + Unpin)) -> Result<()> {
@@ -37,6 +38,7 @@ impl DataWriter for ClientboundPackets {
             Self::LoginDisconnect(packet) => packet.write(writer).await,
             Self::LoginSuccess(packet) => packet.write(writer).await,
             Self::Status(packet) => packet.write(writer).await,
+            Self::LoginEncryptionRequest(packet) => packet.write(writer).await,
         }
     }
 }
@@ -46,6 +48,10 @@ pub enum ServerboundPackets {
     Handshake(HandshakePacket),
     StatusRequest(StatusRequestPacket),
     PingRequest(PingPacket),
+    LoginStart(LoginStart),
+    LoginEncryptionResponse(LoginEncryptionResponse),
+    LoginAcknowledged,
+
 }
 impl ServerboundPackets {
     pub async fn read(reader: &mut (impl AsyncRead + Unpin), state: State) -> Result<Self> {
@@ -62,7 +68,7 @@ impl ServerboundPackets {
         let mut first_two_bytes = bytes::BytesMut::with_capacity(2);
         match reader.read_buf(&mut first_two_bytes).await {
             Ok(_) => /*println!("Read to the buffer")*/(),
-            Err(_) => return Error::NotEnoughtBytes.into(),
+            Err(_) => return Error::NotEnoughtBytes(format!("{}:{}", file!(), line!())).into(),
         }
         if first_two_bytes[0] == 0xFE && first_two_bytes[1] == 0x01 {
             LegacyPingPacket::read(reader).await?;
@@ -77,11 +83,9 @@ impl ServerboundPackets {
                 length = VarInt::new(first_two_bytes[0] as i32);
                 packet_id = VarInt::new(first_two_bytes[1] as i32);
             }
-            // println!("Reading new Handshake: {}|{}", length.get_value(), packet_id.get_value());
             match packet_id.get_value() {
                 0 => {
                     let data = HandshakePacket::read(reader, length.get_value(), packet_id.get_value()).await?;
-                    // read_byte(reader).await?;
                     Ok(ServerboundPackets::Handshake(data))
                 },
                 _ => Error::InvalidId.into()
@@ -89,24 +93,27 @@ impl ServerboundPackets {
         }
     }
     async fn status(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
-        // println!("Reading status");
         let length = VarInt::read(reader).await?.get_value();
-        // println!("length: {}", length);
         let packet_id = VarInt::read(reader).await?.get_value();
         match packet_id {
             0 => {
-                // println!("Status Request");
                 Ok(ServerboundPackets::StatusRequest(StatusRequestPacket::read(reader, length, packet_id).await?))
             },
             1 => {
-                // println!("Ping request");
                 Ok(ServerboundPackets::PingRequest(PingPacket::read(reader, length, packet_id).await?))
             },
             _ => Error::InvalidId.into(),
         }
     }
-    async fn login(_reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
-        todo!()
+    async fn login(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+        let _length = VarInt::read(reader).await?.get_value();
+        let packet_id = VarInt::read(reader).await?.get_value();
+        match packet_id {
+            0 => Ok(Self::LoginStart(LoginStart::read(reader).await?)),
+            1 => Ok(Self::LoginEncryptionResponse(LoginEncryptionResponse::read(reader).await?)),
+            3 => Ok(Self::LoginAcknowledged),
+            _ => todo!(),
+        }
     }
     async fn configuration(_reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
         todo!()

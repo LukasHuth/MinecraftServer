@@ -48,6 +48,14 @@ impl DataWriter for UUID {
         Ok(())
     }
 }
+impl DataReader for UUID {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+        let l0 = Long::read(reader).await?.get_value();
+        let l1 = Long::read(reader).await?.get_value();
+        let data = ((l0 as u128) << 64) | l1 as u128;
+        Ok(Self(data))
+    }
+}
 impl<T> From<T> for JSONTextComponent where T: Serialize {
     fn from(value: T) -> Self {
         Self(String::new(serde_json::to_string(&value).unwrap_or(std::string::String::new())))
@@ -94,7 +102,7 @@ impl ListDataReader for ByteArray {
         let mut data = vec![0; length];
         match reader.read_exact(&mut data).await {
             Ok(_) => Ok(Self(data)),
-            Err(_) => Error::NotEnoughtBytes.into(),
+            Err(_) => Error::NotEnoughtBytes(format!("{}:{}", file!(), line!())).into(),
         }
     }
 }
@@ -111,7 +119,7 @@ impl<const S: usize> DataReader for FixedBitSet<S> {
         let mut data = [0u8; S];
         match reader.read_exact(&mut data).await {
             Ok(_) => Ok(Self(data)),
-            Err(_) => Error::NotEnoughtBytes.into(),
+            Err(_) => Error::NotEnoughtBytes(format!("{}:{}", file!(), line!())).into(),
         }
     }
 }
@@ -126,6 +134,32 @@ impl ImportantFunctions for VarInt {
 
     fn get_value(&self) -> Self::ReturnType {
         self.0
+    }
+}
+impl ImportantFunctions for UUID {
+    type InputType = u128;
+
+    type ReturnType = u128;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0
+    }
+}
+impl ImportantFunctions for ByteArray {
+    type InputType = Vec<u8>;
+
+    type ReturnType = Vec<u8>;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0.clone()
     }
 }
 impl ImportantFunctions for Long {
@@ -171,7 +205,7 @@ impl DataReader for VarInt {
     async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> where Self: Sized {
         let mut data: i32 = 0;
         loop {
-            let current = read_byte(reader).await?;
+            let current = read_byte(reader, line!(), file!()).await?;
             data <<= 7;
             data |= (current & 0x7F) as i32;
             if current < 0x80 { break; }
@@ -198,7 +232,7 @@ impl DataReader for Long {
         let mut data = 0;
         for _ in 0..8 {
             data <<= 8;
-            data |= read_byte(reader).await? as u64;
+            data |= read_byte(reader, line!(), file!()).await? as u64;
         }
         Ok(Self(data as i64))
     }
@@ -218,7 +252,7 @@ impl DataReader for String {
         let length = VarInt::read(reader).await?;
         let mut chars = Vec::new();
         for _ in 0..length.0 {
-            chars.push(read_utf8_char(reader).await?);
+            chars.push(read_utf8_char(reader, line!(), file!()).await?);
         }
         let data: std::string::String = chars.iter().collect();
         Ok(Self(data))
@@ -234,7 +268,7 @@ impl DataWriter for String {
 }
 impl DataReader for UnsignedShort {
     async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> where Self: Sized {
-        let data = ((read_byte(reader).await? as u16) << 8) | read_byte(reader).await? as u16;
+        let data = ((read_byte(reader, line!(), file!()).await? as u16) << 8) | read_byte(reader, line!(), file!()).await? as u16;
         Ok(Self(data))
     }
 }

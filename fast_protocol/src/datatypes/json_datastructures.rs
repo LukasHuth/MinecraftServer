@@ -36,6 +36,11 @@ pub(crate) struct StatusResponseJSON {
     #[serde(rename = "previewsChar")]
     previews_char: bool,
 }
+impl Player {
+    pub fn new(name: std::string::String, id: std::string::String) -> Self {
+        Self {name, id}
+    }
+}
 impl StatusResponseJSON {
     pub(crate) fn new(version: std::string::String, protocol: u16, max_players: u16, player_count: u16, players: Vec<Player>, modt: std::string::String, image: std::string::String) -> Self {
         let version = Version { name: version, protocol };
