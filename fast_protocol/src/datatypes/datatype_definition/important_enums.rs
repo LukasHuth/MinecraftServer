@@ -1,4 +1,5 @@
-use crate::{ImportantEnumTrait, errors::Error};
+use binary_utils::Error;
+use datatypes::ImportantEnumTrait;
 
 #[derive(Debug, Clone)]
 pub enum HandshakeNextState {
@@ -6,7 +7,7 @@ pub enum HandshakeNextState {
     Login,
 }
 impl ImportantEnumTrait for HandshakeNextState {
-    fn new(data: u64) -> crate::errors::Result<Self> {
+    fn new(data: u64) -> binary_utils::Result<Self> {
         match data {
             1 => Ok(HandshakeNextState::Status),
             2 => Ok(HandshakeNextState::Login),

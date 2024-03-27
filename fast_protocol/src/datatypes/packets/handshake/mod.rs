@@ -1,8 +1,8 @@
+use binary_utils::{DataWriter, Result, write_bytes, DataReader, Error, consume_utf16be_char, PacketReader};
+use datatypes::{VarInt, UnsignedShort, Enum, String};
 use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite};
 
-use crate::utils::{DataWriter, write_bytes, consume_utf16be_char, PacketReader, DataReader};
-use crate::errors::Error;
-use crate::datatypes::datatype_definition::{VarInt, UnsignedShort, Enum, important_enums::HandshakeNextState, String};
+use crate::datatypes::datatype_definition::important_enums::HandshakeNextState;
 
 pub struct LegacyPongPacket {
     server_version: std::string::String,
@@ -23,7 +23,7 @@ impl LegacyPongPacket {
     }
 }
 impl DataWriter for LegacyPongPacket {
-    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> crate::errors::Result<()> {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
         let mut d = Vec::new();
         let data = format!("{}\0{}\0{}\0{}\0{}", 127, self.server_version, self.motd, self.current_players, self.max_players);
         let length = data.len() + 3; // +3 because the two beginning chars plus zero
@@ -41,7 +41,7 @@ impl DataWriter for LegacyPongPacket {
     }
 }
 impl DataReader for LegacyPingPacket {
-    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> crate::errors::Result<Self> {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
         let mut data = [0; 3];
         match reader.read_exact(&mut data).await { Ok(_) => Ok(()), Err(_) => Error::NotEnoughtBytes(format!("{}:{}", file!(), line!())).into()}?;
         println!("data: {:?}", data);
@@ -71,7 +71,7 @@ impl DataReader for LegacyPingPacket {
     }
 }
 impl PacketReader for HandshakePacket {
-    async fn read(reader: &mut (impl AsyncRead + Unpin), _length: i32, _packet_id: i32) -> crate::errors::Result<Self> {
+    async fn read(reader: &mut (impl AsyncRead + Unpin), _length: i32, _packet_id: i32) -> Result<Self> {
         let protocol = VarInt::read(reader).await?;
         let address= String::read(reader).await?;
         let port = UnsignedShort::read(reader).await?;

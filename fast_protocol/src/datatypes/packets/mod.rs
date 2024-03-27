@@ -1,18 +1,21 @@
-use crate::utils::{DataReader, PacketReader, DataWriter, read_byte};
-use crate::errors::{Result, Error};
-
-use super::datatype_definition::{VarInt, ImportantFunctions};
-
+use binary_utils::DataReader as _;
+use binary_utils::Error;
+use binary_utils::PacketReader;
+use binary_utils::Result;
 mod handshake;
 mod login;
 mod status;
 mod configuration;
 mod playing;
+use binary_utils::DataWriter;
+use datatypes::ImportantFunctions as _;
+use datatypes::VarInt;
 pub use handshake::*;
 pub use login::*;
 pub use status::*;
 pub use configuration::*;
 pub use playing::*;
+use tokio::io::AsyncWrite;
 use tokio::io::{AsyncRead, AsyncReadExt as _};
 #[derive(Clone, Copy)]
 pub enum State {
@@ -31,7 +34,7 @@ pub enum ClientboundPackets {
     LoginEncryptionRequest(LoginEncryptionRequest),
 }
 impl DataWriter for ClientboundPackets {
-    async fn write(&self, writer: &mut (impl tokio::io::AsyncWrite + Unpin)) -> Result<()> {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
         match self {
             Self::LegacyPong(packet) => packet.write(writer).await,
             Self::Pong(packet) => packet.write(writer).await,

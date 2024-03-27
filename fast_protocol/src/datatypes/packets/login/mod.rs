@@ -1,10 +1,8 @@
+use binary_utils::{DataWriter, Result, write_bytes, DataReader, ListDataReader as _};
+use datatypes::{JSONTextComponent, VarInt, String, ByteArray, Boolean, UUID, ImportantFunctions as _};
 use openssl::pkey::Private;
-use rand::RngCore;
 use serde::{Serialize, Deserialize};
 use tokio::io::AsyncWrite;
-
-use crate::utils::{DataWriter, write_bytes, DataReader, ListDataReader};
-use crate::datatypes::datatype_definition::{JSONTextComponent, VarInt, String, ByteArray, UUID, Boolean, ImportantFunctions};
 
 const SKIN: &str = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmM5NmExNGRjMWNiOTQzYjhmZjNjOTJhYWNiMDEwMmMyMzg5ZWVkZWY1MGQzNmI3MTRkMGRiOThiMjdhIn19fQ";
 
@@ -75,7 +73,7 @@ impl LoginSuccess {
     }
 }
 impl DataWriter for LoginDisconnect {
-    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> crate::errors::Result<()> {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
         let mut data = Vec::new();
         let id = VarInt::new(0x00);
         id.write(&mut data).await?;
@@ -87,7 +85,7 @@ impl DataWriter for LoginDisconnect {
     }
 }
 impl DataWriter for LoginEncryptionRequest {
-    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> crate::errors::Result<()> {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
         let mut data = Vec::new();
         let id = VarInt::new(0x01);
         id.write(&mut data).await?;
@@ -103,7 +101,7 @@ impl DataWriter for LoginEncryptionRequest {
     }
 }
 impl DataWriter for LoginDataStruct {
-    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> crate::errors::Result<()> {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
         let mut d = Vec::new();
         self.0.write(&mut d).await?;
         println!("d: {:?}", d);
@@ -119,7 +117,7 @@ impl DataWriter for LoginDataStruct {
     }
 }
 impl DataWriter for LoginSuccess {
-    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> crate::errors::Result<()> {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
         println!("writing Success");
         let mut data = Vec::new();
         let packet_id = VarInt::new(0x02);
@@ -144,14 +142,14 @@ impl DataWriter for LoginSuccess {
     }
 }
 impl DataReader for LoginStart {
-    async fn read(reader: &mut (impl tokio::io::AsyncRead + Unpin)) -> crate::errors::Result<Self> {
+    async fn read(reader: &mut (impl tokio::io::AsyncRead + Unpin)) -> Result<Self> {
         let name = String::read(reader).await?;
         let uuid = UUID::read(reader).await?;
         Ok(Self { name, uuid })
     }
 }
 impl DataReader for LoginEncryptionResponse {
-    async fn read(reader: &mut (impl tokio::io::AsyncRead + Unpin)) -> crate::errors::Result<Self> {
+    async fn read(reader: &mut (impl tokio::io::AsyncRead + Unpin)) -> Result<Self> {
         let shared_secret_length = VarInt::read(reader).await?;
         let shared_secret = ByteArray::read_list(reader, shared_secret_length.get_value() as usize).await?;
         let verify_token_length = VarInt::read(reader).await?;

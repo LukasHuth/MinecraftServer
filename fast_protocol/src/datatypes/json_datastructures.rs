@@ -1,9 +1,7 @@
+use binary_utils::{DataWriter};
+use datatypes::ImportantFunctions;
 use serde::{Serialize, Deserialize};
 use tokio::io::AsyncWrite;
-
-use crate::utils::DataWriter;
-use crate::errors::Error;
-use super::datatype_definition::{String, ImportantFunctions as _};
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct Version {
@@ -23,14 +21,14 @@ pub(crate) struct Players {
 }
 #[derive(Serialize, Deserialize)]
 pub(crate) struct Description {
-    text: std::string::String,
+    text: String,
 }
 #[derive(Serialize, Deserialize)]
 pub(crate) struct StatusResponseJSON {
     version: Version,
     players: Players,
     description: Description,
-    favicon: std::string::String,
+    favicon: String,
     #[serde(rename = "enforcesSecureChat")]
     enforces_secure_chat: bool,
     #[serde(rename = "previewsChar")]
@@ -42,7 +40,7 @@ impl Player {
     }
 }
 impl StatusResponseJSON {
-    pub(crate) fn new(version: std::string::String, protocol: u16, max_players: u16, player_count: u16, players: Vec<Player>, modt: std::string::String, image: std::string::String) -> Self {
+    pub(crate) fn new(version: String, protocol: u16, max_players: u16, player_count: u16, players: Vec<Player>, modt: String, image: String) -> Self {
         let version = Version { name: version, protocol };
         let players = Players { max: max_players, online: player_count, sample: players };
         let description = Description { text: modt };
@@ -50,8 +48,8 @@ impl StatusResponseJSON {
     }
 }
 impl DataWriter for StatusResponseJSON {
-    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> crate::errors::Result<()> {
-        let data = String::new(match serde_json::to_string(self) { Ok(v) => Ok(v), Err(_) => Error::FailedToWrite.into()}?);
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> binary_utils::Result<()> {
+        let data = datatypes::String::new(match serde_json::to_string(self) { Ok(v) => Ok(v), Err(_) => binary_utils::Error::FailedToWrite.into()}?);
         data.write(writer).await?;
         Ok(())
     }

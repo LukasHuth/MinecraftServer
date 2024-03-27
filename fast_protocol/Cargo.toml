@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+datatypes = { path = "../datatypes" }
+binary_utils = { path = "../binary_utils" }
 fastnbt = { version = "2.5.0", features = ["arbitrary", "arbitrary1"] }
 entmet_lib = { path = "../entmet_lib" }
 slot_lib = { path = "../slot_lib" }
