@@ -26,6 +26,7 @@ impl std::fmt::Display for NbtError {
             NbtError::VarIntTooBig(value) => write!(f, "Read a too big VarInt: {value}"),
             NbtError::VarLongTooBig(value) => write!(f, "Read a too big VarLong: {value}"),
             NbtError::ListTypeNotSame(t0, t1) => write!(f, "List types didn't match, expected: {t0} and found {t1}"),
+            NbtError::CursorOverflow(c, l, a) => write!(f, "Tried to read out of bounce, data length is {a} and cursor is at {c} but a data length of {l} was requested"),
         }
     }
 }

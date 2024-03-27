@@ -16,7 +16,7 @@ pub enum NbtValue {
     ByteArray(Vec<i8>), // length prefixed: i32,
     String(String), // length prefixed: u16 & modified utf8
     List(Vec<NbtValue>),
-    Compound(Option<String>, Vec<(String, NbtValue)>),
+    Compound((Option<String>, Vec<(String, NbtValue)>)),
     IntArray(Vec<i32>),
     LongArray(Vec<i64>),
 }
@@ -83,6 +83,14 @@ impl NbtData {
             return Err(NbtError::UnknownErr(format!("{err}")))
         }
         let result = u32::from_be_bytes(data);
+        Ok(result)
+    }
+    pub fn read_le_i32(&mut self) -> NbtResult<i32> {
+        let mut data = [0;4];
+        if let Err(err) = self.read(&mut data) {
+            return Err(NbtError::UnknownErr(format!("{err}")))
+        }
+        let result = i32::from_le_bytes(data);
         Ok(result)
     }
     pub fn read_be_u64(&mut self) -> NbtResult<u64> {
