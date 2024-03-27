@@ -1,30 +1,6 @@
 use crate::{traits::NbtRead, NbtData, error::{NbtResult, NbtError}, NbtValue};
 
 impl NbtRead for NbtValue {
-    fn read_i8(reader: &mut NbtData) -> NbtResult<i8> {
-        Ok(reader.read_u8()? as i8)
-    }
-
-    fn read_i16(reader: &mut NbtData) -> NbtResult<i16> {
-        Ok(reader.read_be_u16()? as i16)
-    }
-
-    fn read_i32(reader: &mut NbtData) -> NbtResult<i32> {
-        Ok(reader.read_be_u32()? as i32)
-    }
-
-    fn read_i64(reader: &mut NbtData) -> NbtResult<i64> {
-        Ok(reader.read_be_u64()? as i64)
-    }
-
-    fn read_f32(reader: &mut NbtData) -> NbtResult<f32> {
-        Ok(reader.read_be_f32()? as f32)
-    }
-
-    fn read_f64(reader: &mut NbtData) -> NbtResult<f64> {
-        Ok(reader.read_be_f64()? as f64)
-    }
-
     fn read_i8_array(reader: &mut NbtData) -> NbtResult<Vec<i8>> {
         let len = reader.read_be_u32()? as i32;
         let data = reader.read_i8_array(len as usize)?;
@@ -32,7 +8,8 @@ impl NbtRead for NbtValue {
     }
 
     fn read_nbt_string(reader: &mut NbtData) -> NbtResult<String> {
-        let len = reader.read_be_u16()?;
+        let len = reader.read_le_u16()?;
+        println!("string_len: {len}");
         let data = reader.read_string(len as usize)?;
         Ok(data)
     }
@@ -67,11 +44,14 @@ impl NbtRead for NbtValue {
         let mut compound = Vec::new();
         let name = if with_name { Some(Self::read_nbt_string(reader)?) } else { None };
         loop {
+            println!("{}", reader);
             let tag_id = reader.read_u8()?;
+            println!("{}", reader);
+            println!("tag_id: {tag_id}");
             if tag_id == 0 { break; }
-            let name_length = reader.read_var_i32()?;
+            let name_length = reader.read_be_u16()?;
+            println!("{}", reader);
             let name = reader.read_string(name_length as usize)?;
-            // https://github.com/shenjackyuanjie/nbt-rust/blob/main/shen-nbt5/src/reader.rs#L42
             let value = match tag_id {
                 1 => NbtValue::Byte(reader.read_u8()? as i8),
                 2 => NbtValue::Short(reader.read_be_u16()? as i16),

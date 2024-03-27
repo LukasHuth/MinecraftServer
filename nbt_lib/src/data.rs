@@ -6,6 +6,7 @@ use tokio::io::{AsyncRead, AsyncReadExt as _};
 use crate::error::{NbtResult, NbtError};
 
 pub type NbtTypeId = u8;
+#[derive(Debug, PartialEq)]
 pub enum NbtValue {
     Byte(i8),
     Short(i16),
@@ -25,6 +26,11 @@ pub struct NbtData {
     data: Vec<u8>,
     cursor: usize,
 }
+impl std::fmt::Display for NbtData {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?} cursor: {}", &self.data[self.cursor..], self.cursor)
+    }
+}
 impl NbtData {
     pub fn new_with_array(data: Vec<u8>) -> Self {
         let cursor = 0;
@@ -40,7 +46,7 @@ impl NbtData {
         let cursor = 0;
         Ok(Self { data, cursor })
     }
-    pub fn from_uncompressed_data(data: Vec<u8>) -> NbtResult<Self> {
+    pub fn from_compressed_data(data: Vec<u8>) -> NbtResult<Self> {
         let mut decoder = GzDecoder::new(&data[..]);
         let mut uncompressed_data = Vec::new();
         match decoder.read_to_end(&mut uncompressed_data) {
@@ -48,6 +54,10 @@ impl NbtData {
             Err(err) => return Err(NbtError::UnknownErr(format!("{}", err))),
         }
         let data = uncompressed_data;
+        let cursor = 0;
+        Ok(Self { data, cursor })
+    }
+    pub fn from_uncompressed_data(data: Vec<u8>) -> NbtResult<Self> {
         let cursor = 0;
         Ok(Self { data, cursor })
     }
@@ -74,6 +84,16 @@ impl NbtData {
         if let Err(err) = self.read(&mut data) {
             return Err(NbtError::UnknownErr(format!("{err}")))
         }
+        println!("data: {:?}", data);
+        let result = u16::from_be_bytes(data);
+        Ok(result)
+    }
+    pub fn read_le_u16(&mut self) -> NbtResult<u16> {
+        let mut data = [0;2];
+        if let Err(err) = self.read(&mut data) {
+            return Err(NbtError::UnknownErr(format!("{err}")))
+        }
+        println!("data: {:?}", data);
         let result = u16::from_be_bytes(data);
         Ok(result)
     }
