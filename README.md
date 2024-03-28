@@ -2,6 +2,8 @@
 This is a project to learn, how to implement an documented packet (And possibly create a fully working Minecraft server).
 
 ## To-Do
+- [ ] using serde for the packets etc
+  - help: [serde tutorial](https://serde.rs/impl-deserializer.html)
 - [ ] implementing all the login packets
   - [x] packet implementation
   - [ ] packet usage (encrypted)
