@@ -21,3 +21,6 @@ members = [
     "nbt_lib",
     "slot_lib",
 ]
+
+[package.metadata]
+rust-toolchain = "nightly"
