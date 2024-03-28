@@ -48,3 +48,10 @@ The `Config.toml` file holds essential configurations for the Rust Minecraft Ser
 - **offline_mode**: Determines whether the server operates in offline mode, which allows players with unverified Minecraft accounts to join. Presently set to `false`.
 
 Ensure to adjust these configurations according to your server requirements before deployment.
+
+## Disclaimer
+
+Shoutout to [shenjack](https://github.com/shenjackyuanjie) and [Yue Fei](https://github.com/InfyniteHeap) with their work on the crate [nbt-rust](https://github.com/shenjackyuanjie/nbt-rust).
+Their crate helped me out a lot to implement a fine tuned working NBT library.
+More Informations [here](./nbt_lib/README.md)
+

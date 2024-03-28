@@ -1,34 +1,26 @@
-use crate::{error::NbtResult, NbtData, NbtValue};
+use crate::{NbtValue, error::NbtResult, reader::NbtReader};
 
-pub(crate) trait NbtRead {
-    fn read_i8_array(reader: &mut NbtData) -> NbtResult<Vec<i8>>;
-    fn read_nbt_string(reader: &mut NbtData) -> NbtResult<String>;
-    fn read_list(reader: &mut NbtData) -> NbtResult<Vec<NbtValue>>;
-    fn read_compound(reader: &mut NbtData, with_name: bool) -> NbtResult<(Option<String>, Vec<(String, NbtValue)>)>;
-    fn read_i32_array(reader: &mut NbtData) -> NbtResult<Vec<i32>>;
-    fn read_i64_array(reader: &mut NbtData) -> NbtResult<Vec<i64>>;
-}
-pub mod filesystem {
-    use crate::{error::NbtResult, NbtValue, NbtData};
-
-    use super::NbtRead;
-
-    pub fn read_root_compound(reader: &mut NbtData) -> NbtResult<NbtValue> {
-        reader.read_u8()?;
-        Ok(NbtValue::Compound(NbtValue::read_compound(reader, true)?))
+pub trait NbtWrite {
+    fn write_i8_array(writer: &mut Vec<u8>, data: &[i8]);
+    fn write_i32_array(writer: &mut Vec<u8>, data: &[i32]);
+    fn write_i64_array(writer: &mut Vec<u8>, data: &[i64]);
+    fn write_nbt_string(writer: &mut Vec<u8>, data: &str);
+    fn write_compound(writer: &mut Vec<u8>, name: Option<String>, data: &[(String, NbtValue)]) -> NbtResult<NbtValue>;
+    fn write_to(value: &NbtValue, buff: &mut Vec<u8>) -> NbtResult<()>;
+    fn write_to_with_name(name: &str, value: &NbtValue, buff: &mut Vec<u8>) -> NbtResult<()>;
+    fn to_bytes(value: &NbtValue) -> NbtResult<Vec<u8>> {
+        let mut buff = Vec::new();
+        Self::write_to(value, &mut buff)?;
+        Ok(buff)
     }
 }
-pub mod network {
-    pub mod pre764 {
-        pub use super::super::filesystem::read_root_compound;
-        // works exactly the same as the file read
-    }
-    pub mod after763 {
-        use crate::{error::NbtResult, NbtValue, NbtData, traits::NbtRead as _};
-        // Since 1.20.2 (Protocol 764) NBT sent over the network has been updated to exclude the name from the root `TAG_COMPOUND`
-        pub fn read_root_compound(reader: &mut NbtData) -> NbtResult<NbtValue> {
-            reader.read_u8()?;
-            Ok(NbtValue::Compound(NbtValue::read_compound(reader, false)?))
-        }
-    }
+
+pub trait NbtRead {
+    fn read_i8_array(reader: &mut NbtReader) -> NbtResult<Vec<i8>>;
+    fn read_i32_array(reader: &mut NbtReader) -> NbtResult<Vec<i32>>;
+    fn read_i64_array(reader: &mut NbtReader) -> NbtResult<Vec<i64>>;
+    fn read_nbt_string(reader: &mut NbtReader) -> NbtResult<String>;
+    fn read_list(reader: &mut NbtReader) -> NbtResult<Vec<NbtValue>>;
+    fn read_compound(reader: &mut NbtReader) -> NbtResult<Vec<(String, NbtValue)>>;
+    fn from_reader(reader: NbtReader) -> NbtResult<NbtValue>;
 }
