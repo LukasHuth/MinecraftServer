@@ -1,15 +1,13 @@
 use std::{sync::{Arc, Mutex}, time::{Instant, Duration}, ops::Sub, thread::{self}, collections::VecDeque };
 
+use datatypes::ImportantFunctions as _;
 use openssl::{rsa::Padding, sha::Sha1};
 use rand::RngCore as _;
 use tokio::{net::TcpStream, io::{AsyncWrite, BufReader, BufWriter}, sync::{mpsc, oneshot}};
 use tokio::io::AsyncWriteExt;
 
-use fast_protocol::{utils::DataWriter, datatypes::{datatype_definition::important_enums::HandshakeNextState, packets::{PongPacket, StatusResponsePacket, LoginEncryptionRequest, LoginSuccess}} };
-
-use fast_protocol::datatypes::datatype_definition::ImportantFunctions;
-
-use fast_protocol::datatypes::packets::{State, ServerboundPackets, LegacyPongPacket};
+use fast_protocol::datatypes::{packets::{State, ServerboundPackets, LegacyPongPacket, PongPacket, StatusResponsePacket, LoginSuccess}, datatype_definition::important_enums::HandshakeNextState};
+use binary_utils::{DataWriter};
 
 use crate::{server::{Server, ServerMessage, server_settings::ServerSettings}, player::{Player, PlayerMessages}};
 
@@ -22,11 +20,11 @@ pub enum ConnectionHandlerError {
     PacketSent(String),
     Shutdown(String),
     StartSequence(String),
-    PacketReading(fast_protocol::errors::Error),
+    PacketReading(binary_utils::Error),
     ReponseError,
 }
-impl From<fast_protocol::errors::Error> for ConnectionHandlerError {
-    fn from(value: fast_protocol::errors::Error) -> Self {
+impl From<binary_utils::Error> for ConnectionHandlerError {
+    fn from(value: binary_utils::Error) -> Self {
         Self::PacketReading(value)
     }
 }

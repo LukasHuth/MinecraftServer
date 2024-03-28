@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 datatypes = { path = "../datatypes" }
 binary_utils = { path = "../binary_utils" }
-fastnbt = { version = "2.5.0", features = ["arbitrary", "arbitrary1"] }
+nbt_lib = { path = "../nbt_lib" }
 entmet_lib = { path = "../entmet_lib" }
 slot_lib = { path = "../slot_lib" }
 serde_json = "1.0.114"

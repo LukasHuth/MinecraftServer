@@ -10,3 +10,14 @@ path = "fast_server"
 rand = "0.8.5"
 tokio = { version = "1.36.0", features = ["full"] }
 uuid = "1.7.0"
+
+[workspace]
+members = [
+    "binary_utils",
+    "datatypes",
+    "entmet_lib",
+    "fast_protocol",
+    "fast_server",
+    "nbt_lib",
+    "slot_lib",
+]
