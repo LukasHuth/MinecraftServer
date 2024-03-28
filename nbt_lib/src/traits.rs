@@ -5,7 +5,8 @@ pub trait NbtWrite {
     fn write_i32_array(writer: &mut Vec<u8>, data: &[i32]);
     fn write_i64_array(writer: &mut Vec<u8>, data: &[i64]);
     fn write_nbt_string(writer: &mut Vec<u8>, data: &str);
-    fn write_compound(writer: &mut Vec<u8>, name: Option<String>, data: &[(String, NbtValue)]) -> NbtResult<NbtValue>;
+    fn write_list(writer: &mut Vec<u8>, data: &[NbtValue]) -> NbtResult<()>;
+    fn write_compound(writer: &mut Vec<u8>, name: Option<&String>, data: &[(String, NbtValue)]) -> NbtResult<()>;
     fn write_to(value: &NbtValue, buff: &mut Vec<u8>) -> NbtResult<()>;
     fn write_to_with_name(name: &str, value: &NbtValue, buff: &mut Vec<u8>) -> NbtResult<()>;
     fn to_bytes(value: &NbtValue) -> NbtResult<Vec<u8>> {
