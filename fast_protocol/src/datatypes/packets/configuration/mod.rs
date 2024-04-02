@@ -1,5 +1,5 @@
-use binary_utils::{DataWriter, DataReader};
-use datatypes::{Identifier, ByteArray, Long, UUID, VarInt, Array, String, Byte, Enum, GetU64, ImportantEnumTrait, UnsignedByte};
+use binary_utils::{DataWriter, DataReader, write_bytes};
+use datatypes::{Identifier, ByteArray, Long, UUID, VarInt, Array, String, Byte, Enum, GetU64, ImportantEnumTrait, UnsignedByte, ImportantFunctions as _};
 use tokio::io::{AsyncWrite, AsyncRead};
 
 use crate::datatypes::datatype_definition::{TextComponent, NBT};
@@ -143,4 +143,18 @@ impl DataReader for TagArrayData {
         todo!()
     }
 }
-// TODO: implement read and write
+impl DataWriter for ClientboundPluginMessage {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> binary_utils::Result<()> {
+        let mut data = Vec::new();
+        let id = VarInt::new(0);
+        id.write(&mut data).await?;
+        self.channel.write(&mut data).await?;
+        self.data.write(&mut data).await?;
+        let len = VarInt::new(data.len() as i32);
+        let mut d = Vec::new();
+        len.write(&mut d).await?;
+        write_bytes(&mut d, &data).await?;
+        write_bytes(writer, &d).await?;
+        Ok(())
+    }
+}
