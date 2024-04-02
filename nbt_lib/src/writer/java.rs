@@ -96,4 +96,12 @@ impl NbtWrite for Java {
         }
         Ok(())
     }
+
+    fn write_text_component(writer: &mut Vec<u8>, value: &NbtValue) -> NbtResult<()> {
+        match value {
+            NbtValue::String(str) => Ok(Java::write_nbt_string(writer, str)),
+            NbtValue::Compound(_, _) => Java::write_to(value, writer),
+            v => Err(NbtError::WrongRootType(v.tag())),
+        }
+    }
 }
