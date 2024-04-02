@@ -36,6 +36,11 @@ pub trait ImportantFunctions {
     fn new(data: Self::InputType) -> Self;
     fn get_value(&self) -> Self::ReturnType;
 }
+impl DataWriter for Identifier {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
+        self.0.write(writer).await
+    }
+}
 impl DataWriter for UUID {
     async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
         write_bytes(writer, &self.0.to_be_bytes()).await?;
@@ -180,6 +185,16 @@ impl ImportantFunctions for String {
 
     fn get_value(&self) -> Self::ReturnType {
         self.0.clone()
+    }
+}
+impl ImportantFunctions for Identifier {
+    type InputType = std::string::String;
+    type ReturnType = std::string::String;
+    fn new(data: Self::InputType) -> Self {
+        Self(String::new(data))
+    }
+    fn get_value(&self) -> Self::ReturnType {
+        self.0.get_value()
     }
 }
 impl ImportantFunctions for Boolean {

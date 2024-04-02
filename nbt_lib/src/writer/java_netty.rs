@@ -31,7 +31,7 @@ impl NbtWrite for JavaNetty {
         Java::write_compound(writer, name, data)
     }
 
-    #[inline]
+    #[cfg_attr(feature = "inline_read", inline)]
     fn write_to(value: &crate::NbtValue, buff: &mut Vec<u8>) -> crate::error::NbtResult<()> {
         match value {
             NbtValue::Compound(_, data) => {
@@ -69,13 +69,14 @@ impl NbtWrite for JavaNetty {
         JavaNetty::write_to(value, buff)
     }
 
-    #[inline]
+    #[cfg_attr(feature = "inline_read", inline)]
     fn to_bytes(value: &NbtValue) -> NbtResult<Vec<u8>> {
         let mut buff = Vec::new();
         JavaNetty::write_to(value, &mut buff)?;
         Ok(buff)
     }
 
+    #[cfg_attr(feature = "inline_read", inline)]
     fn write_text_component(writer: &mut Vec<u8>, value: &NbtValue) -> NbtResult<()> {
         match value {
             NbtValue::String(str) => Ok(Java::write_nbt_string(writer, str)),
