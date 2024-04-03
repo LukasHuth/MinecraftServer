@@ -31,9 +31,9 @@ pub struct SessionResponsePiece {
 }
 #[derive(Deserialize)]
 pub struct SessionResponse {
-    id: std::string::String,
-    name: std::string::String,
-    properties: Vec<SessionResponsePiece>,
+    pub id: std::string::String,
+    pub name: std::string::String,
+    pub properties: Vec<SessionResponsePiece>,
 }
 #[derive(Serialize)]
 struct Reason {
