@@ -7,6 +7,7 @@ pub struct VarInt(i32);
 pub struct VarLong(i64);
 pub struct Position(i32, i32, i16);
 pub struct Angle(u8);
+#[derive(Clone)]
 pub struct UUID(u128);
 pub struct BitSet(Vec<u64>);
 pub struct FixedBitSet<const S: usize>([u8; S]); // INFO: S = ceil(size / 8)

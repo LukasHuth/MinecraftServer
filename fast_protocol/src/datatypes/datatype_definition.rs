@@ -6,6 +6,7 @@ pub mod important_enums;
 
 pub struct EntityMetadata(entmet_lib::EntityMetadata);
 pub struct Slot(slot_lib::Slot);
+#[derive(Clone)]
 pub struct TextComponent(NbtValue);
 pub struct NBT(NbtValue);
 

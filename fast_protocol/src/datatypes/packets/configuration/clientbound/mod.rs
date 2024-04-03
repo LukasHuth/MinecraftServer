@@ -25,8 +25,8 @@ pub struct RemoveResoucePack {
 }
 pub struct AddResourcePack {
     pub uuid: datatypes::UUID,
-    pub url: String,
-    pub hash: String,
+    pub url: datatypes::String,
+    pub hash: datatypes::String,
     pub forced: bool,
     pub has_prompt_message: Option<custom_datatypes::TextComponent>,
 }

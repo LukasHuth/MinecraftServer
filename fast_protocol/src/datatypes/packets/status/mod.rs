@@ -1,6 +1,6 @@
 use binary_utils::{Result, DataWriter, write_bytes, PacketReader, DataReader as _};
 use datatypes::{Long, VarInt, ImportantFunctions as _};
-use tokio::io::{AsyncWrite, AsyncRead};
+use tokio::io::{AsyncWrite, AsyncRead, BufWriter, AsyncWriteExt};
 
 use crate::datatypes::json_datastructures::{StatusResponseJSON, Player};
 
@@ -44,15 +44,19 @@ impl DataWriter for StatusResponsePacket {
 }
 impl DataWriter for PongPacket {
     async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
-        let mut d = Vec::new();
+        let mut buf_writer = BufWriter::new(writer);
         let mut data = Vec::new();
         let id = VarInt::new(0x01);
         id.write(&mut data).await?;
         self.id.write(&mut data).await?;
         let length = VarInt::new(data.len() as i32);
-        length.write(&mut d).await?;
-        write_bytes(&mut d, &data).await?;
-        write_bytes(writer, &d).await?;
+        length.write(&mut buf_writer).await?;
+        if let Err(_) = buf_writer.write_all(&data).await {
+            return Err(binary_utils::Error::FailedToWrite);
+        }
+        if let Err(_) = buf_writer.flush().await {
+            return Err(binary_utils::Error::FailedToWrite);
+        }
         Ok(())
     }
 }
