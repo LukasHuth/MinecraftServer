@@ -9,6 +9,12 @@ impl DataWriter for Identifier {
         self.0.write(writer).await
     }
 }
+impl DataReader for Identifier {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+        let data = String::read(reader).await?;
+        Ok(Self(data))
+    }
+}
 impl<T> From<T> for JSONTextComponent where T: Serialize {
     fn from(value: T) -> Self {
         Self(String::new(serde_json::to_string(&value).unwrap_or(std::string::String::new())))

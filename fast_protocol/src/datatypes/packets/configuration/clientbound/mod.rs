@@ -1,4 +1,5 @@
 mod implementations;
+mod new_impl;
 use crate::datatypes::datatype_definition as custom_datatypes;
 pub struct ClientboundPluginMessage {
     pub channel: datatypes::Identifier,
@@ -32,8 +33,9 @@ pub struct AddResourcePack {
 }
 pub struct FeatureFlags {
     pub feature_count: datatypes::VarInt,
-    pub feature_flags: datatypes::Identifier,
+    pub feature_flags: datatypes::Array<datatypes::Identifier>,
 }
+#[derive(Clone)]
 pub struct TagArrayData {
     // pub length: VarInt
     pub tag_name: datatypes::Identifier,

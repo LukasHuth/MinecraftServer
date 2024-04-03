@@ -15,6 +15,11 @@ impl From<String> for TextComponent{
         Self (NbtValue::String(value))
     }
 }
+impl From<NbtValue> for NBT {
+    fn from(value: NbtValue) -> Self {
+        Self(value)
+    }
+}
 impl DataWriter for TextComponent {
     async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> binary_utils::Result<()> {
         let mut data: Vec<u8> = Vec::new();

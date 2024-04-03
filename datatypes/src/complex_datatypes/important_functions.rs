@@ -53,3 +53,16 @@ impl<T, S> ImportantFunctions for Enum<T, S> where S: DataReader + GetU64, T: Im
         self.0.clone()
     }
 }
+impl<T> ImportantFunctions for Array<T> where T: DataReader + DataWriter + Clone {
+    type InputType = Vec<T>;
+
+    type ReturnType = Vec<T>;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0.clone()
+    }
+}
