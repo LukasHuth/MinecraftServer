@@ -1,15 +1,10 @@
-use binary_utils::DataReader as _;
-use binary_utils::Error;
-use binary_utils::PacketReader;
-use binary_utils::Result;
+use binary_utils::{DataReader as _, ListDataReader as _, Error, PacketReader, Result, DataWriter};
 mod handshake;
 mod login;
 mod status;
 mod configuration;
 mod playing;
-use binary_utils::DataWriter;
-use datatypes::ImportantFunctions as _;
-use datatypes::VarInt;
+use datatypes::{ImportantFunctions as _, VarInt};
 pub use handshake::*;
 pub use login::*;
 pub use status::*;
@@ -54,7 +49,12 @@ pub enum ServerboundPackets {
     LoginStart(LoginStart),
     LoginEncryptionResponse(LoginEncryptionResponse),
     LoginAcknowledged,
-
+    ClientInformation(ClientInformation),
+    ConfigurationPluginMessage(ServerboundPluginMessage),
+    AckFinishConfiguration,
+    KeepAlive(KeepAliveResponse),
+    Pong,
+    ResoucePackResponse(ResoucePackResponse),
 }
 impl ServerboundPackets {
     pub async fn read(reader: &mut (impl AsyncRead + Unpin), state: State) -> Result<Self> {
@@ -118,10 +118,21 @@ impl ServerboundPackets {
             _ => todo!(),
         }
     }
-    async fn configuration(_reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
-        todo!()
+    async fn configuration(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+        let length = VarInt::read(reader).await?.get_value();
+        let packet_id = VarInt::read(reader).await?.get_value();
+        match packet_id {
+            0 => Ok(Self::ClientInformation(ClientInformation::read(reader).await?)),
+            1 => Ok(Self::ConfigurationPluginMessage(ServerboundPluginMessage::read_list(reader, length as usize - 1).await?)),
+            2 => Ok(Self::AckFinishConfiguration),
+            3 => Ok(Self::KeepAlive(KeepAliveResponse::read(reader).await?)),
+            4 => unimplemented!(),
+            5 => Ok(Self::ResoucePackResponse(ResoucePackResponse::read(reader).await?)),
+            i32::MIN..=-1 | 6..=i32::MAX => Err(Error::InvalidStructure),
+        }
     }
     async fn playing(_reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
         todo!()
     }
+
 }

@@ -1,17 +1,19 @@
-use std::{sync::{Arc, Mutex}, time::{Instant, Duration}, ops::Sub, thread::{self}, collections::VecDeque };
+use std::sync::{Arc, Mutex};
 
 use datatypes::ImportantFunctions as _;
-use openssl::{rsa::Padding, sha::Sha1};
+use openssl::sha::Sha1;
 use rand::RngCore as _;
-use tokio::{net::TcpStream, io::{AsyncWrite, BufReader, BufWriter}, sync::{mpsc, oneshot}};
+use tokio::sync::{mpsc, oneshot};
+use tokio::io::{AsyncWrite, BufReader};
+use tokio::net::TcpStream;
 use tokio::io::AsyncWriteExt;
 
 use fast_protocol::datatypes::{packets::{State, ServerboundPackets, LegacyPongPacket, PongPacket, StatusResponsePacket, LoginSuccess}, datatype_definition::important_enums::HandshakeNextState};
 use binary_utils::{DataWriter};
 
-use crate::{server::{Server, ServerMessage, server_settings::ServerSettings}, player::{Player, PlayerMessages}};
+use crate::{server::{ServerMessage, server_settings::ServerSettings}, player::{Player, PlayerMessages}};
 
-const UPDATE_RATE: f32 = 100.0;
+const _UPDATE_RATE: f32 = 100.0;
 
 pub struct ConnectionHandler;
 #[derive(Debug)]
@@ -22,6 +24,7 @@ pub enum ConnectionHandlerError {
     StartSequence(String),
     PacketReading(binary_utils::Error),
     ReponseError,
+    ChannelError,
 }
 impl From<binary_utils::Error> for ConnectionHandlerError {
     fn from(value: binary_utils::Error) -> Self {
@@ -58,7 +61,8 @@ fn minecraft_sha1_hexdigest(input: Sha1) -> String {
     }
 }
 impl ConnectionHandler {
-    async fn handle_incomming_messages(mut _stream: &TcpStream, mut receiver: mpsc::Receiver<PlayerMessages>) {
+    // TODO: use this or delete it
+    async fn _handle_incomming_messages(mut _stream: &TcpStream, mut receiver: mpsc::Receiver<PlayerMessages>) {
         while let Some(message) = receiver.recv().await {
             match message {
             }
@@ -125,7 +129,9 @@ impl ConnectionHandler {
                 },
                 ServerboundPackets::StatusRequest(_req) => {
                     let (player_sender, player_rec) = oneshot::channel();
-                    sender.send(ServerMessage::GetPlayers(player_sender)).await;
+                    if let Err(_) = sender.send(ServerMessage::GetPlayers(player_sender)).await {
+                        return Err((ConnectionHandlerError::ChannelError, player));
+                    }
                     let players = match player_rec.await {
                         Ok(v) => v,
                         Err(_) => return Err((ConnectionHandlerError::ReponseError, player)),
@@ -191,6 +197,12 @@ impl ConnectionHandler {
                         Err(_) => return Err((ConnectionHandlerError::ReponseError, player)),
                     }
                 }
+                ServerboundPackets::Pong => unreachable!(),
+                ServerboundPackets::KeepAlive(_keep_alive) => todo!(),
+                ServerboundPackets::ClientInformation(_client_information) => todo!(),
+                ServerboundPackets::AckFinishConfiguration => todo!(),
+                ServerboundPackets::ResoucePackResponse(_res) => todo!(),
+                ServerboundPackets::ConfigurationPluginMessage(_message) => todo!(),
             }
         }
         Ok(())

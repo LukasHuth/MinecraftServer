@@ -42,3 +42,17 @@ file.read_to_end(&mut buffer)?;
 let reader = nbt_lib::reader::NbtReader::from_compressed_data(buffer);
 let nbt_data = nbt_lib::version::Java::from_reader(reader);
 ```
+
+### Writing uncompressed
+```rust
+use nbt_lib::traits::WriteNbt;
+let mut buffer = Vec::new();
+let compound_name = Some("".to_string());
+let elements = vec![
+    ("test_field".to_string(), nbt_lib::NbtValue::String("test".to_string()))
+];
+let value = nbt_lib::NbtValue::Compund(compound_name, elements);
+match let Err(e) = nbt_lib::version::Java::write_to(&value, &mut buffer) {
+    // TODO: handle error
+}
+```
