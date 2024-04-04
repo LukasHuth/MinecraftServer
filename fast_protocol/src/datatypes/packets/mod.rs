@@ -10,8 +10,9 @@ pub use login::*;
 pub use status::*;
 pub use configuration::*;
 pub use playing::*;
-use tokio::io::AsyncWrite;
-use tokio::io::{AsyncRead, AsyncReadExt as _};
+use tokio::io::{AsyncWrite, BufReader, AsyncBufReadExt};
+use tokio::io::AsyncReadExt as _;
+use tokio::net::tcp::ReadHalf;
 #[derive(Clone, Copy)]
 pub enum State {
     Handshake,
@@ -57,7 +58,16 @@ pub enum ServerboundPackets {
     ResoucePackResponse(ResoucePackResponse),
 }
 impl ServerboundPackets {
-    pub async fn read(reader: &mut (impl AsyncRead + Unpin), state: State) -> Result<Self> {
+    // pub async fn read(reader: &mut (impl AsyncRead + Unpin), state: State) -> Result<Self> {
+    pub async fn read<'a>(reader: &mut BufReader<ReadHalf<'a>>, state: State) -> Result<Self> {
+        if let Ok(vec) = reader.fill_buf().await {
+            if vec.is_empty() {
+                return Ok(ServerboundPackets::None);
+            }
+        } else {
+            return Err(Error::NotEnoughtBytes("".to_string()))
+        }
+        if reader.buffer().len() == 0 { return Ok(ServerboundPackets::None) }
         match state {
             State::Handshake => Self::handshake(reader).await,
             State::Status => Self::status(reader).await,
@@ -66,7 +76,7 @@ impl ServerboundPackets {
             State::Playing => Self::playing(reader).await,
         }
     }
-    async fn handshake(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+    async fn handshake<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self> {
         // let mut reader = BufReader::new(reader);
         let mut first_two_bytes = bytes::BytesMut::with_capacity(2);
         match reader.read_buf(&mut first_two_bytes).await {
@@ -95,7 +105,7 @@ impl ServerboundPackets {
             }
         }
     }
-    async fn status(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+    async fn status<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self> {
         let length = VarInt::read(reader).await?.get_value();
         let packet_id = VarInt::read(reader).await?.get_value();
         match packet_id {
@@ -108,7 +118,7 @@ impl ServerboundPackets {
             _ => Error::InvalidId.into(),
         }
     }
-    async fn login(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+    async fn login<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self> {
         let _length = VarInt::read(reader).await?.get_value();
         let packet_id = VarInt::read(reader).await?.get_value();
         match packet_id {
@@ -118,7 +128,8 @@ impl ServerboundPackets {
             _ => todo!(),
         }
     }
-    async fn configuration(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+    async fn configuration<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self> {
+        reader.buffer();
         let length = VarInt::read(reader).await?.get_value();
         let packet_id = VarInt::read(reader).await?.get_value();
         match packet_id {
@@ -131,7 +142,7 @@ impl ServerboundPackets {
             i32::MIN..=-1 | 6..=i32::MAX => Err(Error::InvalidStructure),
         }
     }
-    async fn playing(_reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+    async fn playing<'a>(_reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self> {
         todo!()
     }
 
