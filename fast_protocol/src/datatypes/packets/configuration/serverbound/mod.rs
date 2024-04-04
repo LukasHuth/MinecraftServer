@@ -28,7 +28,7 @@ pub struct ClientInformation {
     pub displayed_skin_parts: datatypes::UnsignedByte,
     pub main_hand: datatypes::Enum<MainHand, datatypes::VarInt>,
     pub text_filtering: datatypes::Boolean,
-    pub allow_server_listings: datatypes::Boolean,
+    pub allow_server_listing: datatypes::Boolean,
 }
 pub struct ServerboundPluginMessage {
     pub channel: datatypes::Identifier,
@@ -44,6 +44,6 @@ pub struct KeepAliveResponse {
 #[deprecated]
 pub struct Pong {}
 pub struct ResoucePackResponse {
-    pub uiid: datatypes::UUID,
+    pub uuid: datatypes::UUID,
     pub result: datatypes::Enum<ResourcePackResponseEnum, datatypes::VarInt>,
 }

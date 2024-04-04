@@ -197,6 +197,12 @@ impl ConnectionHandler {
                         Err(_) => return Err((ConnectionHandlerError::ReponseError, player)),
                     }
                 }
+                ServerboundPackets::Pong => unreachable!(),
+                ServerboundPackets::KeepAlive(_keep_alive) => todo!(),
+                ServerboundPackets::ClientInformation(_client_information) => todo!(),
+                ServerboundPackets::AckFinishConfiguration => todo!(),
+                ServerboundPackets::ResoucePackResponse(_res) => todo!(),
+                ServerboundPackets::ConfigurationPluginMessage(_message) => todo!(),
             }
         }
         Ok(())

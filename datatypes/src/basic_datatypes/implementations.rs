@@ -1,5 +1,5 @@
 use binary_utils::{DataWriter, Result, Error, DataReader, read_byte, write_bytes};
-use tokio::io::{AsyncWrite, AsyncWriteExt as _, AsyncRead};
+use tokio::io::{AsyncWrite, AsyncWriteExt as _, AsyncRead, AsyncReadExt};
 use super::*;
 
 
@@ -9,6 +9,30 @@ impl DataWriter for Boolean {
             Ok(_) => Ok(()),
             Err(_) => Error::FailedToWrite.into(),
         }
+    }
+}
+impl DataReader for Boolean {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+        if let Ok(data) = reader.read_i8().await {
+            return Ok(Self(if data == 0 { false } else { true }))
+        }
+        Err(Error::InvalidStructure)
+    }
+}
+impl DataReader for Byte {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+        if let Ok(data) = reader.read_i8().await {
+            return Ok(Self(data))
+        }
+        Err(Error::InvalidStructure)
+    }
+}
+impl DataReader for UnsignedByte {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+        if let Ok(data) = reader.read_u8().await {
+            return Ok(Self(data))
+        }
+        Err(Error::InvalidStructure)
     }
 }
 impl DataReader for Long {
