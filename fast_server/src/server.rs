@@ -2,8 +2,9 @@ use self::server_settings::ServerSettings;
 
 use crate::{player::Player, connection_handler::ConnectionHandler};
 
+use fast_protocol::datatypes::{datatype_definition::TextComponent, packets::FeatureFlags};
 use openssl::pkey::Private;
-use tokio::{net::TcpListener, sync::{mpsc, oneshot}};
+use tokio::{net::TcpListener, sync::{mpsc, oneshot}, io::AsyncWriteExt};
 
 pub(crate) mod server_settings;
 pub struct Server {
@@ -16,6 +17,19 @@ pub(crate) enum ServerMessage {
     GetPlayers(oneshot::Sender<Vec<Player>>),
     GetPlayerAmount(oneshot::Sender<u16>),
     AddPlayer(Option<Player>),
+    IsResourcePackImportant(datatypes::UUID, oneshot::Sender<bool>),
+    PluginMessage(Option<Player>, String, Vec<u8>),
+    GetConfigData(oneshot::Sender<Vec<ConfigData>>),
+}
+#[allow(dead_code)]
+#[derive(Clone)]
+pub(crate) enum ConfigData {
+    PluginMessage(String, Vec<u8>),
+    RegistryData(nbt_lib::NbtValue),
+    RemoveResourcePack(Option<u128>),
+    AddResourcePack(u128, String, String, bool, Option<TextComponent>),
+    FeatureFlags(Vec<String>),
+    // TODO: Update Tags
 }
 impl Server {
     fn new(settings: ServerSettings) -> Self {
@@ -24,6 +38,9 @@ impl Server {
     }
     async fn server_manager(server_settings: ServerSettings, mut receiver: mpsc::Receiver<ServerMessage>) {
         let mut server = Server::new(server_settings);
+        let config = vec![
+            // ConfigData::FeatureFlags(vec!["minecraft:vanilla".to_string(), "minecraft:bundle".to_string(), "minecraft:trade_rebalance".to_string()])
+        ];
         while let Some(message) = receiver.recv().await {
             match message {
                 ServerMessage::RemovePlayer(uuid) => {
@@ -40,6 +57,16 @@ impl Server {
                         server.players.push(player);
                     }
                 }
+                ServerMessage::IsResourcePackImportant(_uuid, sender) => {
+                    // TODO: Implement a real check
+                    let _ = sender.send(false);
+                }
+                ServerMessage::PluginMessage(_player, _channel, _data) => {
+                    // TODO: do something with the plugin message
+                }
+                ServerMessage::GetConfigData(sender) => {
+                    let _ = sender.send(config.clone());
+                }
             }
         }
     }
@@ -51,11 +78,12 @@ impl Server {
         let listener = TcpListener::bind(address).await?;
         println!("Starting server on port {}", server_settings.port);
         loop {
-            if let Ok((socket, _)) = listener.accept().await {
+            if let Ok((mut socket, _)) = listener.accept().await {
                 let sender_clone = sender.clone();
                 let server_settings_clone = server_settings.clone();
                 tokio::spawn(async move {
-                    if let Err(err) = ConnectionHandler::run(socket, sender_clone.clone(), server_settings_clone).await {
+                    println!("New thread created");
+                    if let Err(err) = ConnectionHandler::run(&mut socket, sender_clone.clone(), server_settings_clone).await {
                         if err.1.is_some() {
                             let player = err.1.unwrap();
                             let _ = sender_clone.send(ServerMessage::RemovePlayer(player.uuid)).await;
@@ -63,6 +91,10 @@ impl Server {
                         }
                         // if the player is none the player wasn't connected yet so the error is
                         // unneccessary
+                    }
+                    println!("Closing TCP Connection");
+                    if let Err(e) = socket.shutdown().await {
+                        eprintln!("Could not close the tcp stream: {e}");
                     }
                 });
             }

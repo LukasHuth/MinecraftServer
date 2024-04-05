@@ -1,14 +1,17 @@
 mod implementations;
 mod important_functions;
+#[derive(Clone, Copy)]
 pub enum ChatMode {
     Enabled,
     CommandsOnly,
     Hidden,
 }
+#[derive(Clone, Copy)]
 pub enum MainHand {
     Left,
     Right,
 }
+#[derive(Clone, Copy)]
 pub enum ResourcePackResponseEnum {
     SuccessfullyDownloaded,
     Declined,

@@ -1,7 +1,7 @@
 mod implementations;
 mod new_impl;
 use crate::datatypes::datatype_definition as custom_datatypes;
-pub struct ClientboundPluginMessage {
+pub struct ConfigurationClientboundPluginMessage {
     pub channel: datatypes::Identifier,
     pub data: datatypes::ByteArray,
 }
@@ -17,7 +17,7 @@ pub struct KeepAlive {
 // deprecated
 #[deprecated]
 pub struct Ping {}
-pub struct RegestryData {
+pub struct RegistryData {
     pub regestry_codec: custom_datatypes::NBT
 }
 pub struct RemoveResoucePack {

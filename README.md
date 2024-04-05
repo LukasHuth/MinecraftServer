@@ -11,6 +11,9 @@ This is a project to learn, how to implement an documented packet (And possibly 
 - [ ] implementint all the playing packets
   - [ ] implementing server handling (events redstone ticks etc.)
 
+## Known Issues
+- The Feature Flag Packet is currently brocken and is under investigation and will be fixed as fast as possible
+
 ## How to use
 
 Follow these steps to set up and run the Rust Minecraft Server:

@@ -13,7 +13,7 @@ impl DataReader for TagArrayData {
         todo!()
     }
 }
-impl DataWriter for ClientboundPluginMessage {
+impl DataWriter for ConfigurationClientboundPluginMessage {
     async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> binary_utils::Result<()> {
         use datatypes::VarInt;
         let mut buf_writer = BufWriter::new(writer);
@@ -66,7 +66,7 @@ impl DataWriter for KeepAlive {
         Ok(())
     }
 }
-impl DataWriter for RegestryData {
+impl DataWriter for RegistryData {
     async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> binary_utils::Result<()> {
         use datatypes::VarInt;
         let mut buf_writer = BufWriter::new(writer);
@@ -129,8 +129,11 @@ impl DataWriter for FeatureFlags {
         VarInt::new(0x08).write(&mut data).await?;
         self.feature_count.write(&mut data).await?;
         self.feature_flags.write(&mut data).await?;
-        VarInt::new(data.len() as i32).write(&mut buf_writer).await?;
-        write_bytes(&mut buf_writer, &data).await?;
+        let mut d = Vec::new();
+        VarInt::new(data.len() as i32).write(&mut d).await?;
+        write_bytes(&mut d, &data).await?;
+        println!("d: {:?}", d);
+        write_bytes(&mut buf_writer, &d).await?;
         if let Err(_) = buf_writer.flush().await {
             return Err(binary_utils::Error::FailedToWrite);
         }

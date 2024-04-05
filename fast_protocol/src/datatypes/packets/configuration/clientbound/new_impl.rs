@@ -26,7 +26,7 @@ impl super::RemoveResoucePack {
         Self { has_uuid: uuid.is_some(), uuid: uuid.map(|e| datatypes::UUID::new(e)) }
     }
 }
-impl super::RegestryData {
+impl super::RegistryData {
     pub fn new(data: NbtValue) -> Self {
         Self { regestry_codec: custom_datatypes::NBT::from(data) }
     }
@@ -54,7 +54,7 @@ impl super::ConfigurationDisconnect {
         Self { reason: TextComponent::from(message) }
     }
 }
-impl super::ClientboundPluginMessage {
+impl super::ConfigurationClientboundPluginMessage {
     pub fn new(channel: datatypes::Identifier, data: Vec<u8>) -> Self {
         Self { channel, data: datatypes::ByteArray::new(data) }
     }

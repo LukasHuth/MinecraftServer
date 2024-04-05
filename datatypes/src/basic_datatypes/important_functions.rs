@@ -27,3 +27,29 @@ impl ImportantFunctions for Boolean {
         self.0
     }
 }
+impl ImportantFunctions for Byte {
+    type InputType = i8;
+
+    type ReturnType = i8;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0
+    }
+}
+impl ImportantFunctions for UnsignedByte {
+    type InputType = u8;
+
+    type ReturnType = u8;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0
+    }
+}

@@ -28,6 +28,12 @@ pub enum ClientboundPackets {
     LoginSuccess(LoginSuccess),
     LoginDisconnect(LoginDisconnect),
     LoginEncryptionRequest(LoginEncryptionRequest),
+    ConfigurationPluginMessage(ConfigurationClientboundPluginMessage),
+    RegistryData(RegistryData),
+    RemoveResourcePack(RemoveResoucePack),
+    AddResourcePack(AddResourcePack),
+    FeatureFlags(FeatureFlags),
+    FinishConfiguration(FinishConfiguration),
 }
 impl DataWriter for ClientboundPackets {
     async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
@@ -38,6 +44,12 @@ impl DataWriter for ClientboundPackets {
             Self::LoginSuccess(packet) => packet.write(writer).await,
             Self::Status(packet) => packet.write(writer).await,
             Self::LoginEncryptionRequest(packet) => packet.write(writer).await,
+            Self::ConfigurationPluginMessage(packet) => packet.write(writer).await,
+            Self::RegistryData(packet) => packet.write(writer).await,
+            Self::RemoveResourcePack(packet) => packet.write(writer).await,
+            Self::AddResourcePack(packet) => packet.write(writer).await,
+            Self::FeatureFlags(packet) => packet.write(writer).await,
+            Self::FinishConfiguration(packet) => packet.write(writer).await,
         }
     }
 }
@@ -59,8 +71,9 @@ pub enum ServerboundPackets {
 }
 impl ServerboundPackets {
     // pub async fn read(reader: &mut (impl AsyncRead + Unpin), state: State) -> Result<Self> {
-    pub async fn read<'a>(reader: &mut BufReader<ReadHalf<'a>>, state: State) -> Result<Self> {
+    pub async fn read<'a>(reader: &mut BufReader<ReadHalf<'a>>, state: &State) -> Result<Self> {
         if let Ok(vec) = reader.fill_buf().await {
+            println!("vec: {:?}", vec);
             if vec.is_empty() {
                 return Ok(ServerboundPackets::None);
             }

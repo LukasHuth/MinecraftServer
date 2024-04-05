@@ -175,6 +175,7 @@ dependencies = [
  "binary_utils",
  "datatypes",
  "fast_protocol",
+ "nbt_lib",
  "openssl",
  "rand",
  "reqwest",
