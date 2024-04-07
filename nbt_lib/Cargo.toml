@@ -5,6 +5,9 @@ edition = "2021"
 
 [dependencies]
 flate2 = "1.0"
+binary_utils = { path = "../binary_utils" }
+tokio = { version = "1.37.0", features = ["io-util"] }
+datatypes = { path = "../datatypes" }
 
 [features]
 # comment this out if the files are getting too big ( remove unneccessary inline )

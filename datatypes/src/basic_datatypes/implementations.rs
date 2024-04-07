@@ -19,6 +19,14 @@ impl DataReader for Boolean {
         Err(Error::InvalidStructure)
     }
 }
+impl DataWriter for Byte {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
+        match writer.write_all(&[self.0 as u8]).await {
+            Ok(_) => Ok(()),
+            Err(_) => Error::FailedToWrite.into(),
+        }
+    }
+}
 impl DataReader for Byte {
     async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
         if let Ok(data) = reader.read_i8().await {

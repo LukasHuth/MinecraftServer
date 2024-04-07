@@ -2,7 +2,7 @@ use self::server_settings::ServerSettings;
 
 use crate::{player::Player, connection_handler::ConnectionHandler};
 
-use fast_protocol::datatypes::{datatype_definition::TextComponent, packets::FeatureFlags};
+use nbt_lib::datatypes::TextComponent;
 use openssl::pkey::Private;
 use tokio::{net::TcpListener, sync::{mpsc, oneshot}, io::AsyncWriteExt};
 

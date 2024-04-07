@@ -1,12 +1,13 @@
+use nbt_lib::datatypes::{TextComponent, NBT};
+
 mod implementations;
 mod new_impl;
-use crate::datatypes::datatype_definition as custom_datatypes;
 pub struct ConfigurationClientboundPluginMessage {
     pub channel: datatypes::Identifier,
     pub data: datatypes::ByteArray,
 }
 pub struct ConfigurationDisconnect {
-    pub reason: custom_datatypes::TextComponent,
+    pub reason: TextComponent,
 }
 pub struct FinishConfiguration;
 pub struct KeepAlive {
@@ -18,7 +19,7 @@ pub struct KeepAlive {
 #[deprecated]
 pub struct Ping {}
 pub struct RegistryData {
-    pub regestry_codec: custom_datatypes::NBT
+    pub regestry_codec: NBT
 }
 pub struct RemoveResoucePack {
     pub has_uuid: bool,
@@ -29,7 +30,7 @@ pub struct AddResourcePack {
     pub url: datatypes::String,
     pub hash: datatypes::String,
     pub forced: bool,
-    pub has_prompt_message: Option<custom_datatypes::TextComponent>,
+    pub has_prompt_message: Option<TextComponent>,
 }
 pub struct FeatureFlags {
     pub feature_count: datatypes::VarInt,

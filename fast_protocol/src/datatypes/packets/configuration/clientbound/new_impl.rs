@@ -1,7 +1,7 @@
 use datatypes::ImportantFunctions;
 use nbt_lib::NbtValue;
 
-use crate::datatypes::datatype_definition::{self as custom_datatypes, TextComponent};
+use nbt_lib::datatypes::{TextComponent, NBT};
 
 use super::TagArrayData;
 impl super::FeatureFlags {
@@ -11,7 +11,7 @@ impl super::FeatureFlags {
     }
 }
 impl super::AddResourcePack {
-    pub fn new(uuid: u128, url: String, hash: String, forced: bool, prompt_message: Option<custom_datatypes::TextComponent>) -> Self {
+    pub fn new(uuid: u128, url: String, hash: String, forced: bool, prompt_message: Option<TextComponent>) -> Self {
         Self {
             uuid: datatypes::UUID::new(uuid),
             url: datatypes::String::new(url),
@@ -28,7 +28,7 @@ impl super::RemoveResoucePack {
 }
 impl super::RegistryData {
     pub fn new(data: NbtValue) -> Self {
-        Self { regestry_codec: custom_datatypes::NBT::from(data) }
+        Self { regestry_codec: NBT::from(data) }
     }
 }
 impl super::FinishConfiguration {

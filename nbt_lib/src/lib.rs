@@ -2,6 +2,7 @@ pub mod reader;
 pub mod writer;
 pub mod error;
 pub mod version;
+pub mod datatypes;
 
 #[cfg(test)]
 mod tests;

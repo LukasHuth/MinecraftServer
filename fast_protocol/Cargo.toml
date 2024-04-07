@@ -11,7 +11,7 @@ entmet_lib = { path = "../entmet_lib" }
 slot_lib = { path = "../slot_lib" }
 serde_json = "1.0.114"
 serde = { version = "1.0.197", features = ["derive"] }
-tokio = { version = "1.36.0", features = ["io-util"] }
+tokio = { version = "1.37.0", features = ["io-util"] }
 openssl = "0.10.64"
 bytes = "1.5.0"
 rand = "0.8.5"
