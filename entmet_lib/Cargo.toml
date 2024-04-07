@@ -4,3 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+datatypes = { path = "../datatypes" }
+nbt_lib = { path = "../nbt_lib" }
+slot_lib = { path = "../slot_lib" }
+binary_utils = { path = "../binary_utils" }

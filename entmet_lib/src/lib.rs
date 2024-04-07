@@ -1,2 +1,2 @@
-pub enum EntityMetadata {
-}
+pub mod entities;
+pub mod datatypes;

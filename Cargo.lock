@@ -134,6 +134,12 @@ dependencies = [
 [[package]]
 name = "entmet_lib"
 version = "0.1.0"
+dependencies = [
+ "binary_utils",
+ "datatypes",
+ "nbt_lib",
+ "slot_lib",
+]
 
 [[package]]
 name = "equivalent"
