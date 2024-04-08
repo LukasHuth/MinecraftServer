@@ -1,6 +1,7 @@
 use crate::{traits::NbtRead, version::{JavaNetty, Java}, NbtValue, error::NbtError};
 
 impl NbtRead for JavaNetty {
+
     fn read_i8_array(reader: &mut crate::reader::NbtReader) -> crate::error::NbtResult<Vec<i8>> {
         Java::read_i8_array(reader)
     }
@@ -28,6 +29,13 @@ impl NbtRead for JavaNetty {
     fn from_reader(mut reader: crate::reader::NbtReader) -> crate::error::NbtResult<crate::NbtValue> {
         match reader.read_u8()? {
             10 => Ok(NbtValue::Compound(None, Java::read_compound(&mut reader)?)),
+            x => Err(NbtError::WrongRootType(x)),
+        }
+    }
+    fn from_reader_text_component(mut reader: crate::reader::NbtReader) -> crate::error::NbtResult<crate::NbtValue> {
+        match reader.read_u8()? {
+            10 => Ok(NbtValue::Compound(None, Java::read_compound(&mut reader)?)),
+            8 => Ok(NbtValue::String(Java::read_nbt_string(&mut reader)?)),
             x => Err(NbtError::WrongRootType(x)),
         }
     }

@@ -25,4 +25,5 @@ pub trait NbtRead {
     fn read_list(reader: &mut NbtReader) -> NbtResult<Vec<NbtValue>>;
     fn read_compound(reader: &mut NbtReader) -> NbtResult<Vec<(String, NbtValue)>>;
     fn from_reader(reader: NbtReader) -> NbtResult<NbtValue>;
+    fn from_reader_text_component(reader: NbtReader) -> NbtResult<NbtValue>;
 }

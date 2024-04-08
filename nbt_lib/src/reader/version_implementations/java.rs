@@ -91,4 +91,18 @@ impl NbtRead for Java {
             x => Err(NbtError::WrongRootType(x)),
         }
     }
+
+    #[cfg_attr(feature = "inline_read", inline)]
+    fn from_reader_text_component(mut reader: NbtReader) -> NbtResult<NbtValue> {
+        match reader.read_u8()? {
+            10 => {
+                let name = Java::read_nbt_string(&mut reader)?;
+                Ok(NbtValue::Compound(Some(name), Java::read_compound(&mut reader)?))
+            }
+            8 => {
+                Ok(NbtValue::String(Java::read_nbt_string(&mut reader)?))
+            }
+            x => Err(NbtError::WrongRootType(x)),
+        }
+    }
 }

@@ -1,8 +1,8 @@
-use binary_utils::{DataWriter, write_bytes};
+use binary_utils::{DataWriter, write_bytes, DataReader};
 use datatypes::ImportantFunctions;
-use tokio::io::AsyncWrite;
+use tokio::io::{AsyncWrite, AsyncRead, BufReader};
 
-use crate::{NbtValue, version::JavaNetty, traits::NbtWrite as _};
+use crate::{NbtValue, version::JavaNetty, traits::{NbtWrite, NbtRead}, reader::NbtReader};
 #[derive(Clone)]
 pub struct TextComponent(NbtValue);
 pub struct NBT(NbtValue);
@@ -25,6 +25,18 @@ impl DataWriter for TextComponent {
         write_bytes(writer, &data).await
     }
 }
+impl DataReader for TextComponent {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> binary_utils::Result<Self> {
+        let buf_reader = BufReader::new(reader);
+        let reader = NbtReader::new(buf_reader.buffer().to_vec());
+        let value = JavaNetty::from_reader_text_component(reader);
+        let value = match value {
+            Ok(v) => v,
+            Err(_) => return Err(binary_utils::Error::InvalidStructure),
+        };
+        Ok(Self(value))
+    }
+}
 impl DataWriter for NBT {
     async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> binary_utils::Result<()> {
         let mut data: Vec<u8> = Vec::new();
@@ -32,6 +44,18 @@ impl DataWriter for NBT {
             return Err(binary_utils::Error::FailedToWrite);
         }
         write_bytes(writer, &data).await
+    }
+}
+impl DataReader for NBT {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> binary_utils::Result<Self> {
+        let buf_reader = BufReader::new(reader);
+        let reader = NbtReader::new(buf_reader.buffer().to_vec());
+        let value = JavaNetty::from_reader(reader);
+        let value = match value {
+            Ok(v) => v,
+            Err(_) => return Err(binary_utils::Error::InvalidStructure),
+        };
+        Ok(Self(value))
     }
 }
 impl ImportantFunctions for NBT {

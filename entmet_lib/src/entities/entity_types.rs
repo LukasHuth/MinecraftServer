@@ -1,4 +1,3 @@
-// do as seperate files?
 pub enum Entity {
     Allay,
     AreaEffectCloud,
