@@ -29,11 +29,19 @@ pub struct Player {
     score: i32,
     displayed_skin_parts: Vec<DisplayedSkinParts>,
     main_hand: MainHand,
-    left_shoulder: NbtValue,
-    right_shoulder: NbtValue,
+    left_shoulder: Option<NbtValue>,
+    right_shoulder: Option<NbtValue>,
 }
 impl Default for Player {
     fn default() -> Self {
-        todo!()
+        Self {
+            living_entity: LivingEntity::default(),
+            additional_hearts: 0.0,
+            score: 0,
+            displayed_skin_parts: Vec::new(),
+            main_hand: MainHand::Right,
+            left_shoulder: None, // write 0
+            right_shoulder: None,
+        }
     }
 }

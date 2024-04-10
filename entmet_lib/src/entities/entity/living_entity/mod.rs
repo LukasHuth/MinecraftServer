@@ -1,5 +1,7 @@
 use super::Entity;
 pub mod player;
+pub mod armor_stand;
+pub mod mob;
 #[repr(u8)]
 pub enum HandStates {
     None = 0,
@@ -19,6 +21,15 @@ pub struct LivingEntity {
 }
 impl Default for LivingEntity {
     fn default() -> Self {
-        todo!()
+        Self {
+            entity: Entity::default(),
+            hand_state: HandStates::None,
+            health: 1.0,
+            potion_effect_color: 0,
+            potion_effect_ambient: false,
+            arrows_inside: 0,
+            bee_stingers_inside: 0,
+            location_of_bed_currently_sleeping_in: None,
+        }
     }
 }

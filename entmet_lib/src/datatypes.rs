@@ -4,9 +4,9 @@ use binary_utils::{DataWriter, DataReader, Error};
 use datatypes::{ImportantEnumTrait, Enum, ImportantFunctions};
 
 pub struct Rotations {
-    pub x: datatypes::Float,
-    pub y: datatypes::Float,
-    pub z: datatypes::Float,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 pub enum Direction {
     Down,
