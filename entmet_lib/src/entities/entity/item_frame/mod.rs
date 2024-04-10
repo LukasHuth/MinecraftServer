@@ -2,6 +2,8 @@ use slot_lib::Slot;
 
 use super::Entity;
 
+pub mod glowing_item_frame;
+
 pub struct ItemFrame {
     entity: Entity,
     slot: Slot,

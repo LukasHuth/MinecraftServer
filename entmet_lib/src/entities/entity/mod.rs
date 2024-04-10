@@ -16,6 +16,9 @@ pub mod fireball;
 pub mod wither_skull;
 pub mod firework_rocket_entity;
 pub mod item_frame;
+pub mod painting;
+pub mod item_entity;
+pub mod living_entity;
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum EntityState {

@@ -1,4 +1,4 @@
-pub enum Entity {
+pub enum EntityEnum {
     Allay,
     AreaEffectCloud,
     Armorstand,

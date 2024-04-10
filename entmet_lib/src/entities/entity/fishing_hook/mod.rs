@@ -1,4 +1,4 @@
-use crate::entities::entity_types::Entity as EntityEnum;
+use crate::entities::entity_types::EntityEnum as EntityEnum;
 
 use super::Entity;
 
