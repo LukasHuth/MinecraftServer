@@ -137,18 +137,8 @@ version = "0.1.0"
 dependencies = [
  "binary_utils",
  "datatypes",
- "entmet_macros",
  "nbt_lib",
  "slot_lib",
-]
-
-[[package]]
-name = "entmet_macros"
-version = "0.1.0"
-dependencies = [
- "paste",
- "quote",
- "syn",
 ]
 
 [[package]]
@@ -667,12 +657,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "paste"
-version = "1.0.14"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "de3145af08024dea9fa9914f381a17b8fc6034dfb00f3a84013f7ff43f29ed4c"
-
-[[package]]
 name = "percent-encoding"
 version = "2.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -729,13 +713,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e835ff2298f5721608eb1a980ecaee1aef2c132bf95ecc026a11b7bf3c01c02e"
 dependencies = [
  "unicode-ident",
-]
-
-[[package]]
-name = "proc_macro_test"
-version = "0.1.0"
-dependencies = [
- "entmet_macros",
 ]
 
 [[package]]

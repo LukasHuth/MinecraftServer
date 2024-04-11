@@ -65,27 +65,6 @@ impl EntityStatusHolder {
         self.mask &= u8::MAX ^ state as u8;
     }
 }
-pub trait EntityFunctions {
-    fn get_states(&self) -> &[EntityState];
-    fn add_state(&mut self, state: EntityState);
-    fn remove_state(&mut self, state: EntityState);
-    fn get_air_ticks(&self) -> i32;
-    fn set_air_ticks(&mut self, value: i32);
-    fn increment_air_ticks(&mut self);
-    fn get_custom_name(&self) -> Option<&nbt_lib::datatypes::TextComponent>;
-    fn set_custom_name(&mut self, value: Option<nbt_lib::datatypes::TextComponent>);
-    fn is_custom_name_visible(&self) -> bool;
-    fn set_custom_name_visible(&mut self, value: bool);
-    fn is_silent(&self) -> bool;
-    fn set_silent(&mut self, value: bool);
-    fn has_no_gravity(&self) -> bool;
-    fn set_no_gravity(&mut self, value: bool);
-    fn get_pose(&self) -> PoseEnum;
-    fn set_pose(&mut self, value: PoseEnum);
-    fn get_ticks_frozen_in_powdered_snow(&self) -> i32;
-    fn set_ticks_frozen_in_powdered_snow(&mut self, value: i32);
-    fn increment_ticks_frozen_in_powdered_snow(&mut self);
-}
 pub struct Entity {
     status: EntityStatusHolder,
     air_ticks: i32,
@@ -110,80 +89,80 @@ impl Default for Entity {
         }
     }
 }
-impl EntityFunctions for Entity {
-    fn get_states(&self) -> &[EntityState] {
+impl Entity {
+    pub fn get_states(&self) -> &[EntityState] {
         self.status.states.as_slice()
     }
 
-    fn add_state(&mut self, state: EntityState) {
+    pub fn add_state(&mut self, state: EntityState) {
         self.status.add(state)
     }
 
-    fn remove_state(&mut self, state: EntityState) {
+    pub fn remove_state(&mut self, state: EntityState) {
         self.status.remove(state)
     }
 
-    fn get_air_ticks(&self) -> i32 {
+    pub fn get_air_ticks(&self) -> i32 {
         self.air_ticks
     }
 
-    fn set_air_ticks(&mut self, value: i32) {
+    pub fn set_air_ticks(&mut self, value: i32) {
         self.air_ticks = value;
     }
 
-    fn increment_air_ticks(&mut self) {
+    pub fn increment_air_ticks(&mut self) {
         self.air_ticks += 1;
     }
 
-    fn get_custom_name(&self) -> Option<&nbt_lib::datatypes::TextComponent> {
+    pub fn get_custom_name(&self) -> Option<&nbt_lib::datatypes::TextComponent> {
         self.custom_name.as_ref()
     }
 
-    fn set_custom_name(&mut self, value: Option<nbt_lib::datatypes::TextComponent>) {
+    pub fn set_custom_name(&mut self, value: Option<nbt_lib::datatypes::TextComponent>) {
         self.custom_name = value;
     }
 
-    fn is_custom_name_visible(&self) -> bool {
+    pub fn is_custom_name_visible(&self) -> bool {
         self.custom_name_visible
     }
 
-    fn set_custom_name_visible(&mut self, value: bool) {
+    pub fn set_custom_name_visible(&mut self, value: bool) {
         self.custom_name_visible = value;
     }
 
-    fn is_silent(&self) -> bool {
+    pub fn is_silent(&self) -> bool {
         self.silent
     }
 
-    fn set_silent(&mut self, value: bool) {
+    pub fn set_silent(&mut self, value: bool) {
         self.silent = value;
     }
 
-    fn has_no_gravity(&self) -> bool {
+    pub fn has_no_gravity(&self) -> bool {
         self.no_gravity
     }
 
-    fn set_no_gravity(&mut self, value: bool) {
+    pub fn set_no_gravity(&mut self, value: bool) {
         self.no_gravity = value;
     }
 
-    fn get_pose(&self) -> PoseEnum {
+    pub fn get_pose(&self) -> PoseEnum {
         self.pose
     }
 
-    fn set_pose(&mut self, value: PoseEnum) {
+    pub fn set_pose(&mut self, value: PoseEnum) {
         self.pose = value;
     }
 
-    fn get_ticks_frozen_in_powdered_snow(&self) -> i32 {
+    pub fn get_ticks_frozen_in_powdered_snow(&self) -> i32 {
         self.ticks_frozen_in_powdered_snow
     }
 
-    fn set_ticks_frozen_in_powdered_snow(&mut self, value: i32) {
+    pub fn set_ticks_frozen_in_powdered_snow(&mut self, value: i32) {
         self.ticks_frozen_in_powdered_snow = value;
     }
 
-    fn increment_ticks_frozen_in_powdered_snow(&mut self) {
+    pub fn increment_ticks_frozen_in_powdered_snow(&mut self) {
         self.ticks_frozen_in_powdered_snow += 1;
     }
 }
