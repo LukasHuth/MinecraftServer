@@ -1,3 +1,5 @@
+use std::ops::{Deref, DerefMut};
+
 use super::LivingEntity;
 
 pub mod ambient_creature;
@@ -11,7 +13,19 @@ pub enum MobInfo {
 }
 pub struct Mob {
     living_entity: LivingEntity,
-    info: Vec<MobInfo>,
+    pub info: Vec<MobInfo>,
+}
+impl Deref for Mob {
+    type Target = LivingEntity;
+
+    fn deref(&self) -> &Self::Target {
+        &self.living_entity
+    }
+}
+impl DerefMut for Mob {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.living_entity
+    }
 }
 impl Default for Mob {
     fn default() -> Self {

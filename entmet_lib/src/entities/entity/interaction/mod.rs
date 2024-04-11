@@ -1,10 +1,24 @@
+use std::ops::{Deref, DerefMut};
+
 use super::Entity;
 
 pub struct Interaction {
     entity: Entity,
-    width: f32,
-    height: f32,
-    responsive: bool,
+    pub width: f32,
+    pub height: f32,
+    pub responsive: bool,
+}
+impl Deref for Interaction {
+    type Target = Entity;
+
+    fn deref(&self) -> &Self::Target {
+        &self.entity
+    }
+}
+impl DerefMut for Interaction {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.entity
+    }
 }
 impl Default for Interaction {
     fn default() -> Self {

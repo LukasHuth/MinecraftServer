@@ -1,3 +1,5 @@
+use std::ops::{Deref, DerefMut};
+
 use nbt_lib::datatypes::TextComponent;
 
 use super::Display;
@@ -13,11 +15,23 @@ pub enum TextDisplayMaskData {
 }
 pub struct TextDisplay {
     display: Display,
-    text: TextComponent,
-    line_width: i32,
-    background_color: i32,
-    text_opacity: i8,
-    mask_dat: u8,
+    pub text: TextComponent,
+    pub line_width: i32,
+    pub background_color: i32,
+    pub text_opacity: i8,
+    mask_dat: u8, // TODO: find good way for this
+}
+impl Deref for TextDisplay {
+    type Target = Display;
+
+    fn deref(&self) -> &Self::Target {
+        &self.display
+    }
+}
+impl DerefMut for TextDisplay {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.display
+    }
 }
 impl Default for TextDisplay {
     fn default() -> Self {

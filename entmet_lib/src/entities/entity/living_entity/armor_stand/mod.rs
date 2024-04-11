@@ -1,3 +1,5 @@
+use std::ops::{Deref, DerefMut};
+
 use crate::datatypes::Rotations;
 
 use super::LivingEntity;
@@ -11,13 +13,25 @@ pub enum ArmorStandInfo {
 }
 pub struct ArmorStand {
     living_entity: LivingEntity,
-    info: Vec<ArmorStandInfo>,
-    head_rotation: Rotations,
-    body_rotation: Rotations,
-    left_arm_rotation: Rotations,
-    right_arm_rotation: Rotations,
-    left_leg_rotation: Rotations,
-    right_leg_rotation: Rotations,
+    pub info: Vec<ArmorStandInfo>,
+    pub head_rotation: Rotations,
+    pub body_rotation: Rotations,
+    pub left_arm_rotation: Rotations,
+    pub right_arm_rotation: Rotations,
+    pub left_leg_rotation: Rotations,
+    pub right_leg_rotation: Rotations,
+}
+impl Deref for ArmorStand {
+    type Target = LivingEntity;
+
+    fn deref(&self) -> &Self::Target {
+        &self.living_entity
+    }
+}
+impl DerefMut for ArmorStand {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.living_entity
+    }
 }
 impl Default for ArmorStand {
     fn default() -> Self {

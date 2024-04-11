@@ -1,3 +1,5 @@
+use std::ops::{Deref, DerefMut};
+
 use slot_lib::Slot;
 
 use super::Display;
@@ -16,8 +18,20 @@ pub enum DisplayType {
 }
 pub struct ItemDisplay {
     display: Display,
-    slot: Slot,
-    display_type: DisplayType,
+    pub slot: Slot,
+    pub display_type: DisplayType,
+}
+impl Deref for ItemDisplay {
+    type Target = Display;
+
+    fn deref(&self) -> &Self::Target {
+        &self.display
+    }
+}
+impl DerefMut for ItemDisplay {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.display
+    }
 }
 impl Default for ItemDisplay {
     fn default() -> Self {

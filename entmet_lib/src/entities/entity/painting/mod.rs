@@ -1,3 +1,5 @@
+use std::ops::{Deref, DerefMut};
+
 use super::Entity;
 
 #[derive(Clone, Copy)]
@@ -36,7 +38,19 @@ pub enum PaintingVariant {
 }
 pub struct Painting {
     entity: Entity,
-    var: PaintingVariant,
+    pub var: PaintingVariant,
+}
+impl Deref for Painting {
+    type Target = Entity;
+
+    fn deref(&self) -> &Self::Target {
+        &self.entity
+    }
+}
+impl DerefMut for Painting {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.entity
+    }
 }
 impl Default for Painting {
     fn default() -> Self {

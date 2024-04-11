@@ -15,10 +15,10 @@ pub enum BoatWoodType {
 }
 pub struct Boat {
     abstract_vehicle: AbstractVehicle,
-    wood_type: BoatWoodType,
-    left_paddle_turning: bool,
-    right_paddle_turning: bool,
-    splash_timer: i32,
+    pub wood_type: BoatWoodType,
+    pub left_paddle_turning: bool,
+    pub right_paddle_turning: bool,
+    pub splash_timer: i32,
 }
 impl Default for Boat {
     fn default() -> Self {
@@ -41,31 +41,5 @@ impl Deref for Boat {
 impl DerefMut for Boat {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.abstract_vehicle
-    }
-}
-impl Boat {
-    pub fn get_wood_type(&self) -> BoatWoodType {
-        self.wood_type
-    }
-    pub fn set_wood_type(&mut self, value: BoatWoodType) {
-        self.wood_type = value;
-    }
-    pub fn is_left_paddle_turning(&self) -> bool {
-        self.left_paddle_turning
-    }
-    pub fn has_left_paddle_turning(&mut self, value: bool) {
-        self.left_paddle_turning = value;
-    }
-    pub fn is_right_paddle_turning(&self) -> bool {
-        self.right_paddle_turning
-    }
-    pub fn has_right_paddle_turning(&mut self, value: bool) {
-        self.right_paddle_turning = value;
-    }
-    pub fn get_splash_timer(&self) -> i32{
-        self.splash_timer
-    }
-    pub fn set_splash_timer(&mut self, value: i32) {
-        self.splash_timer = value;
     }
 }

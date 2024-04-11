@@ -10,6 +10,7 @@ This is a project to learn, how to implement an documented packet (And possibly 
 - [ ] implementing all the configuration packets
 - [ ] implementint all the playing packets
   - [ ] implementing server handling (events redstone ticks etc.)
+- [ ] test if inlining deref's helps performance
 
 ## Known Issues
 - The Feature Flag Packet is currently brocken and is under investigation and will be fixed as fast as possible
