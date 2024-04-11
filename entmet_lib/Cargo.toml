@@ -8,3 +8,4 @@ datatypes = { path = "../datatypes" }
 nbt_lib = { path = "../nbt_lib" }
 slot_lib = { path = "../slot_lib" }
 binary_utils = { path = "../binary_utils" }
+entmet_macros = { path = "entmet_macros" }

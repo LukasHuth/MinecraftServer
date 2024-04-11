@@ -20,6 +20,8 @@ members = [
     "fast_server",
     "nbt_lib",
     "slot_lib",
+    "entmet_lib/entmet_macros",
+    "entmet_lib/proc_macro_test",
 ]
 
 [package.metadata]

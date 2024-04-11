@@ -1,0 +1,12 @@
+[package]
+name = "entmet_macros"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+paste = "1.0.14"
+quote = "1.0.36"
+syn = { version = "2.0.58", features = ["full", "extra-traits", "fold", "visit", "visit-mut", "test"] }
+
+[lib]
+proc-macro = true
