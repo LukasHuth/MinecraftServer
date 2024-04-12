@@ -143,21 +143,25 @@ pub struct GlobalPosition {
     pub position: datatypes::Position,
 }
 // TODO:
-pub enum PaintingEnum {
-}
-pub struct PaintingVariant {
-    pub variant: PaintingEnum,
-}
-// TODO:
+#[repr(u8)]
 pub enum SnifferEnum {
+    Idling = 0,
+    FeelingHappy = 1,
+    Scenting = 2,
+    Sniffing = 3,
+    Searching = 4,
+    Digging = 5,
+    Rising = 6,
+}
+impl Default for SnifferEnum {
+    fn default() -> Self {
+        Self::Idling
+    }
 }
 impl ImportantEnumTrait for SnifferEnum {
     fn new(_data: u64) -> binary_utils::Result<Self> {
         todo!()
     }
-}
-pub struct SnifferState {
-    pub state: SnifferEnum,
 }
 pub struct Vector3 {
     pub x: f32,
