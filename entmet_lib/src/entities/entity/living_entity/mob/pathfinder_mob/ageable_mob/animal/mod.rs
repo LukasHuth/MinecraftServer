@@ -20,6 +20,7 @@ pub mod hoglin;
 pub mod sheep;
 pub mod strider;
 pub mod tameable_animal;
+pub mod goat;
 
 #[derive(Default)]
 pub struct Animal {

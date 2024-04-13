@@ -2,25 +2,21 @@ use std::ops::{Deref, DerefMut};
 
 use super::Animal;
 
-pub mod cat;
-pub mod wolf;
-pub mod parrot;
-
 #[derive(Default)]
-pub struct TameableAnimal {
+pub struct Goat {
     animal: Animal,
-    pub sitting: bool,
-    pub tamed: bool,
-    pub owner: Option<u128>,
+    pub screaming: bool,
+    pub left_horn: bool,
+    pub right_horn: bool,
 }
-impl Deref for TameableAnimal {
+impl Deref for Goat {
     type Target = Animal;
 
     fn deref(&self) -> &Self::Target {
         &self.animal
     }
 }
-impl DerefMut for TameableAnimal {
+impl DerefMut for Goat {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.animal
     }

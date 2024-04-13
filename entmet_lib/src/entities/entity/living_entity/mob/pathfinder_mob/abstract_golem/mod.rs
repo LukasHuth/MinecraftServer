@@ -1,23 +1,24 @@
+
 use std::ops::{Deref, DerefMut};
 
 use super::PathfinderMob;
 
-pub mod animal;
-pub mod abstract_villager;
+pub mod iron_golem;
+pub mod snow_golem;
+pub mod shulker;
 
 #[derive(Default)]
-pub struct AgeableMob {
+pub struct AbstractGolem {
     pathfinder_mob: PathfinderMob,
-    pub is_baby: bool,
 }
-impl Deref for AgeableMob {
+impl Deref for AbstractGolem {
     type Target = PathfinderMob;
 
     fn deref(&self) -> &Self::Target {
         &self.pathfinder_mob
     }
 }
-impl DerefMut for AgeableMob {
+impl DerefMut for AbstractGolem {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.pathfinder_mob
     }

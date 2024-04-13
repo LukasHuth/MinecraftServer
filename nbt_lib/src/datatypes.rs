@@ -5,6 +5,11 @@ use tokio::io::{AsyncWrite, AsyncRead, BufReader};
 use crate::{NbtValue, version::JavaNetty, traits::{NbtWrite, NbtRead}, reader::NbtReader};
 #[derive(Clone)]
 pub struct TextComponent(NbtValue);
+impl Default for TextComponent {
+    fn default() -> Self {
+        Self(NbtValue::Compound(Some("".to_string()), vec![("text".to_string(), NbtValue::String("".to_string()))]))
+    }
+}
 pub struct NBT(NbtValue);
 impl From<String> for TextComponent{
     fn from(value: String) -> Self {

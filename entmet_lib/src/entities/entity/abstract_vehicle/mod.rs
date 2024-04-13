@@ -3,6 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::Entity;
 
 pub mod boat;
+pub mod abstract_minecart;
 
 pub struct AbstractVehicle {
     entity: Entity,

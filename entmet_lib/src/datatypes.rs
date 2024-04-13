@@ -8,8 +8,9 @@ pub struct Rotations {
     pub y: f32,
     pub z: f32,
 }
+#[derive(Default)]
 pub enum Direction {
-    Down,
+    #[default] Down,
     Up,
     North,
     South,
@@ -43,6 +44,15 @@ pub struct VillagerData {
     pub villager_type: villager_data::VillagerType,
     pub villager_profession: villager_data::VillagerProfession,
     pub level: i32,
+}
+impl Default for VillagerData {
+    fn default() -> Self {
+        Self {
+            villager_type: villager_data::VillagerType::Plains,
+            villager_profession: villager_data::VillagerProfession::None,
+            level: 1
+        }
+    }
 }
 #[derive(Clone, Copy)]
 #[repr(u8)]
@@ -173,4 +183,24 @@ pub struct Quaternion {
     pub y: f32,
     pub z: f32,
     pub w: f32,
+}
+#[repr(u8)]
+#[derive(Default, Clone, Copy)]
+pub enum MinecraftColor {
+    White = 0,
+    Orange = 1,
+    Magenta = 2,
+    LightBlue = 3,
+    Yellow = 4,
+    Lime = 5,
+    Pink = 6,
+    Gray = 7,
+    LightGray = 8,
+    Cyan = 9,
+    Purple = 10,
+    Blue = 11,
+    Brown = 12,
+    Green = 13,
+    #[default] Red = 14,
+    Black = 15,
 }
