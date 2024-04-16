@@ -53,3 +53,68 @@ impl ImportantFunctions for UnsignedByte {
         self.0
     }
 }
+impl ImportantFunctions for Short {
+    type InputType = i16;
+
+    type ReturnType = Self::InputType;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0
+    }
+}
+impl ImportantFunctions for UnsignedShort {
+    type InputType = u16;
+
+    type ReturnType = Self::InputType;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0
+    }
+}
+impl ImportantFunctions for Int {
+    type InputType = i32;
+
+    type ReturnType = Self::InputType;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0
+    }
+}
+impl ImportantFunctions for Float {
+    type InputType = f32;
+
+    type ReturnType = Self::InputType;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0
+    }
+}
+impl ImportantFunctions for Double {
+    type InputType = f64;
+
+    type ReturnType = Self::InputType;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0
+    }
+}
