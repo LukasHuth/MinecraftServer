@@ -16,6 +16,7 @@ pub mod wither;
 pub mod zoglin;
 pub mod zombie;
 pub mod enderman;
+pub mod guardian;
 
 #[derive(Default)]
 pub struct Monster {

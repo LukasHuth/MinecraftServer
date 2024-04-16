@@ -1,13 +1,10 @@
 use std::ops::{Deref, DerefMut};
 
-use crate::entities::entity_types::EntityEnum as EntityEnum;
-
 use super::Entity;
-
 
 pub struct FishingHook {
     entity: Entity,
-    pub hooked_entity: Option<EntityEnum>,
+    pub hooked_entity: Option<i32>,
     pub is_catchable: bool,
 }
 impl Deref for FishingHook {

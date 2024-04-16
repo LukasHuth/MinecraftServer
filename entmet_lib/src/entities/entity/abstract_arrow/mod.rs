@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Entity;
 
+pub mod arrow;
 pub mod spectral_arrow;
 pub mod thrown_trident;
 

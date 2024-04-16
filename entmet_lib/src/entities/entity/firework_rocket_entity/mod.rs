@@ -2,14 +2,12 @@ use std::ops::{Deref, DerefMut};
 
 use slot_lib::Slot;
 
-use crate::entities::entity_types::EntityEnum as EntityEnum;
-
 use super::Entity;
 
 pub struct FireworkRocketEntity {
     entity: Entity,
     pub slot: Slot,
-    pub user_entity_id: Option<EntityEnum>,
+    pub user_entity_id: Option<i32>,
     pub show_at_angle: bool,
 }
 impl Deref for FireworkRocketEntity {

@@ -43,6 +43,14 @@ impl DataReader for UnsignedByte {
         Err(Error::InvalidStructure)
     }
 }
+impl DataWriter for UnsignedByte {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
+        match writer.write_all(&[self.0]).await {
+            Ok(_) => Ok(()),
+            Err(_) => Error::FailedToWrite.into(),
+        }
+    }
+}
 impl DataReader for Long {
     async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> where Self: Sized {
         let mut data = 0;

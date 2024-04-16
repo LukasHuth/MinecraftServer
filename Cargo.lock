@@ -139,6 +139,7 @@ dependencies = [
  "datatypes",
  "nbt_lib",
  "slot_lib",
+ "tokio",
 ]
 
 [[package]]
