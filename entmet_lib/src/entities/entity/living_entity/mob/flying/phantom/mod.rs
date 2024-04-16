@@ -1,0 +1,21 @@
+use std::ops::{Deref, DerefMut};
+
+use super::Flying;
+
+#[derive(Default)]
+pub struct Phantom {
+    flying: Flying,
+    pub size: i32,
+}
+impl Deref for Phantom {
+    type Target = Flying;
+
+    fn deref(&self) -> &Self::Target {
+        &self.flying
+    }
+}
+impl DerefMut for Phantom {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.flying
+    }
+}

@@ -19,6 +19,10 @@ pub mod item_frame;
 pub mod painting;
 pub mod item_entity;
 pub mod living_entity;
+pub mod evoker_fangs;
+pub mod llama_spit;
+pub mod primed_tnt;
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum EntityState {

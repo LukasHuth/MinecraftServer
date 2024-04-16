@@ -4,6 +4,9 @@ use super::LivingEntity;
 
 pub mod ambient_creature;
 pub mod pathfinder_mob;
+pub mod ender_dragon;
+pub mod flying;
+pub mod slime;
 
 #[repr(u8)]
 pub enum MobInfo {
