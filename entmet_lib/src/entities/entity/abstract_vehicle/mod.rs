@@ -1,12 +1,15 @@
+use std::ops::{Deref, DerefMut};
+
 use super::Entity;
 
 pub mod boat;
+pub mod abstract_minecart;
 
 pub struct AbstractVehicle {
     entity: Entity,
-    shaking_power: i32,
-    shaking_direction: i32,
-    shaking_multiplier: f32,
+    pub shaking_power: i32,
+    pub shaking_direction: i32,
+    pub shaking_multiplier: f32,
 }
 impl Default for AbstractVehicle {
     fn default() -> Self {
@@ -16,5 +19,17 @@ impl Default for AbstractVehicle {
             shaking_direction: 1,
             shaking_multiplier: 0.0,
         }
+    }
+}
+impl Deref for AbstractVehicle {
+    type Target = Entity;
+
+    fn deref(&self) -> &Self::Target {
+        &self.entity
+    }
+}
+impl DerefMut for AbstractVehicle {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.entity
     }
 }

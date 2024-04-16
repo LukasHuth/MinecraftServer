@@ -19,6 +19,10 @@ pub mod item_frame;
 pub mod painting;
 pub mod item_entity;
 pub mod living_entity;
+pub mod evoker_fangs;
+pub mod llama_spit;
+pub mod primed_tnt;
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum EntityState {
@@ -87,6 +91,83 @@ impl Default for Entity {
             pose: PoseEnum::Standing,
             ticks_frozen_in_powdered_snow: 0,
         }
+    }
+}
+impl Entity {
+    pub fn get_states(&self) -> &[EntityState] {
+        self.status.states.as_slice()
+    }
+
+    pub fn add_state(&mut self, state: EntityState) {
+        self.status.add(state)
+    }
+
+    pub fn remove_state(&mut self, state: EntityState) {
+        self.status.remove(state)
+    }
+
+    pub fn get_air_ticks(&self) -> i32 {
+        self.air_ticks
+    }
+
+    pub fn set_air_ticks(&mut self, value: i32) {
+        self.air_ticks = value;
+    }
+
+    pub fn increment_air_ticks(&mut self) {
+        self.air_ticks += 1;
+    }
+
+    pub fn get_custom_name(&self) -> Option<&nbt_lib::datatypes::TextComponent> {
+        self.custom_name.as_ref()
+    }
+
+    pub fn set_custom_name(&mut self, value: Option<nbt_lib::datatypes::TextComponent>) {
+        self.custom_name = value;
+    }
+
+    pub fn is_custom_name_visible(&self) -> bool {
+        self.custom_name_visible
+    }
+
+    pub fn set_custom_name_visible(&mut self, value: bool) {
+        self.custom_name_visible = value;
+    }
+
+    pub fn is_silent(&self) -> bool {
+        self.silent
+    }
+
+    pub fn set_silent(&mut self, value: bool) {
+        self.silent = value;
+    }
+
+    pub fn has_no_gravity(&self) -> bool {
+        self.no_gravity
+    }
+
+    pub fn set_no_gravity(&mut self, value: bool) {
+        self.no_gravity = value;
+    }
+
+    pub fn get_pose(&self) -> PoseEnum {
+        self.pose
+    }
+
+    pub fn set_pose(&mut self, value: PoseEnum) {
+        self.pose = value;
+    }
+
+    pub fn get_ticks_frozen_in_powdered_snow(&self) -> i32 {
+        self.ticks_frozen_in_powdered_snow
+    }
+
+    pub fn set_ticks_frozen_in_powdered_snow(&mut self, value: i32) {
+        self.ticks_frozen_in_powdered_snow = value;
+    }
+
+    pub fn increment_ticks_frozen_in_powdered_snow(&mut self) {
+        self.ticks_frozen_in_powdered_snow += 1;
     }
 }
 impl Entity {

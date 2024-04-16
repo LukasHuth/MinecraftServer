@@ -1,12 +1,23 @@
-use crate::entities::entity_types::EntityEnum as EntityEnum;
+use std::ops::{Deref, DerefMut};
 
 use super::Entity;
 
-
 pub struct FishingHook {
     entity: Entity,
-    hooked_entity: Option<EntityEnum>,
-    is_catchable: bool,
+    pub hooked_entity: Option<i32>,
+    pub is_catchable: bool,
+}
+impl Deref for FishingHook {
+    type Target = Entity;
+
+    fn deref(&self) -> &Self::Target {
+        &self.entity
+    }
+}
+impl DerefMut for FishingHook {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.entity
+    }
 }
 impl Default for FishingHook {
     fn default() -> Self {

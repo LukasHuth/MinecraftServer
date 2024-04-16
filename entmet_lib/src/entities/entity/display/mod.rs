@@ -1,3 +1,5 @@
+use std::ops::{Deref, DerefMut};
+
 use super::Entity;
 pub mod block_display;
 pub mod item_display;
@@ -12,21 +14,33 @@ pub enum BillboardConstraints {
 }
 pub struct Display {
     entity: Entity,
-    interpolation_delay: i32,
-    transformation_interpolation_duration: i32,
-    position_rotation_interpolation_duration: i32,
-    translation: (f32, f32, f32),
-    scale: (f32, f32, f32),
-    rotation_left: (f32, f32, f32, f32),
-    rotation_right: (f32, f32, f32, f32),
-    billpoard_constraints: BillboardConstraints,
-    brightness_override: i32,
-    view_range: f32,
-    shadow_radius: f32,
-    shadow_strength: f32,
-    width: f32,
-    height: f32,
-    glow_color_override: i32,
+    pub interpolation_delay: i32,
+    pub transformation_interpolation_duration: i32,
+    pub position_rotation_interpolation_duration: i32,
+    pub translation: (f32, f32, f32),
+    pub scale: (f32, f32, f32),
+    pub rotation_left: (f32, f32, f32, f32),
+    pub rotation_right: (f32, f32, f32, f32),
+    pub billpoard_constraints: BillboardConstraints,
+    pub brightness_override: i32,
+    pub view_range: f32,
+    pub shadow_radius: f32,
+    pub shadow_strength: f32,
+    pub width: f32,
+    pub height: f32,
+    pub glow_color_override: i32,
+}
+impl Deref for Display {
+    type Target = Entity;
+
+    fn deref(&self) -> &Self::Target {
+        &self.entity
+    }
+}
+impl DerefMut for Display {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.entity
+    }
 }
 impl Default for Display {
     fn default() -> Self {

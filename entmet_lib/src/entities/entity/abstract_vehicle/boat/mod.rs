@@ -1,7 +1,10 @@
+use std::ops::{Deref, DerefMut};
+
 use super::AbstractVehicle;
 
 pub mod chest_boat;
 
+#[derive(Clone, Copy)]
 pub enum BoatWoodType {
     Oak = 0,
     Spruce = 1,
@@ -12,10 +15,10 @@ pub enum BoatWoodType {
 }
 pub struct Boat {
     abstract_vehicle: AbstractVehicle,
-    wood_type: BoatWoodType,
-    left_paddle_turning: bool,
-    right_paddle_turning: bool,
-    splash_timer: i32,
+    pub wood_type: BoatWoodType,
+    pub left_paddle_turning: bool,
+    pub right_paddle_turning: bool,
+    pub splash_timer: i32,
 }
 impl Default for Boat {
     fn default() -> Self {
@@ -26,5 +29,17 @@ impl Default for Boat {
             right_paddle_turning: false,
             splash_timer: 0,
         }
+    }
+}
+impl Deref for Boat {
+    type Target = AbstractVehicle;
+
+    fn deref(&self) -> &Self::Target {
+        &self.abstract_vehicle
+    }
+}
+impl DerefMut for Boat {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.abstract_vehicle
     }
 }
