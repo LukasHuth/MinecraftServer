@@ -1,4 +1,4 @@
-use binary_utils::{DataWriter};
+use binary_utils::DataWriter;
 use datatypes::ImportantFunctions;
 use serde::{Serialize, Deserialize};
 use tokio::io::AsyncWrite;
@@ -8,6 +8,7 @@ pub(crate) struct Version {
     name: std::string::String,
     protocol: u16,
 }
+/// This struct represents a basic player in the minecraft protocol
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Player {
     name: std::string::String,
@@ -35,6 +36,12 @@ pub(crate) struct StatusResponseJSON {
     previews_char: bool,
 }
 impl Player {
+    /// Function to create a new instance of `Player`
+    ///
+    /// # Arguments
+    ///
+    /// `name` - name of the player
+    /// `id` - uuid of the player as a string
     pub fn new(name: std::string::String, id: std::string::String) -> Self {
         Self {name, id}
     }

@@ -4,20 +4,39 @@ use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite};
 
 use crate::datatypes::datatype_definition::important_enums::HandshakeNextState;
 
+/// Struct for the legacy ping response
 pub struct LegacyPongPacket {
     server_version: std::string::String,
     motd: std::string::String,
     current_players: u16,
     max_players: u16
 }
+/// Struct for the `Handshake` packet used to tell the server in which state he should switch for
+/// the following packets
 pub struct HandshakePacket {
+    /// annotation of the protocol version that the client uses to let the server decide if he is
+    /// capable of comunicating with the client or not
     pub protocol: VarInt,
+    /// Address used to connect to the server, can be used to check if the client connected how it
+    /// should has
     pub address: String,
+    /// Port that the client used to connect to the server
     pub port: UnsignedShort,
+    /// enum to tell the server in which state he should switch after this packet
     pub next_state: Enum<HandshakeNextState, VarInt>
 }
+/// Struct to be able to read a legacy ping packet of a datastream
 pub struct LegacyPingPacket;
 impl LegacyPongPacket {
+    /// function to initialize a new instance of `LegacyPingPacket`
+    ///
+    /// # Arguments
+    ///
+    /// `server_version` - A String containing the version of the server
+    /// `motd` - A String of the motd
+    /// `current_players` - An u16 representing, how much players are currently connected to the
+    /// server
+    /// `max_players` - An u16 representing, how much players are allowed to join the server
     pub fn new(server_version: std::string::String, motd: std::string::String, current_players: u16, max_players: u16) -> Self {
         Self{ server_version, motd, current_players, max_players }
     }
