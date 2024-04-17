@@ -4,15 +4,28 @@ use flate2::read::GzDecoder;
 
 use crate::error::{NbtResult, NbtError};
 
+/// Struct that is needed for the NBT reading
 pub struct NbtReader {
+    /// A list of the whole data in bytes
     pub data: Vec<u8>,
+    /// Cursor, where we are currently reading
     pub cursor: usize,
 }
 
+/// Module for version handling, because version 1.20.4 changed, how nbt data is send over the web
 pub mod version_implementations;
 
 impl NbtReader {
+    /// function to create a new instance of `NbtReader`
+    ///
+    /// # Arguments
+    /// `data` - List of the whole data in bytes
     pub fn new(data: Vec<u8>) -> NbtReader { Self { data, cursor: 0 } }
+    /// function to create a new instance of `NbtReader` but before storing the byte array it gets
+    /// decompressed
+    ///
+    /// # Arguments
+    /// `data` - List of the whole data in bytes
     pub fn from_compressed_data(data: Vec<u8>) -> NbtReader {
         let cursor = Cursor::new(data);
         let mut decoder = GzDecoder::new(cursor);
@@ -23,6 +36,11 @@ impl NbtReader {
         println!("{:?}", data);
         Self { data, cursor: 0 }
     }
+    /// function to read an u8
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_u8(&mut self) -> NbtResult<u8> {
         if self.cursor + 1 > self.data.len() { return Err(NbtError::Overflow(self.cursor, 1, self.data.len()))}
@@ -30,8 +48,18 @@ impl NbtReader {
         self.cursor += 1;
         Ok(value)
     }
+    /// function to read an i8
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[inline]
     pub fn read_i8(&mut self) -> NbtResult<i8> { Ok(self.read_u8()? as i8) }
+    /// function to read an i16 BE
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_be_i16(&mut self) -> NbtResult<i16> {
         if self.cursor + 2 > self.data.len() { return Err(NbtError::Overflow(self.cursor, 2, self.data.len()))}
@@ -39,6 +67,11 @@ impl NbtReader {
         self.cursor += 2;
         Ok(value)
     }
+    /// function to read an i16 LE
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_le_i16(&mut self) -> NbtResult<i16> {
         if self.cursor + 2 > self.data.len() { return Err(NbtError::Overflow(self.cursor, 2, self.data.len()))}
@@ -46,10 +79,25 @@ impl NbtReader {
         self.cursor += 2;
         Ok(value)
     }
+    /// function to read an u16 BE
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[inline]
     pub fn read_be_u16(&mut self) -> NbtResult<u16> { Ok(self.read_be_i16()? as u16) }
+    /// function to read an u16 LE
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[inline]
     pub fn read_le_u16(&mut self) -> NbtResult<u16> { Ok(self.read_le_i16()? as u16) }
+    /// function to read an i32 BE
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_be_i32(&mut self) -> NbtResult<i32> {
         if self.cursor + 4 > self.data.len() { return Err(NbtError::Overflow(self.cursor, 4, self.data.len()))}
@@ -62,10 +110,20 @@ impl NbtReader {
         self.cursor += 4;
         Ok(value)
     }
+    /// function to read an u32 BE
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[inline]
     pub fn read_be_u32(&mut self) -> NbtResult<u32> {
         Ok(self.read_be_i32()? as u32)
     }
+    /// function to read a VarInt
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_var_i32(&mut self) -> NbtResult<i32> {
         let mut value = 0;
@@ -83,6 +141,11 @@ impl NbtReader {
         }
         Ok(value)
     }
+    /// function to read a VarLong
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_var_i64(&mut self) -> NbtResult<i64> {
         let mut value = 0;
@@ -100,11 +163,21 @@ impl NbtReader {
         }
         Ok(value)
     }
+    /// function to read a ZigZagVarInt
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_zigzag_var_i32(&mut self) -> NbtResult<i32> {
         let value = self.read_var_i32()?;
         Ok((value >> 1) ^ (-(value & 1)))
     }
+    /// function to read an i64 BE
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_be_i64(&mut self) -> NbtResult<i64> {
         if self.cursor + 8 > self.data.len() { return Err(NbtError::Overflow(self.cursor, 8, self.data.len()))}
@@ -121,12 +194,35 @@ impl NbtReader {
         self.cursor += 8;
         Ok(value)
     }
+    /// function to read an u64 BE
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[inline]
     pub fn read_be_u64(&mut self) -> NbtResult<u64> { Ok(self.read_be_i64()? as u64) }
+    /// function to read a f32 BE
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[inline]
     pub fn read_be_f32(&mut self) -> NbtResult<f32> { Ok(f32::from_bits(self.read_be_u32()?)) }
+    /// function to read a f64 BE
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[inline]
     pub fn read_be_f64(&mut self) -> NbtResult<f64> { Ok(f64::from_bits(self.read_be_u64()?)) }
+    /// function to read an u8 array
+    ///
+    /// # Arguments
+    /// `len` - The amount of elements in the array
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_u8_array(&mut self, len: usize) -> NbtResult<Vec<u8>> {
         if self.cursor + len > self.data.len() { return Err(NbtError::Overflow(self.cursor, len, self.data.len()))}
@@ -134,10 +230,26 @@ impl NbtReader {
         self.cursor += len;
         Ok(value.to_vec())
     }
+    /// function to read an i8 array
+    ///
+    /// # Arguments
+    /// `len` - The amount of elements in the array
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_i8_array(&mut self, len: usize) -> NbtResult<Vec<i8>> {
         Ok(self.read_u8_array(len)?.iter().map(|&v|v as i8).collect())
     }
+    /// function to read an i32 BE array
+    ///
+    /// # Arguments
+    /// `len` - The amount of elements in the array
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_be_i32_array(&mut self, len: usize) -> NbtResult<Vec<i32>> {
         if self.cursor + len * 4 > self.data.len() { return Err(NbtError::Overflow(self.cursor, len, self.data.len()))}
@@ -148,6 +260,14 @@ impl NbtReader {
         self.cursor += len * 4;
         Ok(value)
     }
+    /// function to read an i64 BE array
+    ///
+    /// # Arguments
+    /// `len` - The amount of elements in the array
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_be_i64_array(&mut self, len: usize) -> NbtResult<Vec<i64>> {
         if self.cursor + len * 8 > self.data.len() { return Err(NbtError::Overflow(self.cursor, len, self.data.len()))}
@@ -158,6 +278,14 @@ impl NbtReader {
         self.cursor += len * 8;
         Ok(value)
     }
+    /// function to read an string
+    ///
+    /// # Arguments
+    /// `len` - The length of the string
+    ///
+    /// # Returns
+    ///
+    /// Returns the value or an error, why whe read operation failed
     #[cfg_attr(feature = "inline_read", inline)]
     pub fn read_string(&mut self, len: usize) -> Result<String, NbtError> {
         if len + self.cursor > self.data.len() {
