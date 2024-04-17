@@ -20,17 +20,29 @@ use crate::{server::{ServerMessage, server_settings::ServerSettings}, player::{P
 
 const _UPDATE_RATE: f32 = 100.0;
 
+/// Struct used to handle connections of the players
 pub struct ConnectionHandler;
+/// Error enum of the different errors that can occur
 #[derive(Debug)]
 pub enum ConnectionHandlerError {
+    /// This error occurs, if an object could not be moved between two threads
     ThreadMovement(String),
+    /// This error occurs, if the server was not able to send an packet to the player
     PacketSent(String),
+    /// This error is and error used when the server closes the connection
     Shutdown(String),
+    /// This error occurs, if the start sequence is not being used
     StartSequence(String),
+    /// This error occurs, if an error occurs while reading a packet
     PacketReading(binary_utils::Error),
+    /// This error occurs, if a response is not how it es expected
     ReponseError,
+    /// This error occurs, if a channel produces an error
     ChannelError,
+    /// This error is being used, if the server kicks a player
     KickingPlayer,
+    /// This error is being used, if the thread wants to close the `TcpStream` beacause of
+    /// inactivity
     CloseConnection,
 }
 impl From<binary_utils::Error> for ConnectionHandlerError {
@@ -38,9 +50,13 @@ impl From<binary_utils::Error> for ConnectionHandlerError {
         Self::PacketReading(value)
     }
 }
+/// An custom error type that keeps track of the error type and the player that the thread was
+/// handling
 #[derive(Debug)]
 pub struct Error {
+    /// Type of the error
     pub error_type: ConnectionHandlerError,
+    /// instance of the player that the thread handled if one exists
     pub player: Option<Arc<Mutex<fast_protocol::datatypes::json_datastructures::Player>>>,
 }
 type ErrorResult = std::result::Result<(), ConnectionHandlerError>;

@@ -4,7 +4,7 @@
 //! - `Server::start()`: static function that makes it easy to listen to a port and send player
 //! connections to their seperate Thread using `ConnectionHandler`
 //! - `ConnectionHandler`: used to handle the player socket
-#[deny(missing_docs)]
+#![deny(missing_docs)]
 
 /// Module that specifies server specific data and functions
 pub mod server;
