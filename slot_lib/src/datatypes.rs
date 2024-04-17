@@ -12,10 +12,10 @@ impl DataWriter for Slot {
             Self::Data(id, count, nbt) => {
                 let mut data = Vec::new();
                 datatypes::Boolean::new(true).write(&mut data).await?;
-                id.write(&mut data).await?;
-                count.write(&mut data).await?;
+                datatypes::VarInt::new(*id).write(&mut data).await?;
+                datatypes::Byte::new(*count).write(&mut data).await?;
                 if let Some(nbt) = nbt {
-                    if let Err(_) = JavaNetty::write_to(&nbt.get_value(), &mut data) {
+                    if let Err(_) = JavaNetty::write_to(&nbt, &mut data) {
                         return Err(Error::FailedToWrite);
                     }
                 } else {
@@ -32,7 +32,7 @@ impl ImportantFunctions for Slot {
 
     fn new(data: Self::InputType) -> Self {
         if data.0.is_some() && data.1.is_some() {
-            return Self::Data(datatypes::VarInt::new(data.0.unwrap_or(0)), datatypes::Byte::new(data.1.unwrap_or(0)), data.2.map(|d|nbt_lib::datatypes::NBT::new(d)));
+            return Self::Data(data.0.unwrap_or(0), data.1.unwrap_or(0), data.2);
         }
         Self::Empty
     }
