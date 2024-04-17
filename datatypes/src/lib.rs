@@ -16,12 +16,12 @@ pub trait ImportantEnumTrait : Sized {
     ///     A,
     ///     B
     /// }
-    /// impl ImportantEnumTrait for Example {
-    ///     fn new(data: u64) -> Result<Self> {
+    /// impl datatypes::ImportantEnumTrait for Example {
+    ///     fn new(data: u64) -> binary_utils::Result<Self> {
     ///         match data {
     ///             0 => Ok(Self::A),
     ///             1 => Ok(Self::B),
-    ///             _ => Err(Error::InvalidId),
+    ///             _ => Err(binary_utils::Error::InvalidId),
     ///         }
     ///     }
     /// }
