@@ -70,14 +70,14 @@ impl EntityStatusHolder {
     }
 }
 pub struct Entity {
-    status: EntityStatusHolder,
-    air_ticks: i32,
-    custom_name: Option<nbt_lib::datatypes::TextComponent>,
-    custom_name_visible: bool,
-    silent: bool,
-    no_gravity: bool,
-    pose: PoseEnum,
-    ticks_frozen_in_powdered_snow: i32,
+    pub status: EntityStatusHolder,
+    pub air_ticks: i32,
+    pub custom_name: Option<nbt_lib::datatypes::TextComponent>,
+    pub custom_name_visible: bool,
+    pub silent: bool,
+    pub no_gravity: bool,
+    pub pose: PoseEnum,
+    pub ticks_frozen_in_powdered_snow: i32,
 }
 impl Default for Entity {
     fn default() -> Self {
@@ -91,83 +91,6 @@ impl Default for Entity {
             pose: PoseEnum::Standing,
             ticks_frozen_in_powdered_snow: 0,
         }
-    }
-}
-impl Entity {
-    pub fn get_states(&self) -> &[EntityState] {
-        self.status.states.as_slice()
-    }
-
-    pub fn add_state(&mut self, state: EntityState) {
-        self.status.add(state)
-    }
-
-    pub fn remove_state(&mut self, state: EntityState) {
-        self.status.remove(state)
-    }
-
-    pub fn get_air_ticks(&self) -> i32 {
-        self.air_ticks
-    }
-
-    pub fn set_air_ticks(&mut self, value: i32) {
-        self.air_ticks = value;
-    }
-
-    pub fn increment_air_ticks(&mut self) {
-        self.air_ticks += 1;
-    }
-
-    pub fn get_custom_name(&self) -> Option<&nbt_lib::datatypes::TextComponent> {
-        self.custom_name.as_ref()
-    }
-
-    pub fn set_custom_name(&mut self, value: Option<nbt_lib::datatypes::TextComponent>) {
-        self.custom_name = value;
-    }
-
-    pub fn is_custom_name_visible(&self) -> bool {
-        self.custom_name_visible
-    }
-
-    pub fn set_custom_name_visible(&mut self, value: bool) {
-        self.custom_name_visible = value;
-    }
-
-    pub fn is_silent(&self) -> bool {
-        self.silent
-    }
-
-    pub fn set_silent(&mut self, value: bool) {
-        self.silent = value;
-    }
-
-    pub fn has_no_gravity(&self) -> bool {
-        self.no_gravity
-    }
-
-    pub fn set_no_gravity(&mut self, value: bool) {
-        self.no_gravity = value;
-    }
-
-    pub fn get_pose(&self) -> PoseEnum {
-        self.pose
-    }
-
-    pub fn set_pose(&mut self, value: PoseEnum) {
-        self.pose = value;
-    }
-
-    pub fn get_ticks_frozen_in_powdered_snow(&self) -> i32 {
-        self.ticks_frozen_in_powdered_snow
-    }
-
-    pub fn set_ticks_frozen_in_powdered_snow(&mut self, value: i32) {
-        self.ticks_frozen_in_powdered_snow = value;
-    }
-
-    pub fn increment_ticks_frozen_in_powdered_snow(&mut self) {
-        self.ticks_frozen_in_powdered_snow += 1;
     }
 }
 impl Entity {
