@@ -70,6 +70,11 @@ impl ConnectionHandler {
             }
         }
     }
+    /// function to handle the keep alive
+    ///
+    /// # Note
+    ///
+    /// This function checks if it has to send/receive a packet. it can be run every iteration
     async fn send_keep_alive<'a>(
         state: &State,
         writer: &mut WriteHalf<'a>,
@@ -102,9 +107,29 @@ impl ConnectionHandler {
         }
         Ok(())
     }
+    /// function to disconnect the player
+    ///
+    /// # Arguments
+    /// `player` - optional player instance
     fn disconnect_player(player: Option<Player>) -> Result<(), (ConnectionHandlerError, Option<Player>)> {
         return Err((ConnectionHandlerError::KickingPlayer, player));
     }
+    /// function to handle/receive packets
+    ///
+    /// # Arguments
+    /// `reader` - A `BufReader<ReadHalf>` to read data from the stream
+    /// `writer` - A `WriteHalf` to write data into the stream
+    /// `sender` - A `Sender<ServerMessage` to be able to communicate with the server
+    /// `state` - The current state of the connection
+    /// `player` - An optional instance of the player of the connection
+    /// `settings` - A reference to the `ServerSettings`
+    /// `keep_alive_answered_at` - A mutable reference to an `Instant` that records the last time,
+    /// that an `KeepAlive` was answered at
+    /// `await_keep_alive_answer` - A mutable reference to a bool whether an keep alive is awaited
+    /// or not
+    /// `player_sender` - A reference to the player sender instance to read from it
+    /// `packet_queue` - A mutable reference to a `VecDeque<ClientboundPackets>` to send packets,
+    /// that are queued to be send to the player
     async fn receive_packets<'a>(
         reader: &mut BufReader<ReadHalf<'a>>,
         writer: &mut WriteHalf<'a>,
@@ -311,6 +336,12 @@ impl ConnectionHandler {
         }
         Ok(())
     }
+    /// function to handle the connection
+    ///
+    /// # Arguments
+    /// `stream` - A mutable reference to the `TcpStream` of the connection
+    /// `sender` - A `Sender<ServerMessage>` to be able to communicate with the server
+    /// `settings` - A instance of the `ServerSettings`
     pub(crate) async fn run(stream: &mut TcpStream,
         sender: mpsc::Sender<ServerMessage>,
         settings: ServerSettings,
