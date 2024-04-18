@@ -2,9 +2,12 @@ use std::ops::{Deref, DerefMut};
 
 use super::Animal;
 
-pub mod cat;
-pub mod wolf;
-pub mod parrot;
+mod cat;
+pub use cat::*;
+mod wolf;
+pub use wolf::*;
+mod parrot;
+pub use parrot::*;
 
 #[derive(Default)]
 pub struct TameableAnimal {

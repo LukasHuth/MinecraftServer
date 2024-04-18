@@ -2,34 +2,37 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractVehicle;
 
-pub mod chest_boat;
+mod chest_boat;
+pub use chest_boat::*;
 
-#[derive(Clone, Copy)]
+/// An enum of the wood types that a boat can consist of
+#[derive(Clone, Copy, Default)]
 pub enum BoatWoodType {
-    Oak = 0,
+    /// Oak wood
+    #[default] Oak = 0,
+    /// Spruce wood
     Spruce = 1,
+    /// Birch wood
     Birch = 2,
+    /// Jungle wood
     Jungle = 3,
+    /// Acacia wood
     Acacia = 4,
+    /// Dark oak wood
     DarkOak = 5,
 }
+/// An instance of a boat
+#[derive(Default)]
 pub struct Boat {
     abstract_vehicle: AbstractVehicle,
+    /// The wood type of the boat
     pub wood_type: BoatWoodType,
+    /// Whether the left paddle is turning or not
     pub left_paddle_turning: bool,
+    /// Whether the right paddle is turning or not
     pub right_paddle_turning: bool,
+    /// The splash timer
     pub splash_timer: i32,
-}
-impl Default for Boat {
-    fn default() -> Self {
-        Self {
-            abstract_vehicle: AbstractVehicle::default(),
-            wood_type: BoatWoodType::Oak,
-            left_paddle_turning: false,
-            right_paddle_turning: false,
-            splash_timer: 0,
-        }
-    }
 }
 impl Deref for Boat {
     type Target = AbstractVehicle;

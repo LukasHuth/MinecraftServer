@@ -2,21 +2,36 @@ use std::ops::{Deref, DerefMut};
 
 use super::PathfinderMob;
 
-pub mod base_piglin;
-pub mod blaze;
-pub mod creeper;
-pub mod endermite;
-pub mod giant;
-pub mod raider;
-pub mod vex;
-pub mod abstract_skeleton;
-pub mod spider;
-pub mod warden;
-pub mod wither;
-pub mod zoglin;
-pub mod zombie;
-pub mod enderman;
-pub mod guardian;
+mod base_piglin;
+pub use base_piglin::*;
+mod blaze;
+pub use blaze::*;
+mod creeper;
+pub use creeper::*;
+mod endermite;
+pub use endermite::*;
+mod giant;
+pub use giant::*;
+mod raider;
+pub use raider::*;
+mod vex;
+pub use vex::*;
+mod abstract_skeleton;
+pub use abstract_skeleton::*;
+mod spider;
+pub use spider::*;
+mod warden;
+pub use warden::*;
+mod wither;
+pub use wither::*;
+mod zoglin;
+pub use zoglin::*;
+mod zombie;
+pub use zombie::*;
+mod enderman;
+pub use enderman::*;
+mod guardian;
+pub use guardian::*;
 
 #[derive(Default)]
 pub struct Monster {

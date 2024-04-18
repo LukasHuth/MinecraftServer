@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractMinecart;
 
+/// An instance of a minecart
 #[derive(Default)]
 pub struct Minecart {
     abstract_minecart: AbstractMinecart,

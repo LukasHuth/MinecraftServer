@@ -8,7 +8,7 @@ use crate::{NbtValue, version::JavaNetty, traits::{NbtWrite, NbtRead}, reader::N
 /// # Note
 ///
 /// This can be a `Compound` or a `String`
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct TextComponent(NbtValue);
 impl Default for TextComponent {
     fn default() -> Self {

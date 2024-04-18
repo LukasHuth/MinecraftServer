@@ -2,9 +2,12 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractHorse;
 
-pub mod donkey;
-pub mod llama;
-pub mod mule;
+mod donkey;
+pub use donkey::*;
+mod llama;
+pub use llama::*;
+mod mule;
+pub use mule::*;
 
 #[derive(Default)]
 pub struct ChestedHorse {

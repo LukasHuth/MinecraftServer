@@ -3,9 +3,12 @@ use std::ops::{Deref, DerefMut};
 
 use super::PathfinderMob;
 
-pub mod iron_golem;
-pub mod snow_golem;
-pub mod shulker;
+mod iron_golem;
+pub use iron_golem::*;
+mod snow_golem;
+pub use snow_golem::*;
+mod shulker;
+pub use shulker::*;
 
 #[derive(Default)]
 pub struct AbstractGolem {

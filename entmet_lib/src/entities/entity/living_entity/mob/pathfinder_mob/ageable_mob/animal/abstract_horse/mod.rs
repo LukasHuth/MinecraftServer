@@ -2,11 +2,16 @@ use std::ops::{Deref, DerefMut};
 
 use super::Animal;
 
-pub mod horse;
-pub mod zombie_horse;
-pub mod skeleton_horse;
-pub mod camel;
-pub mod chested_horse;
+mod horse;
+pub use horse::*;
+mod zombie_horse;
+pub use zombie_horse::*;
+mod skeleton_horse;
+pub use skeleton_horse::*;
+mod camel;
+pub use camel::*;
+mod chested_horse;
+pub use chested_horse::*;
 
 #[repr(u8)]
 pub enum HorseInfo {

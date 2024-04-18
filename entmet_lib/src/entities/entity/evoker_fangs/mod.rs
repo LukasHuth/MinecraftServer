@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Entity;
 
+/// An instance of evoker fangs
 #[derive(Default)]
 pub struct EvokerFangs {
     entity: Entity,

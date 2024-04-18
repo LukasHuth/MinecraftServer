@@ -1,9 +1,12 @@
 use std::ops::{Deref, DerefMut};
 
 use super::PathfinderMob;
-pub mod squid;
-pub mod dolphin;
-pub mod abstract_fish;
+mod squid;
+pub use squid::*;
+mod dolphin;
+pub use dolphin::*;
+mod abstract_fish;
+pub use abstract_fish::*;
 #[derive(Default)]
 pub struct WaterAnimal {
     pathfinder_mob: PathfinderMob,

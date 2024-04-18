@@ -2,9 +2,12 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
-pub mod abstract_illager;
-pub mod ravager;
-pub mod witch;
+mod abstract_illager;
+pub use abstract_illager::*;
+mod ravager;
+pub use ravager::*;
+mod witch;
+pub use witch::*;
 
 #[derive(Default)]
 pub struct Raider {

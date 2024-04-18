@@ -2,10 +2,12 @@ use std::ops::{Deref, DerefMut};
 
 use super::PathfinderMob;
 
-pub mod animal;
-pub mod abstract_villager;
+mod animal;
+pub use animal::*;
+mod abstract_villager;
+pub use abstract_villager::*;
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct AgeableMob {
     pathfinder_mob: PathfinderMob,
     pub is_baby: bool,

@@ -4,11 +4,16 @@ use crate::datatypes::particles::ParticleType;
 
 use super::Entity;
 
+/// An instance of an area effect cloud
 pub struct AreaEffectCloud {
     entity: Entity,
+    /// The radius of the effect
     pub radius: f32,
+    /// The color of the effect
     pub color: i32,
+    /// Whether the radius should be ignored or not
     pub ignore_radius: bool,
+    /// The particle type of the area of effect
     pub particle: ParticleType,
 }
 impl Default for AreaEffectCloud {

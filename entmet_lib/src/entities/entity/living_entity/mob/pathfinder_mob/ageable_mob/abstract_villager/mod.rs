@@ -2,8 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use super::AgeableMob;
 
-pub mod villager;
-pub mod wandering_trader;
+mod villager;
+pub use villager::*;
+mod wandering_trader;
+pub use wandering_trader::*;
 
 #[derive(Default)]
 pub struct AbstractVillager {

@@ -2,7 +2,8 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
-pub mod elder_guardian;
+mod elder_guardian;
+pub use elder_guardian::*;
 
 #[derive(Default)]
 pub struct Guardian {

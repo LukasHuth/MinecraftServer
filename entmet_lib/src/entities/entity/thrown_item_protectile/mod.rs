@@ -3,11 +3,16 @@ use std::ops::{Deref, DerefMut};
 use slot_lib::Slot;
 use super::Entity;
 
-pub mod thrown_egg;
-pub mod thrown_ender_pearl;
-pub mod thrown_experience_bottle;
-pub mod thrown_potion;
-pub mod snowball;
+mod thrown_egg;
+pub use thrown_egg::*;
+mod thrown_ender_pearl;
+pub use thrown_ender_pearl::*;
+mod thrown_experience_bottle;
+pub use thrown_experience_bottle::*;
+mod thrown_potion;
+pub use thrown_potion::*;
+mod snowball;
+pub use snowball::*;
 
 pub struct ThrownItemProtectile {
     entity: Entity,

@@ -2,8 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractIllager;
 
-pub mod evoker;
-pub mod illusioner;
+mod evoker;
+pub use evoker::*;
+mod illusioner;
+pub use illusioner::*;
 
 #[repr(u8)]
 #[derive(Default)]

@@ -1,41 +1,73 @@
 use crate::datatypes::PoseEnum;
 
-pub mod interaction;
-pub mod display;
-pub mod thrown_item_protectile;
-pub mod eye_of_ender;
-pub mod falling_block;
-pub mod area_effect_cloud;
-pub mod fishing_hook;
-pub mod abstract_arrow;
-pub mod abstract_vehicle;
-pub mod end_crystal;
-pub mod dragon_fireball;
-pub mod small_fireball;
-pub mod fireball;
-pub mod wither_skull;
-pub mod firework_rocket_entity;
-pub mod item_frame;
-pub mod painting;
-pub mod item_entity;
-pub mod living_entity;
-pub mod evoker_fangs;
-pub mod llama_spit;
-pub mod primed_tnt;
+mod interaction;
+pub use interaction::*;
+mod display;
+pub use display::*;
+mod thrown_item_protectile;
+pub use thrown_item_protectile::*;
+mod eye_of_ender;
+pub use eye_of_ender::*;
+mod falling_block;
+pub use falling_block::*;
+mod area_effect_cloud;
+pub use area_effect_cloud::*;
+mod fishing_hook;
+pub use fishing_hook::*;
+mod abstract_arrow;
+pub use abstract_arrow::*;
+mod abstract_vehicle;
+pub use abstract_vehicle::*;
+mod end_crystal;
+pub use end_crystal::*;
+mod dragon_fireball;
+pub use dragon_fireball::*;
+mod small_fireball;
+pub use small_fireball::*;
+mod fireball;
+pub use fireball::*;
+mod wither_skull;
+pub use wither_skull::*;
+mod firework_rocket_entity;
+pub use firework_rocket_entity::*;
+mod item_frame;
+pub use item_frame::*;
+mod painting;
+pub use painting::*;
+mod item_entity;
+pub use item_entity::*;
+mod living_entity;
+pub use living_entity::*;
+mod evoker_fangs;
+pub use evoker_fangs::*;
+mod llama_spit;
+pub use llama_spit::*;
+mod primed_tnt;
+pub use primed_tnt::*;
 
+/// An enum of the possible entity states
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum EntityState {
+    /// The mob is on fire
     IsOnFire = 0x01,
+    /// The mob is crouching
     IsCrouching = 0x02,
+    /// The mob is sprinting
     IsSprinting = 0x08,
+    /// The mob is swimming
     IsSwimming = 0x10,
+    /// The mob is invisible
     IsInvisible = 0x20,
+    /// The mob has the glowing effect
     HasGlowingEffect = 0x40,
+    /// The mob is flying with an elytra
     IsFlyingWithAnElytra = 0x80,
 }
 const ALL_ENTITY_STATES: [EntityState; 8] = [EntityState::IsOnFire, EntityState::IsCrouching, EntityState::IsCrouching, EntityState::IsSprinting, EntityState::IsSwimming, EntityState::IsInvisible,
     EntityState::HasGlowingEffect, EntityState::IsFlyingWithAnElytra];
+/// An struct that is able to hold entity states
+#[derive(Clone)]
 pub struct EntityStatusHolder {
     states: Vec<EntityState>,
     mask: u8,
@@ -58,25 +90,37 @@ impl From<u8> for EntityStatusHolder {
     }
 }
 impl EntityStatusHolder {
+    /// Function to add a state to an entity
     pub fn add(&mut self, state: EntityState) {
         if (self.mask & state as u8) != 0 { return }
         self.states.push(state);
         self.mask |= state as u8;
     }
+    /// Function to remove a state from an entity
     pub fn remove(&mut self, state: EntityState) {
         if (self.mask & state as u8) == 0 { return }
         self.states.retain(|&old_state| old_state != state);
         self.mask &= u8::MAX ^ state as u8;
     }
 }
+/// An struct for a basic Entity
+#[derive(Clone)]
 pub struct Entity {
+    /// The states of the entity
     pub status: EntityStatusHolder,
+    /// The amount of ticks in the air
     pub air_ticks: i32,
+    /// The optional custom name of the entity
     pub custom_name: Option<nbt_lib::datatypes::TextComponent>,
+    /// Whether the custom name of the entity is visible
     pub custom_name_visible: bool,
+    /// Wether the entity is silent or not
     pub silent: bool,
+    /// Wether gravity applies to the entity or not
     pub no_gravity: bool,
+    /// The pose of the enum
     pub pose: PoseEnum,
+    /// The amount of ticks that the entity is freezing in powdered snow
     pub ticks_frozen_in_powdered_snow: i32,
 }
 impl Default for Entity {
@@ -94,6 +138,17 @@ impl Default for Entity {
     }
 }
 impl Entity {
+    /// Function to create a new instance of `Entity`
+    ///
+    /// # Arguments
+    /// `status` - An instance of `EntityStatusHolder`, storing the states of the entity
+    /// `air_ticks` - The amount of ticks in the air
+    /// `custom_name` - Optional custom name of the entity
+    /// `custom_name_visible` - Whether the custom name should be visible
+    /// `silent` - Whether the entity is silent or not
+    /// `no_gravity` - Whether gravity should apply to the entity or not
+    /// `pose` - The pose of the entity
+    /// `tickts_frozen_in_powdered_snow` - The amount that the player is freezing in powdered snow
     pub fn new(
         status: EntityStatusHolder,
         air_ticks: i32,
@@ -107,4 +162,3 @@ impl Entity {
         Self { status, air_ticks, custom_name_visible, custom_name, silent, no_gravity, pose, ticks_frozen_in_powdered_snow }
     }
 }
-

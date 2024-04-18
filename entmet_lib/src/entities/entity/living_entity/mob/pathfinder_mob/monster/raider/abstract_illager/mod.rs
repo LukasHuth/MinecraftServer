@@ -2,9 +2,12 @@ use std::ops::{Deref, DerefMut};
 
 use super::Raider;
 
-pub mod vindicator;
-pub mod pillager;
-pub mod spellcaster_illager;
+mod vindicator;
+pub use vindicator::*;
+mod pillager;
+pub use pillager::*;
+mod spellcaster_illager;
+pub use spellcaster_illager::*;
 
 #[derive(Default)]
 pub struct AbstractIllager {

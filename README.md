@@ -2,12 +2,12 @@
 This is a project to learn, how to implement an documented packet (And possibly create a fully working Minecraft server).
 
 ## To-Do
+- [ ] add the missing Block states that are after [this](https://minecraft.fandom.com/wiki/Java_Edition_data_values#axis)
 - [ ] using serde for the packets etc
   - help: [serde tutorial](https://serde.rs/impl-deserializer.html)
 - [ ] implementing all the login packets
   - [x] packet implementation
   - [ ] packet usage (encrypted)
-- [ ] implementing all the configuration packets
 - [ ] implementint all the playing packets
   - [ ] implementing server handling (events redstone ticks etc.)
 - [ ] test if inlining deref's helps performance

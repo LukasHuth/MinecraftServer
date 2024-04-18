@@ -2,18 +2,25 @@ use std::ops::{Deref, DerefMut};
 
 use super::LivingEntity;
 
-pub mod ambient_creature;
-pub mod pathfinder_mob;
-pub mod ender_dragon;
-pub mod flying;
-pub mod slime;
+mod ambient_creature;
+pub use ambient_creature::*;
+mod pathfinder_mob;
+pub use pathfinder_mob::*;
+mod ender_dragon;
+pub use ender_dragon::*;
+mod flying;
+pub use flying::*;
+mod slime;
+pub use slime::*;
 
+#[derive(Clone)]
 #[repr(u8)]
 pub enum MobInfo {
     NoAI = 0x01,
     LeftHanded = 0x02,
     Aggressive = 0x04,
 }
+#[derive(Clone)]
 pub struct Mob {
     living_entity: LivingEntity,
     pub info: Vec<MobInfo>,

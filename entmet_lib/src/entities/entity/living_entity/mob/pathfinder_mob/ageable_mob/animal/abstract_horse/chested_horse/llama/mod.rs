@@ -2,7 +2,8 @@ use std::ops::{Deref, DerefMut};
 
 use super::ChestedHorse;
 
-pub mod trader_llama;
+mod trader_llama;
+pub use trader_llama::*;
 
 #[derive(Default)]
 #[repr(u8)]

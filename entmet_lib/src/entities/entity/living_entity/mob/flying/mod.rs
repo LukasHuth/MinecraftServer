@@ -2,8 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use super::Mob;
 
-pub mod ghast;
-pub mod phantom;
+mod ghast;
+pub use ghast::*;
+mod phantom;
+pub use phantom::*;
 
 #[derive(Default)]
 pub struct Flying {

@@ -2,9 +2,12 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
-pub mod skeleton;
-pub mod wither_skeleton;
-pub mod stray;
+mod skeleton;
+pub use skeleton::*;
+mod wither_skeleton;
+pub use wither_skeleton::*;
+mod stray;
+pub use stray::*;
 
 #[derive(Default)]
 pub struct AbstractSkeleton {

@@ -2,9 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use super::Animal;
 
-pub mod mooshroom;
+mod mooshroom;
+pub use mooshroom::*;
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Cow {
     animal: Animal,
 }

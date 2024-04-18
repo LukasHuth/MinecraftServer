@@ -2,8 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
-pub mod piglin;
-pub mod piglin_brute;
+mod piglin;
+pub use piglin::*;
+mod piglin_brute;
+pub use piglin_brute::*;
 
 #[derive(Default)]
 pub struct BasePiglin {

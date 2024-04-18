@@ -2,13 +2,19 @@ use std::ops::{Deref, DerefMut};
 
 use super::Entity;
 
-pub mod boat;
-pub mod abstract_minecart;
+mod boat;
+pub use boat::*;
+mod abstract_minecart;
+pub use abstract_minecart::*;
 
+/// An Interface to store vehicle data
 pub struct AbstractVehicle {
     entity: Entity,
+    /// The amount of shaking of the vehicle
     pub shaking_power: i32,
+    /// The direction of the shaking
     pub shaking_direction: i32,
+    /// The multiplier of the shaking
     pub shaking_multiplier: f32,
 }
 impl Default for AbstractVehicle {

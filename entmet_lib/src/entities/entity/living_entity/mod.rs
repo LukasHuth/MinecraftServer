@@ -1,9 +1,13 @@
 use std::ops::{Deref, DerefMut};
 
 use super::Entity;
-pub mod player;
-pub mod armor_stand;
-pub mod mob;
+mod player;
+pub use player::*;
+mod armor_stand;
+pub use armor_stand::*;
+mod mob;
+pub use mob::*;
+#[derive(Clone)]
 #[repr(u8)]
 pub enum HandStates {
     None = 0,
@@ -11,6 +15,7 @@ pub enum HandStates {
     HandActiveOffhand = 0b11,
     RiptideSpin = 0x04,
 }
+#[derive(Clone)]
 pub struct LivingEntity {
     entity: Entity,
     pub hand_state: HandStates,

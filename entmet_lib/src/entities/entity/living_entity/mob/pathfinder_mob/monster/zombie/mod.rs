@@ -2,10 +2,14 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
-pub mod zombie_villager;
-pub mod husk;
-pub mod drowned;
-pub mod zombified_piglin;
+mod zombie_villager;
+pub use zombie_villager::*;
+mod husk;
+pub use husk::*;
+mod drowned;
+pub use drowned::*;
+mod zombified_piglin;
+pub use zombified_piglin::*;
 
 #[derive(Default)]
 pub struct Zombie {
