@@ -2,8 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use super::Entity;
 
+/// An instance of a wither skull
 pub struct WitherSkull {
     entity: Entity,
+    /// whether it is invulnerable or not
     pub invulnerable: bool,
 }
 impl Deref for WitherSkull {

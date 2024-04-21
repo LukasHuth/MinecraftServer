@@ -8,6 +8,7 @@ use super::Mob;
 /// and this:
 /// https://wiki.vg/Entity_metadata#Ender_Dragon
 ///
+#[allow(missing_docs)]
 #[repr(u8)]
 #[derive(Default)]
 pub enum EnderDragonPhase {
@@ -24,9 +25,11 @@ pub enum EnderDragonPhase {
     #[default] HoveringWithNoAI = 10,
 }
 
+/// An instance of an ender dragon
 #[derive(Default)]
 pub struct EnderDragon {
     mob: Mob,
+    /// The current phase of the ender dragon
     pub phase: EnderDragonPhase,
 }
 impl Deref for EnderDragon {

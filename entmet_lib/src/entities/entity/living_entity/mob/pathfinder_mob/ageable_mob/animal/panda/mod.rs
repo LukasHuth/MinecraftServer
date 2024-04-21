@@ -1,5 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
+use crate::datatypes::Mask;
+
 use super::Animal;
 
 #[repr(u8)]
@@ -14,12 +16,18 @@ pub enum PandaGene {
     Aggressive = 6,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum PandaInfo {
     IsSneezing = 0x02,
     IsRolling = 0x04,
     IsSitting = 0x08,
     IsOnBack = 0x10,
+}
+impl Into<u8> for PandaInfo {
+    fn into(self) -> u8 {
+        self as u8
+    }
 }
 
 #[derive(Default)]
@@ -30,7 +38,7 @@ pub struct Panda {
     pub eat_timer: i32,
     pub main_gene: PandaGene,
     pub hidden_gene: PandaGene,
-    pub info: Vec<PandaInfo>,
+    pub info: Mask<PandaInfo>,
 }
 impl Deref for Panda {
     type Target = Animal;

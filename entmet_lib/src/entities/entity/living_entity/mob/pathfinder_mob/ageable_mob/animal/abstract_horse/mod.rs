@@ -1,5 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
+use crate::datatypes::Mask;
+
 use super::Animal;
 
 mod horse;
@@ -13,6 +15,7 @@ pub use camel::*;
 mod chested_horse;
 pub use chested_horse::*;
 
+#[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum HorseInfo {
     IsTame = 0x02,
@@ -22,11 +25,16 @@ pub enum HorseInfo {
     IsRearing = 0x20,
     IsMouthOpen = 0x40,
 }
+impl Into<u8> for HorseInfo {
+    fn into(self) -> u8 {
+        todo!()
+    }
+}
 
 #[derive(Default)]
 pub struct AbstractHorse {
     animal: Animal,
-    pub info: Vec<HorseInfo>,
+    pub info: Mask<HorseInfo>,
 }
 impl Deref for AbstractHorse {
     type Target = Animal;

@@ -2,9 +2,12 @@ use std::ops::{Deref, DerefMut};
 
 use super::Entity;
 
+/// An instance of a fishing hook
 pub struct FishingHook {
     entity: Entity,
+    /// The id of the hooked entity
     pub hooked_entity: Option<i32>,
+    /// Whether it is currently catchable or not
     pub is_catchable: bool,
 }
 impl Deref for FishingHook {

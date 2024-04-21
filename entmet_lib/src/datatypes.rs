@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, ops::RangeBounds, slice::Iter};
+use std::{ops::RangeBounds, slice::Iter};
 
 use binary_utils::{DataWriter, DataReader, Error};
 use datatypes::{Identifier, ImportantEnumTrait, ImportantFunctions};
@@ -483,4 +483,48 @@ pub enum Axis3DVariant {
     Y = 1,
     /// The block is oriented towards Z
     Z = 2,
+}
+/// A struct for handling masks
+#[derive(Debug, PartialEq, Clone)]
+pub struct Mask<T> {
+    mask: u8,
+    options: Vec<T>
+}
+impl<T: Into<u8> + Copy + PartialEq> Mask<T> {
+    /// function to create a new instance of `Mask`
+    pub fn new() -> Self {
+        Self::default()
+    }
+    /// function to add an option to the mask
+    pub fn add(&mut self, option: T) {
+        let mask: u8 = self.mask.into();
+        let option_data: u8 = option.into();
+        // Already masked because the adding failed
+        if (mask | option_data) == mask { return }
+        self.options.push(option);
+        self.mask = mask | option_data;
+        assert_eq!(self.mask.count_ones(), self.options.len() as u32);
+    }
+    /// function to remove an option from the mask
+    pub fn remove(&mut self, option: T) {
+        let mask: u8 = self.mask.into();
+        let option_data: u8 = option.into();
+        // Already not contained because the adding worked
+        if (mask | option_data) != mask { return }
+        if let Some(index) = self.options.iter().position(|e| *e == option) {
+            self.options.remove(index);
+            self.mask = mask & !option_data;
+        }
+        assert_eq!(self.mask.count_ones(), self.options.len() as u32);
+    }
+    /// function to get all the active options
+    pub fn get_options(&self) -> &[T] {
+        &self.options
+    }
+}
+impl<T> Default for Mask<T>
+    where T: Into<u8> + Copy + PartialEq {
+    fn default() -> Self {
+        Self { mask: 0u8, options: Vec::new() }
+    }
 }

@@ -1,5 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
+use crate::datatypes::Mask;
+
 use super::Animal;
 
 #[repr(u8)]
@@ -8,6 +10,7 @@ pub enum FoxVariant {
     #[default] Red = 0,
     Snow = 1,
 }
+#[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum FoxInfo {
     IsSitting = 0x01,
@@ -18,12 +21,17 @@ pub enum FoxInfo {
     IsFaceplanted = 0x40,
     IsDefending = 0x80,
 }
+impl Into<u8> for FoxInfo {
+    fn into(self) -> u8 {
+        self as u8
+    }
+}
 
 #[derive(Default)]
 pub struct Fox {
     animal: Animal,
     pub variant: FoxVariant,
-    pub info: Vec<FoxInfo>,
+    pub info: Mask<FoxInfo>,
     pub first_uuid: Option<u128>,
     pub second_uuid: Option<u128>,
 }

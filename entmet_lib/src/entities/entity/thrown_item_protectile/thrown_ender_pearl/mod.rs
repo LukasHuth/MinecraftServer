@@ -2,7 +2,8 @@ use std::ops::{Deref, DerefMut};
 
 use super::ThrownItemProtectile;
 
-
+/// An instance of a thrown ender pearl
+#[derive(Default)]
 pub struct ThrownEnderPearl {
     thrown_item_protectile: ThrownItemProtectile,
 }
@@ -16,12 +17,5 @@ impl Deref for ThrownEnderPearl {
 impl DerefMut for ThrownEnderPearl {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.thrown_item_protectile
-    }
-}
-impl Default for ThrownEnderPearl{
-    fn default() -> Self {
-        Self {
-            thrown_item_protectile: ThrownItemProtectile::default(),
-        }
     }
 }

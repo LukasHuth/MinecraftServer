@@ -14,8 +14,11 @@ pub use thrown_potion::*;
 mod snowball;
 pub use snowball::*;
 
+/// An iterface for a thrown projectile
+#[derive(Default)]
 pub struct ThrownItemProtectile {
     entity: Entity,
+    /// The item data of the thrown protectile
     pub slot: Slot,
 }
 impl Deref for ThrownItemProtectile {
@@ -28,13 +31,5 @@ impl Deref for ThrownItemProtectile {
 impl DerefMut for ThrownItemProtectile {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.entity
-    }
-}
-impl Default for ThrownItemProtectile {
-    fn default() -> Self {
-        Self {
-            entity: Entity::default(),
-            slot: Slot::Empty,
-        }
     }
 }

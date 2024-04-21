@@ -4,9 +4,11 @@ use slot_lib::Slot;
 
 use super::Entity;
 
+/// An instance of a small fireball
 #[derive(Default)]
 pub struct SmallFireball {
     entity: Entity,
+    /// The item data of the small fireball
     pub slot: Slot,
 }
 impl Deref for SmallFireball {

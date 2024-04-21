@@ -1,4 +1,4 @@
-use crate::datatypes::PoseEnum;
+use crate::datatypes::{Mask, PoseEnum};
 
 mod interaction;
 pub use interaction::*;
@@ -64,6 +64,11 @@ pub enum EntityState {
     /// The mob is flying with an elytra
     IsFlyingWithAnElytra = 0x80,
 }
+impl Into<u8> for EntityState {
+    fn into(self) -> u8 {
+        self as u8
+    }
+}
 const ALL_ENTITY_STATES: [EntityState; 8] = [EntityState::IsOnFire, EntityState::IsCrouching, EntityState::IsCrouching, EntityState::IsSprinting, EntityState::IsSwimming, EntityState::IsInvisible,
     EntityState::HasGlowingEffect, EntityState::IsFlyingWithAnElytra];
 /// An struct that is able to hold entity states
@@ -107,7 +112,8 @@ impl EntityStatusHolder {
 #[derive(Clone)]
 pub struct Entity {
     /// The states of the entity
-    pub status: EntityStatusHolder,
+    pub status: Mask<EntityState>,
+    // pub status: EntityStatusHolder,
     /// The amount of ticks in the air
     pub air_ticks: i32,
     /// The optional custom name of the entity
@@ -126,7 +132,7 @@ pub struct Entity {
 impl Default for Entity {
     fn default() -> Self {
         Self {
-            status: EntityStatusHolder::from(vec![]),
+            status: Mask::default(),
             air_ticks: 300,
             custom_name: None,
             custom_name_visible: false,
@@ -141,7 +147,7 @@ impl Entity {
     /// Function to create a new instance of `Entity`
     ///
     /// # Arguments
-    /// `status` - An instance of `EntityStatusHolder`, storing the states of the entity
+    /// `status` - An instance of `Mask` holding `EntityState`, storing the states of the entity
     /// `air_ticks` - The amount of ticks in the air
     /// `custom_name` - Optional custom name of the entity
     /// `custom_name_visible` - Whether the custom name should be visible
@@ -150,7 +156,7 @@ impl Entity {
     /// `pose` - The pose of the entity
     /// `tickts_frozen_in_powdered_snow` - The amount that the player is freezing in powdered snow
     pub fn new(
-        status: EntityStatusHolder,
+        status: Mask<EntityState>,
         air_ticks: i32,
         custom_name: Option<nbt_lib::datatypes::TextComponent>,
         custom_name_visible: bool,

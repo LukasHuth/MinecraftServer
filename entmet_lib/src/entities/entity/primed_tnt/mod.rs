@@ -2,8 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use super::Entity;
 
+/// An instance of a primmed tnt
 pub struct PrimedTnt {
     entity: Entity,
+    /// The time in ticks, until it explodes
     pub fuse_time: i32,
 }
 impl Default for PrimedTnt {
