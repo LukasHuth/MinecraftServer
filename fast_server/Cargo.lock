@@ -134,6 +134,13 @@ dependencies = [
 [[package]]
 name = "entmet_lib"
 version = "0.1.0"
+dependencies = [
+ "binary_utils",
+ "datatypes",
+ "nbt_lib",
+ "slot_lib",
+ "tokio",
+]
 
 [[package]]
 name = "equivalent"
@@ -175,6 +182,7 @@ dependencies = [
  "binary_utils",
  "datatypes",
  "fast_protocol",
+ "nbt_lib",
  "openssl",
  "rand",
  "reqwest",
@@ -287,9 +295,9 @@ checksum = "4271d37baee1b8c7e4b708028c57d816cf9d2434acb33a549475f78c181f6253"
 
 [[package]]
 name = "h2"
-version = "0.4.3"
+version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "51ee2dd2e4f378392eeff5d51618cd9a63166a2513846bbc55f21cfacd9199d4"
+checksum = "816ec7294445779408f36fe57bc5b7fc1cf59664059096c65f905c1c61f58069"
 dependencies = [
  "bytes",
  "fnv",
@@ -541,7 +549,10 @@ dependencies = [
 name = "nbt_lib"
 version = "0.1.0"
 dependencies = [
+ "binary_utils",
+ "datatypes",
  "flate2",
+ "tokio",
 ]
 
 [[package]]
@@ -930,6 +941,12 @@ dependencies = [
 [[package]]
 name = "slot_lib"
 version = "0.1.0"
+dependencies = [
+ "binary_utils",
+ "datatypes",
+ "nbt_lib",
+ "tokio",
+]
 
 [[package]]
 name = "smallvec"
@@ -1014,9 +1031,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.36.0"
+version = "1.37.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61285f6515fa018fb2d1e46eb21223fff441ee8db5d0f1435e8ab4f5cdb80931"
+checksum = "1adbebffeca75fcfd058afa480fb6c0b81e165a0323f9c9d39c9697e37c46787"
 dependencies = [
  "backtrace",
  "bytes",
