@@ -1,0 +1,9 @@
+[package]
+name = "level_lib"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nbt_lib = { path = "../nbt_lib" }
+datatypes = { path = "../datatypes" }
+binary_utils = { path = "../binary_utils" }

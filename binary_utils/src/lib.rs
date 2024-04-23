@@ -1,6 +1,7 @@
 #![deny(missing_docs)]
 //! This create provides important functions for reading and writing data
 use std::future::Future;
+use std::io::{Read, Write};
 
 use tokio::io::{AsyncWrite, AsyncRead};
 
@@ -126,6 +127,25 @@ pub trait DataReader: Sized {
     fn read(reader: &mut (impl AsyncRead + Unpin)) -> impl Future<Output = Result<Self>>;
 }
 
+/// A trait for types that need to be read from a binary stream synchronously
+///
+/// Implementations of this trait provide a way to read their data 
+/// synchronously from a type that implements `Read`
+pub trait SyncDataReader: Sized {
+    /// Reads data from the provided reader synchronously and constructs an instance of `Self`.
+    ///
+    /// # Arguments
+    ///
+    /// * `reader` - A mutable reference to a type implementing `Read` trait,
+    ///              from which the data will be read.
+    ///
+    /// # Returns
+    ///
+    /// Returns a result containing an instance of `Self` if the operation is successful, or an error
+    /// indicating failure.
+    fn read(reader: &mut impl Read) -> Result<Self>;
+}
+
 /// A trait for types that have to read Packet data
 pub trait PacketReader: Sized {
     /// Reads a packet from the provided stream `reader` using the specified `id` and `length`
@@ -163,6 +183,27 @@ pub trait DataWriter {
     /// a `Result` containing an instance of `()` if the operation is successful, or an error
     /// indicating failure.
     fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> impl Future<Output = Result<()>>;
+}
+
+/// A trait for types that have to be written to a synchronous stream
+///
+/// # Notes
+///
+/// This trait is intended to be implemented for types that represent structured data and provide
+/// a method to synchronously write that data into an output source. Implementations should handle
+/// error conditions appropriately and return a `Result` indicating success or failure.
+pub trait SyncDataWriter {
+    /// Writes the data of the object into the defined `writer`.
+    ///
+    /// # Arguments
+    ///
+    /// * `writer` - A mutable reference to a type implementing `Write` trait,
+    ///              into which the data will be written.
+    ///
+    /// # Returns
+    ///
+    /// Returns a result indicating success or failure of the writing operation.
+    fn write(&self, writer: &mut impl Write) -> Result<()>;
 }
 
 /// A trait for types that need to be read from a binary stream but have an context based size
