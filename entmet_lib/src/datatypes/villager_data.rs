@@ -1,5 +1,5 @@
 /// An enum of all villager types.
-#[derive(Default)]
+#[derive(Default, Debug, PartialEq, Eq)]
 #[repr(u8)]
 pub enum VillagerType {
     /// Villager from a desert village.
@@ -19,10 +19,11 @@ pub enum VillagerType {
     Taiga = 6,
 }
 /// An enum of all villager profession
+#[derive(Default, Debug, PartialEq, Eq)]
 #[repr(u8)]
 pub enum VillagerProfession {
     /// Variant if no profession is assigned, but assignable
-    None = 0,
+    #[default] None = 0,
     /// Villager producing Armor etc.
     Armorer = 1,
     /// Villager that sells meat

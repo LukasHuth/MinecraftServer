@@ -85,8 +85,8 @@ pub mod villager_data;
 ///     villager_profession: VillagerProfession::Armorer,
 ///     level: 1,
 /// };
-/// assert_eq!(data.villager_type, villagerType::Plains);
-/// assert_eq!(data.villager_profession, villagerType::Armorer);
+/// assert_eq!(data.villager_type, VillagerType::Plains);
+/// assert_eq!(data.villager_profession, VillagerProfession::Armorer);
 /// assert_eq!(data.level, 1);
 /// ```
 pub struct VillagerData {
