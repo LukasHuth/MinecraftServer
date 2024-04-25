@@ -1,6 +1,8 @@
 use std::ops::{Deref, DerefMut};
 
-use crate::datatypes::{Direction, MinecraftColor};
+use minecraft_assets::color::Color;
+
+use crate::datatypes::Direction;
 
 use super::AbstractGolem;
 
@@ -9,7 +11,7 @@ use super::AbstractGolem;
 #[repr(u8)]
 pub enum SkulkerColor {
     /// One of the dye colors
-    Mc(MinecraftColor),
+    Mc(Color),
     /// The default color
     #[default] None = 16,
 }

@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use crate::datatypes::MinecraftColor;
+use minecraft_assets::color::Color;
 
 use super::AbstractFish;
 
@@ -30,16 +30,16 @@ pub struct FishVariant {
     /// The pattern of the fish
     pub pattern: FishPatternAndSize,
     /// The color of the body
-    pub body_color: MinecraftColor,
+    pub body_color: Color,
     /// The color of the pattern
-    pub pattern_color: MinecraftColor,
+    pub pattern_color: Color,
 }
 impl Default for FishVariant {
     fn default() -> Self {
         Self {
             pattern: FishPatternAndSize::default(),
-            body_color: MinecraftColor::White,
-            pattern_color: MinecraftColor::White,
+            body_color: Color::White,
+            pattern_color: Color::White,
         }
     }
 }

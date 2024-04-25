@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use crate::datatypes::MinecraftColor;
+use minecraft_assets::color::Color;
 
 use super::TameableAnimal;
 
@@ -33,7 +33,7 @@ pub struct Cat {
     /// Whether it is reaxed or not
     pub relaxed: bool,
     /// The collor of its collar
-    pub collar_color: MinecraftColor,
+    pub collar_color: Color,
 }
 impl Deref for Cat {
     type Target = TameableAnimal;

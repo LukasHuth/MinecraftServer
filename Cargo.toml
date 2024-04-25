@@ -17,7 +17,7 @@ members = [
     "datatypes",
     "entmet_lib",
     "fast_protocol",
-    "fast_server", "level_lib",
+    "fast_server", "level_lib", "minecraft_assets",
     "nbt_lib",
     "slot_lib",
 ]

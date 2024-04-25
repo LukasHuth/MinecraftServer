@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use crate::datatypes::MinecraftColor;
+use minecraft_assets::color::Color;
 
 use super::ChestedHorse;
 
@@ -27,7 +27,7 @@ pub struct Llama {
     /// The strength of the llama
     pub strength: i32,
     /// The color of the carpet, `None` (-1) if it has no carpet
-    pub carpet_color: Option<MinecraftColor>,
+    pub carpet_color: Option<Color>,
     /// The variant of the llama
     pub variant: LlamaVariant,
 }

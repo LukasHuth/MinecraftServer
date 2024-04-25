@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use crate::datatypes::MinecraftColor;
+use minecraft_assets::color::Color;
 
 use super::TameableAnimal;
 
@@ -11,7 +11,7 @@ pub struct Wolf {
     /// Whether it is begging or not
     pub begging: bool,
     /// The color of its collar
-    pub collar_color: MinecraftColor,
+    pub collar_color: Color,
     /// The amount of ticks, that it still is angry
     pub anger_time: i32,
 }

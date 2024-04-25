@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use crate::datatypes::MinecraftColor;
+use minecraft_assets::color::Color;
 
 use super::AbstractArrow;
 
@@ -14,7 +14,7 @@ pub struct Arrow {
     ///
     /// The color should be set to `None` if it is an arrow and the color should be set for a
     /// tipped arrow
-    pub color: Option<MinecraftColor>,
+    pub color: Option<Color>,
 }
 impl Deref for Arrow {
     type Target = AbstractArrow;

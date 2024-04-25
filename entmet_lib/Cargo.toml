@@ -8,5 +8,6 @@ datatypes = { path = "../datatypes" }
 nbt_lib = { path = "../nbt_lib" }
 slot_lib = { path = "../slot_lib" }
 binary_utils = { path = "../binary_utils" }
+minecraft_assets = { path = "../minecraft_assets" }
 tokio = { version = "1.37.0", features = ["io-util"] }
 num-traits = "0.2.18"
