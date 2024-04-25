@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Entity;
 
+/// An instance of a llama spit
 #[derive(Default)]
 pub struct LlamaSpit {
     entity: Entity,

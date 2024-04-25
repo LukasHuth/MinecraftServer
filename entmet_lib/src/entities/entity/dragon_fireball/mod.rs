@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Entity;
 
+/// A dragon fireball instance
 #[derive(Default)]
 pub struct DragonFireball {
     entity: Entity,

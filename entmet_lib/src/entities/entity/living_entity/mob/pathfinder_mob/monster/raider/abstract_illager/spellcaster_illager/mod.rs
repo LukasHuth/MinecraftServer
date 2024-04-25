@@ -2,9 +2,13 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractIllager;
 
-pub mod evoker;
-pub mod illusioner;
+mod evoker;
+pub use evoker::*;
+mod illusioner;
+pub use illusioner::*;
 
+/// An enum of all castable spells
+#[allow(missing_docs)]
 #[repr(u8)]
 #[derive(Default)]
 pub enum Spell {
@@ -16,9 +20,11 @@ pub enum Spell {
     Blindness = 5,
 }
 
+/// An interface of a spellcasting illager
 #[derive(Default)]
 pub struct SpellcasterIllager {
     abstract_illager: AbstractIllager,
+    /// The spell that is being casted
     pub spell: Spell,
 }
 impl Deref for SpellcasterIllager {

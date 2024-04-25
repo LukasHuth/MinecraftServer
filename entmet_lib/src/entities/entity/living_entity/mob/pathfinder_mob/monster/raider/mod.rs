@@ -2,13 +2,18 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
-pub mod abstract_illager;
-pub mod ravager;
-pub mod witch;
+mod abstract_illager;
+pub use abstract_illager::*;
+mod ravager;
+pub use ravager::*;
+mod witch;
+pub use witch::*;
 
+/// An interface of a raider
 #[derive(Default)]
 pub struct Raider {
     monster: Monster,
+    /// Whether it is celebrating ot not
     pub celebrating: bool,
 }
 impl Deref for Raider {

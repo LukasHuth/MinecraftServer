@@ -4,35 +4,62 @@ use openssl::pkey::Private;
 use serde::{Serialize, Deserialize};
 use tokio::io::AsyncWrite;
 
+/// Static string representation of the default skin, that every user gets assigned who doesn't has
+/// one.
+///
+/// # Note
+///
+/// Also used for all players, if the server is operating in offline mode
 const SKIN: &str = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmM5NmExNGRjMWNiOTQzYjhmZjNjOTJhYWNiMDEwMmMyMzg5ZWVkZWY1MGQzNmI3MTRkMGRiOThiMjdhIn19fQ";
 
 // Clientbound
+/// Packet to disconnect a client during `Login`
 pub struct LoginDisconnect(JSONTextComponent);
+/// Packet to start the encrypted authentication
 pub struct LoginEncryptionRequest(String, VarInt, ByteArray, VarInt, ByteArray);
+/// Data struct, used to represent data, that gets send to the client if the login is successful
 pub struct LoginDataStruct(String, String, Boolean, Option<String>);
+/// Packet to tell the client that the login was successful
 pub struct LoginSuccess(UUID, String, Vec<LoginDataStruct>);
 // serverbound
+/// Packet used to start the login process
 pub struct LoginStart {
+    /// username of the player
     pub name: String,
+    /// uuid of the player
     pub uuid: UUID,
 }
+/// Packet used to authenticate with the server
 pub struct LoginEncryptionResponse {
+    /// length of the shared secret
     pub shared_secret_length: VarInt,
+    /// the value of the shared secret, encrypted with the server's public key
     pub shared_secret: ByteArray,
+    /// length of the verify token
     pub verify_token_length: VarInt,
+    /// verify token, encrypted with the same pulic key as the shared secret
     pub verify_token: ByteArray,
 }
 // Data Struct
+/// Part of the session response this is data recieved by the mojang authetication service and
+/// defined to be able to parse the data
 #[derive(Deserialize)]
 pub struct SessionResponsePiece {
+    /// name of the data
     pub name: std::string::String,
+    /// value of the data
     pub value: std::string::String,
+    /// A signed signature
     pub signature: std::string::String,
 }
+/// Data struct holding the whole data response of the authetication service
 #[derive(Deserialize)]
 pub struct SessionResponse {
+    /// profile id
     pub id: std::string::String,
+    /// username of the player
     pub name: std::string::String,
+    /// important properties send by the authetication service
     pub properties: Vec<SessionResponsePiece>,
 }
 #[derive(Serialize)]
@@ -40,11 +67,19 @@ struct Reason {
     reason: std::string::String,
 }
 impl LoginDisconnect {
+    /// function to initialize a new instance of `LoginDisconnect`
+    ///
+    /// # Arguments
+    /// `reason` - A reason, why the server closes the connection
     pub fn new(reason: std::string::String) -> Self {
         Self(JSONTextComponent::from(Reason { reason }))
     }
 }
 impl LoginEncryptionRequest {
+    /// function to initialize a new instance of `LoginEncryptionRequest`
+    ///
+    /// # Arguments
+    /// `key` - a rsa private key of the server used for the authentication precedure
     pub fn new(key: openssl::rsa::Rsa<Private>, verify_token: [u8;4]) -> Self {
         // let key = openssl::rsa::Rsa::generate(1024).unwrap();
         let key_bytes = key.public_key_to_der().unwrap();
@@ -67,6 +102,11 @@ impl Default for LoginDataStruct {
     }
 }
 impl LoginSuccess {
+    /// function to initialize a new instance of `LoginSuccess`
+    ///
+    /// # Arguments
+    /// `uuid` - UUID of the connected player
+    /// `username` - Username of the connected player
     pub fn new(uuid: UUID, username: String) -> Self {
         let prop = vec![LoginDataStruct::default()];
         Self(uuid, username, prop)

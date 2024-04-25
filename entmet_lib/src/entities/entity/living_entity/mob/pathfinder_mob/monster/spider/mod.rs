@@ -2,9 +2,11 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
+/// An instance of a spider
 #[derive(Default)]
 pub struct Spider {
     monster: Monster,
+    /// Whether it is climbing or not
     pub climbing: bool,
 }
 impl Deref for Spider {

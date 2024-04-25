@@ -66,3 +66,55 @@ impl<T> ImportantFunctions for Array<T> where T: DataReader + DataWriter + Clone
         self.0.clone()
     }
 }
+impl ImportantFunctions for BitSet {
+    type InputType = Vec<u64>;
+
+    type ReturnType = Self::InputType;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0.clone()
+    }
+}
+impl ImportantFunctions for Angle {
+    type InputType = u8;
+
+    type ReturnType = Self::InputType;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0
+    }
+}
+impl ImportantFunctions for Position {
+    type InputType = (i32, i32, i16);
+
+    type ReturnType = Self::InputType;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data.0, data.1, data.2)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        (self.0, self.1, self.2)
+    }
+}
+impl ImportantFunctions for VarLong {
+    type InputType = i64;
+
+    type ReturnType = Self::InputType;
+
+    fn new(data: Self::InputType) -> Self {
+        Self(data)
+    }
+
+    fn get_value(&self) -> Self::ReturnType {
+        self.0
+    }
+}

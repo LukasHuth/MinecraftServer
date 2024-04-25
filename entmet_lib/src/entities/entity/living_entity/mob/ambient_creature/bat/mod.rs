@@ -2,8 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use super::AmbientCreature;
 
+/// An instance of a bat
 pub struct Bat {
     ambient_crature: AmbientCreature,
+    /// Whether it is hanging or not
     pub is_hanging: bool,
 }
 impl Deref for Bat {

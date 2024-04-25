@@ -1,2 +1,4 @@
+/// Normal Java version
 pub enum Java {}
-pub enum JavaNetty {} // 1.20.2+ Network version
+/// Network data version 1.20.2+
+pub enum JavaNetty {}

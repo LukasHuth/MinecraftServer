@@ -2,12 +2,16 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
-pub mod elder_guardian;
+mod elder_guardian;
+pub use elder_guardian::*;
 
+/// An instance of a Guardian
 #[derive(Default)]
 pub struct Guardian {
     monster: Monster,
+    /// Whether it is retracting its spikes or not
     pub restracting_spikes: bool,
+    /// The id of its target
     pub target_eid: Option<i32>,
 }
 impl Deref for Guardian {

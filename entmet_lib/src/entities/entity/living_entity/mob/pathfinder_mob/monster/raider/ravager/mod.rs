@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Raider;
 
+/// An instance of a ravager
 #[derive(Default)]
 pub struct Ravager {
     raider: Raider,

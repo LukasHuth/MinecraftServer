@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
+/// An instance of a giant
 #[derive(Default)]
 pub struct Giant {
     monster: Monster,

@@ -2,12 +2,16 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
-pub mod piglin;
-pub mod piglin_brute;
+mod piglin;
+pub use piglin::*;
+mod piglin_brute;
+pub use piglin_brute::*;
 
+/// An interface of a piglin
 #[derive(Default)]
 pub struct BasePiglin {
     monster: Monster,
+    /// Whether it is immune to zombification or not
     pub immune_to_zombification: bool,
 }
 impl Deref for BasePiglin {

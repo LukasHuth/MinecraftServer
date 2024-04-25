@@ -2,12 +2,17 @@ use std::ops::{Deref, DerefMut};
 
 use super::Mob;
 
-pub mod water_animal;
-pub mod ageable_mob;
-pub mod abstract_golem;
-pub mod monster;
+mod water_animal;
+pub use water_animal::*;
+mod ageable_mob;
+pub use ageable_mob::*;
+mod abstract_golem;
+pub use abstract_golem::*;
+mod monster;
+pub use monster::*;
 
-#[derive(Default)]
+/// An interface for mobs using pathfinder
+#[derive(Default, Clone)]
 pub struct PathfinderMob {
     mob: Mob,
 }

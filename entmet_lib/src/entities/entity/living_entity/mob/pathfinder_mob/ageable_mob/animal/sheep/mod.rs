@@ -2,6 +2,8 @@ use std::ops::{Deref, DerefMut};
 
 use super::Animal;
 
+/// An enum of all sheep colors
+#[allow(missing_docs)]
 #[repr(u8)]
 #[derive(Default)]
 pub enum SheepColorVariant {
@@ -23,10 +25,13 @@ pub enum SheepColorVariant {
     Black = 0x0F,
 }
 
+/// An instance of a sheep
 #[derive(Default)]
 pub struct Sheep {
     animal: Animal,
+    /// The variant of the sheep
     pub variant: SheepColorVariant,
+    /// Whether the sheep is sheard or not
     pub sheard: bool,
 }
 impl Deref for Sheep {

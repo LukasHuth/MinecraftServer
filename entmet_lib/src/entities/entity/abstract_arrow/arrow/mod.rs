@@ -4,9 +4,16 @@ use crate::datatypes::MinecraftColor;
 
 use super::AbstractArrow;
 
+/// An instance of a minecraft arrow or tipped arrow
 #[derive(Default)]
 pub struct Arrow {
     abstract_arrow: AbstractArrow,
+    /// The color of the arrow
+    ///
+    /// # Note
+    ///
+    /// The color should be set to `None` if it is an arrow and the color should be set for a
+    /// tipped arrow
     pub color: Option<MinecraftColor>,
 }
 impl Deref for Arrow {

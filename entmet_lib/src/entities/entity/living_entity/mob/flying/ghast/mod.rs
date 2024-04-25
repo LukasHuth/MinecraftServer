@@ -2,9 +2,11 @@ use std::ops::{Deref, DerefMut};
 
 use super::Flying;
 
+/// An instance of a ghost
 #[derive(Default)]
 pub struct Ghast {
     flying: Flying,
+    /// Whether it is attacking something or not
     pub attacking: bool,
 }
 impl Deref for Ghast {

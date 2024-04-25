@@ -1,7 +1,10 @@
 use std::ops::{Deref, DerefMut};
 
 use super::Mob;
-pub mod bat;
+mod bat;
+pub use bat::*;
+
+/// An interface of an ambient creature
 #[derive(Default)]
 pub struct AmbientCreature {
     mob: Mob,

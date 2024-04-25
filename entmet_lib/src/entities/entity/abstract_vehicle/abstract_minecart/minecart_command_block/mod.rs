@@ -4,10 +4,13 @@ use nbt_lib::datatypes::TextComponent;
 
 use super::AbstractMinecart;
 
+/// An instance of a minecart that carries a command block
 #[derive(Default)]
 pub struct MinecartCommandBlock {
     abstract_minecart: AbstractMinecart,
+    /// The command of the command block
     pub command: String,
+    /// The last output of the command block
     pub last_output: TextComponent,
 }
 impl Deref for MinecartCommandBlock {

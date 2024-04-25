@@ -8,7 +8,7 @@ path = "fast_server"
 
 [dependencies]
 rand = "0.8.5"
-tokio = { version = "1.36.0", features = ["full"] }
+tokio = { version = "1.37.0", features = ["full"] }
 uuid = "1.7.0"
 
 [workspace]
@@ -17,7 +17,7 @@ members = [
     "datatypes",
     "entmet_lib",
     "fast_protocol",
-    "fast_server",
+    "fast_server", "level_lib",
     "nbt_lib",
     "slot_lib",
 ]

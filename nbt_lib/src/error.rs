@@ -1,17 +1,29 @@
 use crate::NbtTypeId;
+/// Error enum to describe an error that occurs while reading/writing NBT data
 #[derive(Debug, PartialEq, Eq)]
 pub enum NbtError {
+    /// Variant for unknown errors
     UnknownErr(String),
+    /// This error occures if the root of the nbt data is not a `Compound`
     WrongRootType(NbtTypeId),
+    /// This error occures if the root of the nbt data has no name but the name is required
     RootWithoutName,
+    /// This error occures if the parsing reads and unknown type id
     UnknownType(NbtTypeId),
+    /// This error occurs, if the parsing fails to read a name
     NameRead(String),
+    /// This error occurs, if the parsing tries to read more data than supplied
     Overflow(usize, usize, usize),
+    /// This error occurs, if a value is too large to be a `VarInt`, but a `VarInt` is expected
     VarIntTooBig(usize),
+    /// This error occurs, if a value is too large to be a `VarLong`, but a `VarLong` is expected
     VarLongTooBig(usize),
+    /// This error occurs, if elements in a list are not the same type
     ListTypeNotSame(Vec<NbtTypeId>),
+    /// This error occurs, if a specific type is expected, but an other one is found
     IncorrectType(NbtTypeId, NbtTypeId),
 }
+/// A type declaration to store data `T` or return an error of `NbtError`
 pub type NbtResult<T> = std::result::Result<T, NbtError>;
 impl std::error::Error for NbtError {}
 impl std::fmt::Display for NbtError {

@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Zombie;
 
+/// An instance of a zombified piglin
 #[derive(Default)]
 pub struct ZombifiedPiglin {
     zombie: Zombie,

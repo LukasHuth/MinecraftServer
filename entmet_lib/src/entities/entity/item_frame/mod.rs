@@ -4,11 +4,16 @@ use slot_lib::Slot;
 
 use super::Entity;
 
-pub mod glowing_item_frame;
+mod glowing_item_frame;
+pub use glowing_item_frame::*;
 
+/// An instance of an item frame
+#[derive(Default)]
 pub struct ItemFrame {
     entity: Entity,
+    /// The item data of the displayed item
     pub slot: Slot,
+    /// The rotation of the displayed item
     pub rotation: i32,
 }
 impl Deref for ItemFrame {
@@ -21,14 +26,5 @@ impl Deref for ItemFrame {
 impl DerefMut for ItemFrame {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.entity
-    }
-}
-impl Default for ItemFrame {
-    fn default() -> Self {
-        Self {
-            entity: Entity::default(),
-            slot: Slot::Empty,
-            rotation: 0,
-        }
     }
 }

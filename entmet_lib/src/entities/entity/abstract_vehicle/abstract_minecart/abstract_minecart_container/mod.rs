@@ -2,9 +2,12 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractMinecart;
 
-pub mod minecart_hopper;
-pub mod minecart_chest;
+mod minecart_hopper;
+pub use minecart_hopper::*;
+mod minecart_chest;
+pub use minecart_chest::*;
 
+/// An interface to store container minecart data
 #[derive(Default)]
 pub struct AbstractMinecartContainer {
     abstract_minecart: AbstractMinecart,

@@ -4,18 +4,25 @@ use crate::datatypes::{Direction, MinecraftColor};
 
 use super::AbstractGolem;
 
+/// An enum for the shulker color
 #[derive(Default)]
 #[repr(u8)]
 pub enum SkulkerColor {
+    /// One of the dye colors
     Mc(MinecraftColor),
+    /// The default color
     #[default] None = 16,
 }
 
+/// An instance of a shulker
 #[derive(Default)]
 pub struct Shulker {
     abstract_golem: AbstractGolem,
+    /// The direction, that the shulker is attached to
     pub attach_face: Direction,
+    /// The height of it's shield (upper part)
     pub shield_height: i8,
+    /// The color of the shulker
     pub color: SkulkerColor,
 }
 impl Deref for Shulker {

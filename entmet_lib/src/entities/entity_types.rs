@@ -1,235 +1,267 @@
-use super::entity::abstract_arrow::spectral_arrow::SpectralArrow;
-use super::entity::abstract_arrow::thrown_trident::ThrownTrident;
-use super::entity::abstract_vehicle::abstract_minecart::abstract_minecart_container::minecart_hopper::MinecartHopper;
-use super::entity::abstract_vehicle::abstract_minecart::minecart::Minecart;
-use super::entity::abstract_vehicle::abstract_minecart::minecart_furnace::MinecartFurnace;
-use super::entity::abstract_vehicle::abstract_minecart::minecart_spawner::MinecartSpawner;
-use super::entity::abstract_vehicle::abstract_minecart::minecart_tnt::MinecartTnt;
-use super::entity::display::item_display::ItemDisplay;
-use super::entity::display::text_display::TextDisplay;
-use super::entity::dragon_fireball::DragonFireball;
-use super::entity::end_crystal::EndCrystal;
-use super::entity::evoker_fangs::EvokerFangs;
-use super::entity::eye_of_ender::EyeOfEnder;
-use super::entity::falling_block::FallingBlock;
-use super::entity::fireball::Fireball;
-use super::entity::firework_rocket_entity::FireworkRocketEntity;
-use super::entity::fishing_hook::FishingHook;
-use super::entity::interaction::Interaction;
-use super::entity::item_entity::ItemEntity;
-use super::entity::item_frame::glowing_item_frame::GlowingItemFrame;
-use super::entity::item_frame::ItemFrame;
-use super::entity::living_entity::armor_stand::ArmorStand;
-use super::entity::living_entity::mob::ambient_creature::bat::Bat;
-use super::entity::living_entity::mob::ender_dragon::EnderDragon;
-use super::entity::living_entity::mob::flying::ghast::Ghast;
-use super::entity::living_entity::mob::flying::phantom::Phantom;
-use super::entity::living_entity::mob::pathfinder_mob::abstract_golem::iron_golem::IronGolem;
-use super::entity::living_entity::mob::pathfinder_mob::abstract_golem::shulker::Shulker;
-use super::entity::living_entity::mob::pathfinder_mob::abstract_golem::snow_golem::SnowGolem;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::abstract_villager::villager::Villager;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::abstract_villager::wandering_trader::WanderingTrader;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::abstract_horse::chested_horse::donkey::Donkey;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::abstract_horse::chested_horse::llama::trader_llama::TraderLlama;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::abstract_horse::chested_horse::llama::Llama;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::abstract_horse::chested_horse::mule::Mule;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::abstract_horse::horse::Horse;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::abstract_horse::skeleton_horse::SkeletonHorse;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::abstract_horse::zombie_horse::ZombieHorse;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::cow::mooshroom::Mooshroom;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::cow::Cow;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::fox::Fox;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::frog::Frog;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::goat::Goat;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::hoglin::Hoglin;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::ocelot::Ocelot;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::panda::Panda;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::pig::Pig;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::polar_bear::Polarbear;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::rabbit::Rabbit;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::sheep::Sheep;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::sniffer::Sniffer;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::strider::Strider;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::tameable_animal::parrot::Parrot;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::tameable_animal::wolf::Wolf;
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::turtle::Turtle;
-use super::entity::living_entity::mob::pathfinder_mob::monster::abstract_skeleton::skeleton::Skeleton;
-use super::entity::living_entity::mob::pathfinder_mob::monster::abstract_skeleton::stray::Stray;
-use super::entity::living_entity::mob::pathfinder_mob::monster::abstract_skeleton::wither_skeleton::WitherSkeleton;
-use super::entity::living_entity::mob::pathfinder_mob::monster::base_piglin::piglin::Piglin;
-use super::entity::living_entity::mob::pathfinder_mob::monster::base_piglin::piglin_brute::PiglinBrute;
-use super::entity::living_entity::mob::pathfinder_mob::monster::creeper::Creeper;
-use super::entity::living_entity::mob::pathfinder_mob::monster::enderman::Enderman;
-use super::entity::living_entity::mob::pathfinder_mob::monster::endermite::Endermite;
-use super::entity::living_entity::mob::pathfinder_mob::monster::giant::Giant;
-use super::entity::living_entity::mob::pathfinder_mob::monster::guardian::elder_guardian::ElderGuardian;
-use super::entity::living_entity::mob::pathfinder_mob::monster::guardian::Guardian;
-use super::entity::living_entity::mob::pathfinder_mob::monster::raider::abstract_illager::pillager::Pillager;
-use super::entity::living_entity::mob::pathfinder_mob::monster::raider::abstract_illager::spellcaster_illager::evoker::Evoker;
-use super::entity::living_entity::mob::pathfinder_mob::monster::raider::abstract_illager::spellcaster_illager::illusioner::Illusioner;
-use super::entity::living_entity::mob::pathfinder_mob::monster::raider::abstract_illager::vindicator::Vindicator;
-use super::entity::living_entity::mob::pathfinder_mob::monster::raider::ravager::Ravager;
-use super::entity::living_entity::mob::pathfinder_mob::monster::raider::witch::Witch;
-use super::entity::living_entity::mob::pathfinder_mob::monster::vex::Vex;
-use super::entity::living_entity::mob::pathfinder_mob::monster::warden::Warden;
-use super::entity::living_entity::mob::pathfinder_mob::monster::wither::Wither;
-use super::entity::living_entity::mob::pathfinder_mob::monster::zoglin::Zoglin;
-use super::entity::living_entity::mob::pathfinder_mob::monster::zombie::drowned::Drowned;
-use super::entity::living_entity::mob::pathfinder_mob::monster::zombie::husk::Husk;
-use super::entity::living_entity::mob::pathfinder_mob::monster::zombie::zombie_villager::ZombieVillager;
-use super::entity::living_entity::mob::pathfinder_mob::monster::zombie::zombified_piglin::ZombifiedPiglin;
-use super::entity::living_entity::mob::pathfinder_mob::monster::zombie::Zombie;
-use super::entity::living_entity::mob::pathfinder_mob::monster::{blaze::Blaze, spider::Spider};
-use super::entity::living_entity::mob::pathfinder_mob::ageable_mob::animal::{abstract_horse::camel::Camel, axolotl::Axolotl, bee::Bee, chicken::Chicken, tameable_animal::cat::Cat};
-use super::entity::display::block_display::BlockDisplay;
-use super::entity::area_effect_cloud::AreaEffectCloud;
-use super::entity::abstract_vehicle::boat::{chest_boat::ChestBoat, Boat};
-use super::entity::abstract_vehicle::abstract_minecart::{abstract_minecart_container::minecart_chest::MinecartChest, minecart_command_block::MinecartCommandBlock};
-use super::entity::abstract_arrow::arrow::Arrow;
-use super::entity::living_entity::mob::pathfinder_mob::water_animal::abstract_fish::cod::Cod;
-use super::entity::living_entity::mob::pathfinder_mob::water_animal::abstract_fish::puffer_fish::PufferFish;
-use super::entity::living_entity::mob::pathfinder_mob::water_animal::abstract_fish::salmon::Salmon;
-use super::entity::living_entity::mob::pathfinder_mob::water_animal::abstract_fish::tadpole::Tadpole;
-use super::entity::living_entity::mob::pathfinder_mob::water_animal::abstract_fish::tropical_fish::TropicalFish;
-use super::entity::living_entity::mob::pathfinder_mob::water_animal::dolphin::Dolphin;
-use super::entity::living_entity::mob::pathfinder_mob::water_animal::squid::Squid;
-use super::entity::living_entity::mob::slime::Slime;
-use super::entity::living_entity::player::Player;
-use super::entity::llama_spit::LlamaSpit;
-use super::entity::painting::Painting;
-use super::entity::primed_tnt::PrimedTnt;
-use super::entity::small_fireball::SmallFireball;
-use super::entity::thrown_item_protectile::snowball::Snowball;
-use super::entity::thrown_item_protectile::thrown_egg::ThrownEgg;
-use super::entity::thrown_item_protectile::thrown_ender_pearl::ThrownEnderPearl;
-use super::entity::thrown_item_protectile::thrown_experience_bottle::ThrownExperienceBottle;
-use super::entity::thrown_item_protectile::thrown_potion::ThrownPotion;
-use super::entity::wither_skull::WitherSkull;
-use super::entity::Entity;
+use crate::datatypes::BlockStateIdentifier;
 
+use super::entity::{
+    AreaEffectCloud, ArmorStand, Arrow, Axolotl, Bat, Bee, Blaze, BlockDisplay, Boat, Camel, Cat, ChestBoat, Chicken, Cod, Cow, Creeper, Dolphin, Donkey, DragonFireball, Drowned, ElderGuardian,
+    EndCrystal, EnderDragon, Enderman, Endermite, Evoker, EvokerFangs, EyeOfEnder, FallingBlock, Fireball, FireworkRocketEntity, FishingHook, Fox, Frog, Ghast, Giant, GlowingItemFrame, Goat,
+    Guardian, Hoglin, Horse, Husk, Illusioner, Interaction, IronGolem, ItemDisplay, ItemEntity, ItemFrame, Llama, LlamaSpit, Minecart, MinecartChest, MinecartCommandBlock, MinecartFurnace,
+    MinecartHopper, MinecartSpawner, MinecartTnt, Mooshroom, Mule, Ocelot, Painting, Panda, Parrot, Phantom, Pig, Piglin, PiglinBrute, Pillager, Player, Polarbear, PrimedTnt, PufferFish, Rabbit,
+    Ravager, Salmon, Sheep, Shulker, Skeleton, SkeletonHorse, Slime, SmallFireball, Sniffer, SnowGolem, Snowball, SpectralArrow, Spider, Squid, Stray, Strider, Tadpole, TextDisplay, ThrownEgg,
+    ThrownEnderPearl, ThrownExperienceBottle, ThrownPotion, ThrownTrident, TraderLlama, TropicalFish, Turtle, Vex, Villager, Vindicator, WanderingTrader, Warden, Witch, Wither, WitherSkeleton,
+    WitherSkull, Wolf, Zoglin, Zombie, ZombieHorse, ZombieVillager, ZombifiedPiglin};
+
+/// An enum that can hold every entity of the game
 pub enum EntityEnum {
+    /// Enum variant to represent a `Allay`
     Allay,
+    /// Enum variant to represent a `AreaEffectCloud`
     AreaEffectCloud(AreaEffectCloud),
+    /// Enum variant to represent a `Armorstand`
     Armorstand(ArmorStand),
+    /// Enum variant to represent a `Arrow`
     Arrow(Arrow),
+    /// Enum variant to represent a `Axolotl`
     Axolotl(Axolotl),
+    /// Enum variant to represent a `Bat`
     Bat(Bat),
+    /// Enum variant to represent a `Bee`
     Bee(Bee),
+    /// Enum variant to represent a `Blaze`
     Blaze(Blaze),
-    BlockDisplay(BlockDisplay),
+    /// Enum variant to represent a `BlockDisplay`
+    ///
+    /// # Note
+    /// 
+    /// This data is inside a `Box` to allow the T to be a type that implements
+    /// `BlockStateIdentifier`
+    BlockDisplay(Box<BlockDisplay<dyn BlockStateIdentifier>>),
+    /// Enum variant to represent a `Boat`
     Boat(Boat),
+    /// Enum variant to represent a `Camel`
     Camel(Camel),
+    /// Enum variant to represent a `Cat`
     Cat(Cat),
+    /// Enum variant to represent a `CaveSpider`
     CaveSpider(Spider),
+    /// Enum variant to represent a `ChestBoat`
     ChestBoat(ChestBoat),
+    /// Enum variant to represent a `ChestMinecart`
     ChestMinecart(MinecartChest),
+    /// Enum variant to represent a `Chicken`
     Chicken(Chicken),
+    /// Enum variant to represent a `Cod`
     Cod(Cod),
+    /// Enum variant to represent a `CommandBlockMinecart`
     CommandBlockMinecart(MinecartCommandBlock),
+    /// Enum variant to represent a `Cow`
     Cow(Cow),
+    /// Enum variant to represent a `Creeper`
     Creeper(Creeper),
+    /// Enum variant to represent a `Dolphin`
     Dolphin(Dolphin),
+    /// Enum variant to represent a `Donkey`
     Donkey(Donkey),
+    /// Enum variant to represent a `DragonFireball`
     DragonFireball(DragonFireball),
+    /// Enum variant to represent a `Drowned`
     Drowned(Drowned),
+    /// Enum variant to represent a `Egg`
     Egg(ThrownEgg),
+    /// Enum variant to represent a `ElderGuardian`
     ElderGuardian(ElderGuardian),
+    /// Enum variant to represent a `EndCrystal`
     EndCrystal(EndCrystal),
+    /// Enum variant to represent a `EnderDragon`
     EnderDragon(EnderDragon),
+    /// Enum variant to represent a `EnderPearl`
     EnderPearl(ThrownEnderPearl),
+    /// Enum variant to represent a `Enderman`
     Enderman(Enderman),
+    /// Enum variant to represent a `Endermite`
     Endermite(Endermite),
+    /// Enum variant to represent a `Evoker`
     Evoker(Evoker),
+    /// Enum variant to represent a `EvokerFangs`
     EvokerFangs(EvokerFangs),
+    /// Enum variant to represent a `ExperienceBottle`
     ExperienceBottle(ThrownExperienceBottle),
+    /// Enum variant to represent a `ExperienceOrb`
     ExperienceOrb,
+    /// Enum variant to represent a `EyeOfEnder`
     EyeOfEnder(EyeOfEnder),
+    /// Enum variant to represent a `FallingBlock`
     FallingBlock(FallingBlock),
+    /// Enum variant to represent a `FireworkRocket`
     FireworkRocket(FireworkRocketEntity),
+    /// Enum variant to represent a `Fox`
     Fox(Fox),
+    /// Enum variant to represent a `Frog`
     Frog(Frog),
+    /// Enum variant to represent a `FurnaceMinecart`
     FurnaceMinecart(MinecartFurnace),
+    /// Enum variant to represent a `Ghast`
     Ghast(Ghast),
+    /// Enum variant to represent a `Giant`
     Giant(Giant),
+    /// Enum variant to represent a `GlowItemFrame`
     GlowItemFrame(GlowingItemFrame),
+    /// Enum variant to represent a `GlowSquid`
     GlowSquid(Squid),
+    /// Enum variant to represent a `Goat`
     Goat(Goat),
+    /// Enum variant to represent a `Guardian`
     Guardian(Guardian),
+    /// Enum variant to represent a `Hoglin`
     Hoglin(Hoglin),
+    /// Enum variant to represent a `HopperMinecart`
     HopperMinecart(MinecartHopper),
+    /// Enum variant to represent a `Horse`
     Horse(Horse),
+    /// Enum variant to represent a `Husk`
     Husk(Husk),
+    /// Enum variant to represent a `Illusioner`
     Illusioner(Illusioner),
+    /// Enum variant to represent a `Interaction`
     Interaction(Interaction),
+    /// Enum variant to represent a `IronGolem`
     IronGolem(IronGolem),
+    /// Enum variant to represent a `Item`
     Item(ItemEntity),
+    /// Enum variant to represent a `ItemDisplay`
     ItemDisplay(ItemDisplay),
+    /// Enum variant to represent a `ItemFrame`
     ItemFrame(ItemFrame),
+    /// Enum variant to represent a `Fireball`
     Fireball(Fireball),
+    /// Enum variant to represent a `LeashKnot`
     LeashKnot,
+    /// Enum variant to represent a `LightningBolt`
     LightningBolt,
+    /// Enum variant to represent a `Llama`
     Llama(Llama),
+    /// Enum variant to represent a `LlamaSpit`
     LlamaSpit(LlamaSpit),
+    /// Enum variant to represent a `MagmaCube`
     MagmaCube(Slime),
+    /// Enum variant to represent a `Marker`
     Marker,
+    /// Enum variant to represent a `Minecart`
     Minecart(Minecart),
+    /// Enum variant to represent a `Mooshroom`
     Mooshroom(Mooshroom),
+    /// Enum variant to represent a `Mule`
     Mule(Mule),
+    /// Enum variant to represent a `Ocelot`
     Ocelot(Ocelot),
+    /// Enum variant to represent a `Painting`
     Painting(Painting),
+    /// Enum variant to represent a `Panda`
     Panda(Panda),
+    /// Enum variant to represent a `Parrot`
     Parrot(Parrot),
+    /// Enum variant to represent a `Phantom`
     Phantom(Phantom),
+    /// Enum variant to represent a `Pig`
     Pig(Pig),
+    /// Enum variant to represent a `Piglin`
     Piglin(Piglin),
+    /// Enum variant to represent a `PiglinBrute`
     PiglinBrute(PiglinBrute),
+    /// Enum variant to represent a `Pillager`
     Pillager(Pillager),
+    /// Enum variant to represent a `PolarBear`
     PolarBear(Polarbear),
+    /// Enum variant to represent a `Potion`
     Potion(ThrownPotion),
+    /// Enum variant to represent a `Pufferfish`
     Pufferfish(PufferFish),
+    /// Enum variant to represent a `Rabbit`
     Rabbit(Rabbit),
+    /// Enum variant to represent a `Ravager`
     Ravager(Ravager),
+    /// Enum variant to represent a `Salmon`
     Salmon(Salmon),
+    /// Enum variant to represent a `Sheep`
     Sheep(Sheep),
+    /// Enum variant to represent a `Shulker`
     Shulker(Shulker),
+    /// Enum variant to represent a `ShulkerBullet`
     ShulkerBullet,
+    /// Enum variant to represent a `Silverfish`
     Silverfish,
+    /// Enum variant to represent a `Skeleton`
     Skeleton(Skeleton),
+    /// Enum variant to represent a `SkeletonHorse`
     SkeletonHorse(SkeletonHorse),
+    /// Enum variant to represent a `Slime`
     Slime(Slime),
+    /// Enum variant to represent a `SmallFireball`
     SmallFireball(SmallFireball),
+    /// Enum variant to represent a `Sniffer`
     Sniffer(Sniffer),
+    /// Enum variant to represent a `SnowGolem`
     SnowGolem(SnowGolem),
+    /// Enum variant to represent a `Snowball`
     Snowball(Snowball),
+    /// Enum variant to represent a `SpawnerMinecart`
     SpawnerMinecart(MinecartSpawner),
+    /// Enum variant to represent a `SpectralArrow`
     SpectralArrow(SpectralArrow),
+    /// Enum variant to represent a `Spider`
     Spider(Spider),
+    /// Enum variant to represent a `Squid`
     Squid(Squid),
+    /// Enum variant to represent a `Stray`
     Stray(Stray),
+    /// Enum variant to represent a `Strider`
     Strider(Strider),
+    /// Enum variant to represent a `Tadpole`
     Tadpole(Tadpole),
+    /// Enum variant to represent a `TextDisplay`
     TextDisplay(TextDisplay),
+    /// Enum variant to represent a `Tnt`
     Tnt(PrimedTnt),
+    /// Enum variant to represent a `TntMinecart`
     TntMinecart(MinecartTnt),
+    /// Enum variant to represent a `TraderLlama`
     TraderLlama(TraderLlama),
+    /// Enum variant to represent a `Trident`
     Trident(ThrownTrident),
+    /// Enum variant to represent a `TropicalFish`
     TropicalFish(TropicalFish),
+    /// Enum variant to represent a `Turtle`
     Turtle(Turtle),
+    /// Enum variant to represent a `Vex`
     Vex(Vex),
+    /// Enum variant to represent a `Villager`
     Villager(Villager),
+    /// Enum variant to represent a `Vindicator`
     Vindicator(Vindicator),
+    /// Enum variant to represent a `WanderingTrader`
     WanderingTrader(WanderingTrader),
+    /// Enum variant to represent a `Warden`
     Warden(Warden),
+    /// Enum variant to represent a `Witch`
     Witch(Witch),
+    /// Enum variant to represent a `Wither`
     Wither(Wither),
+    /// Enum variant to represent a `WitherSkeleton`
     WitherSkeleton(WitherSkeleton),
+    /// Enum variant to represent a `WitherSkull`
     WitherSkull(WitherSkull),
+    /// Enum variant to represent a `Wolf`
     Wolf(Wolf),
+    /// Enum variant to represent a `Zoglin`
     Zoglin(Zoglin),
+    /// Enum variant to represent a `Zombie`
     Zombie(Zombie),
+    /// Enum variant to represent a `ZombieHorse`
     ZombieHorse(ZombieHorse),
+    /// Enum variant to represent a `ZombieVillager`
     ZombieVillager(ZombieVillager),
+    /// Enum variant to represent a `ZombiePiglin`
     ZombiePiglin(ZombifiedPiglin),
+    /// Enum variant to represent a `Player`
     Player(Player),
+    /// Enum variant to represent a `FishingBobber`
     FishingBobber(FishingHook),
 }

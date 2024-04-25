@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractFish;
 
+/// An instance of a tadpole
 #[derive(Default)]
 pub struct Tadpole {
     water_animal: AbstractFish,

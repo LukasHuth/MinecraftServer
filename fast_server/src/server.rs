@@ -7,11 +7,20 @@ use openssl::pkey::Private;
 use tokio::{net::TcpListener, sync::{mpsc, oneshot}, io::AsyncWriteExt};
 
 pub(crate) mod server_settings;
+/// Struct to store the players, settings and to handle/ update the world
+///
+/// # Note
+///
+/// This Struct is not finished, but will be managing the minecraft world
 pub struct Server {
+    /// A list of all connected players
     pub players: Vec<Player>,
+    /// the settings of the server
     pub settings: ServerSettings,
+    /// the private key used for the authentication of the players
     pub rsa_key: openssl::rsa::Rsa<Private>,
 }
+/// Struct for managing server messages
 pub(crate) enum ServerMessage {
     RemovePlayer(u128),
     GetPlayers(oneshot::Sender<Vec<Player>>),
@@ -70,6 +79,8 @@ impl Server {
             }
         }
     }
+    /// This functions starts a server on the port specified in the configs and only returns a
+    /// value if the server closes or an error occured that forces the server to stop
     pub async fn start() -> Result<(), Box<dyn std::error::Error>> {
         let server_settings = ServerSettings::default();
         let (sender, receiver) = mpsc::channel::<ServerMessage>(32);

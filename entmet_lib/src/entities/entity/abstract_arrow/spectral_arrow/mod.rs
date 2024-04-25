@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractArrow;
 
+/// An instance of a Spectral Arrow
 #[derive(Default)]
 pub struct SpectralArrow {
     abstract_arrow: AbstractArrow,

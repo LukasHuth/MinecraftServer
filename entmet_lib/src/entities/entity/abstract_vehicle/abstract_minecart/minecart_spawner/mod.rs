@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractMinecart;
 
+/// An instance of a minecart that carries a spawner
 #[derive(Default)]
 pub struct MinecartSpawner {
     abstract_minecart: AbstractMinecart,

@@ -2,6 +2,8 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
+/// An enum of all creeper states
+#[allow(missing_docs)]
 #[repr(i8)]
 #[derive(Default)]
 pub enum CreeperState {
@@ -9,11 +11,15 @@ pub enum CreeperState {
     Fuse = 1,
 }
 
+/// An instance of a creeper
 #[derive(Default)]
 pub struct Creeper {
     monster: Monster,
+    /// The state of the creeper
     pub state: CreeperState,
+    /// Whether it is charging or not
     pub charged: bool,
+    /// Whether it is ignited or not
     pub ignited: bool,
 }
 impl Deref for Creeper {

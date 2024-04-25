@@ -1,9 +1,12 @@
 use binary_utils::Error;
 use datatypes::ImportantEnumTrait;
 
+/// Enum used to be able to select `Status` or `Login` in the `Handshake` packet
 #[derive(Debug, Clone)]
 pub enum HandshakeNextState {
+    /// This option selects to switch to `Status`
     Status,
+    /// This option selects to switch to `Login`
     Login,
 }
 impl ImportantEnumTrait for HandshakeNextState {

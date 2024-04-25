@@ -2,24 +2,24 @@
 This is a project to learn, how to implement an documented packet (And possibly create a fully working Minecraft server).
 
 ## To-Do
+- [ ] add the missing Block states that are after [this](https://minecraft.fandom.com/wiki/Java_Edition_data_values#axis)
 - [ ] using serde for the packets etc
   - help: [serde tutorial](https://serde.rs/impl-deserializer.html)
 - [ ] implementing all the login packets
   - [x] packet implementation
   - [ ] packet usage (encrypted)
-- [ ] implementing all the configuration packets
-- [ ] implementint all the playing packets
+- [ ] implementing all the playing packets
   - [ ] implementing server handling (events redstone ticks etc.)
 - [ ] test if inlining deref's helps performance
 
 ## Known Issues
-- The Feature Flag Packet is currently brocken and is under investigation and will be fixed as fast as possible
+- The Feature Flag Packet is currently broken and is under investigation and will be fixed as fast as possible
 
 ## How to use
 
 Follow these steps to set up and run the Rust Minecraft Server:
 
-1. Clone the Repository and Navigate to the Project Directory
+1. Clone the repository and navigate to the project directory
 ```bash
 git clone git@github.com:LukasHuth/MinecraftServer.git
 cd MinecraftServer
@@ -30,7 +30,7 @@ cd MinecraftServer
 - Open the `Config.toml` file.
 - Customize the configurations according to your preferences, such as the port number, message of the day, maximum players, and offline mode.
 
-3. Build the Server:
+3. Build the Server
 
 Compile using the Cargo executable
 
@@ -38,7 +38,7 @@ Compile using the Cargo executable
 cargo build --release
 ```
 
-4. Run the Server:
+4. Run the Server
 Start the server by executing the generated binary
 ```bash
 ./target/release/minecraft_server

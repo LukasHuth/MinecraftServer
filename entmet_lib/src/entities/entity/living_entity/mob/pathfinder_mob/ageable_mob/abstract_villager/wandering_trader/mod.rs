@@ -3,6 +3,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractVillager;
 
+/// An instance of a wandering trader
 #[derive(Default)]
 pub struct WanderingTrader {
     abstract_villager: AbstractVillager,

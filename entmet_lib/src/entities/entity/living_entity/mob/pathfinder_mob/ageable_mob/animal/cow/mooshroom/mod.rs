@@ -2,15 +2,19 @@ use std::ops::{Deref, DerefMut};
 
 use super::Cow;
 
-
+/// An enum of all Mooshroom variants
 #[derive(Default)]
 pub enum MooshroomVariants {
+    /// The default red color
     #[default] Red,
+    /// The rare brown color
     Brown,
 }
+/// An instance of a Mooshroom
 #[derive(Default)]
 pub struct Mooshroom {
     cow: Cow,
+    /// The variant of the Mooshroom
     pub variant: MooshroomVariants,
 }
 impl Deref for Mooshroom {

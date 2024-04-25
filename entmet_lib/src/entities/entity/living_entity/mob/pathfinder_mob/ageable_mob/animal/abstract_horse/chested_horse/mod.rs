@@ -2,13 +2,18 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractHorse;
 
-pub mod donkey;
-pub mod llama;
-pub mod mule;
+mod donkey;
+pub use donkey::*;
+mod llama;
+pub use llama::*;
+mod mule;
+pub use mule::*;
 
+/// An interface for a rideable animal that is able to carry a chest
 #[derive(Default)]
 pub struct ChestedHorse {
     abstract_horse: AbstractHorse,
+    /// Whether it has a chest or not
     pub chest: bool,
 }
 impl Deref for ChestedHorse {

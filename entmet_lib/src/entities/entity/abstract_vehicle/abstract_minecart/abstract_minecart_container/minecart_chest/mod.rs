@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractMinecartContainer;
 
+/// An instance of a minecart that carries a chest
 #[derive(Default)]
 pub struct MinecartChest {
     abstract_minecart_container: AbstractMinecartContainer,

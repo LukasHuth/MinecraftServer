@@ -1,10 +1,15 @@
 use std::ops::{Deref, DerefMut};
 
+use datatypes::Position;
+
 use super::Entity;
 
+/// An instance of an end crystal
 pub struct EndCrystal {
     entity: Entity,
-    pub beam_target: Option<(i32, i32, i16)>,
+    /// The target of the beam, if it is targetting something
+    pub beam_target: Option<Position>,
+    /// Whether the bottom should be visible or not
     pub show_bottom: bool,
 }
 impl Deref for EndCrystal {

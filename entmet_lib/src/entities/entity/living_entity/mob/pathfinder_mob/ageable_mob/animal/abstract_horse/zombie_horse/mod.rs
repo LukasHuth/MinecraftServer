@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractHorse;
 
+/// An instance of a zombie horse
 #[derive(Default)]
 pub struct ZombieHorse {
     abstract_horse: AbstractHorse,

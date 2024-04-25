@@ -1,24 +1,24 @@
 use std::ops::{Deref, DerefMut};
 
+use crate::datatypes::BlockStateIdentifier;
+
 use super::Display;
 
-pub struct BlockDisplay {
+/// An instance of an item display
+#[derive(Default)]
+pub struct BlockDisplay<T: ?Sized + BlockStateIdentifier> {
     display: Display,
-    pub block_state: i32,
+    /// The 
+    pub block_state: T,
 }
-impl Default for BlockDisplay {
-    fn default() -> Self {
-        Self { display: Display::default(), block_state: 0 }
-    }
-}
-impl Deref for BlockDisplay {
+impl<T: BlockStateIdentifier> Deref for BlockDisplay<T> {
     type Target = Display;
 
     fn deref(&self) -> &Self::Target {
         &self.display
     }
 }
-impl DerefMut for BlockDisplay {
+impl<T: BlockStateIdentifier> DerefMut for BlockDisplay<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.display
     }

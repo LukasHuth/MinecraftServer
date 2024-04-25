@@ -3,14 +3,22 @@ use std::ops::{Deref, DerefMut};
 use slot_lib::Slot;
 use super::Entity;
 
-pub mod thrown_egg;
-pub mod thrown_ender_pearl;
-pub mod thrown_experience_bottle;
-pub mod thrown_potion;
-pub mod snowball;
+mod thrown_egg;
+pub use thrown_egg::*;
+mod thrown_ender_pearl;
+pub use thrown_ender_pearl::*;
+mod thrown_experience_bottle;
+pub use thrown_experience_bottle::*;
+mod thrown_potion;
+pub use thrown_potion::*;
+mod snowball;
+pub use snowball::*;
 
+/// An iterface for a thrown projectile
+#[derive(Default)]
 pub struct ThrownItemProtectile {
     entity: Entity,
+    /// The item data of the thrown protectile
     pub slot: Slot,
 }
 impl Deref for ThrownItemProtectile {
@@ -23,13 +31,5 @@ impl Deref for ThrownItemProtectile {
 impl DerefMut for ThrownItemProtectile {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.entity
-    }
-}
-impl Default for ThrownItemProtectile {
-    fn default() -> Self {
-        Self {
-            entity: Entity::default(),
-            slot: Slot::Empty,
-        }
     }
 }

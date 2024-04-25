@@ -2,9 +2,12 @@ use std::ops::{Deref, DerefMut};
 
 use super::Mob;
 
-pub mod ghast;
-pub mod phantom;
+mod ghast;
+pub use ghast::*;
+mod phantom;
+pub use phantom::*;
 
+/// An interface of a flying mob
 #[derive(Default)]
 pub struct Flying {
     mob: Mob,

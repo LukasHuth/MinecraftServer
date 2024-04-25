@@ -2,27 +2,47 @@ use std::ops::{Deref, DerefMut};
 
 use super::AgeableMob;
 
-pub mod sniffer;
-pub mod abstract_horse;
-pub mod axolotl;
-pub mod bee;
-pub mod fox;
-pub mod frog;
-pub mod ocelot;
-pub mod panda;
-pub mod pig;
-pub mod rabbit;
-pub mod turtle;
-pub mod polar_bear;
-pub mod chicken;
-pub mod cow;
-pub mod hoglin;
-pub mod sheep;
-pub mod strider;
-pub mod tameable_animal;
-pub mod goat;
+mod sniffer;
+pub use sniffer::*;
+mod abstract_horse;
+pub use abstract_horse::*;
+mod axolotl;
+pub use axolotl::*;
+mod bee;
+pub use bee::*;
+mod fox;
+pub use fox::*;
+mod frog;
+pub use frog::*;
+mod ocelot;
+pub use ocelot::*;
+mod panda;
+pub use panda::*;
+mod pig;
+pub use pig::*;
+mod rabbit;
+pub use rabbit::*;
+mod turtle;
+pub use turtle::*;
+mod polar_bear;
+pub use polar_bear::*;
+mod chicken;
+pub use chicken::*;
+mod cow;
+pub use cow::*;
+mod hoglin;
+pub use hoglin::*;
+mod sheep;
+pub use sheep::*;
+mod strider;
+pub use strider::*;
+mod tameable_animal;
+pub use tameable_animal::*;
+mod goat;
+pub use goat::*;
 
-#[derive(Default)]
+/// An interface of an animal
+#[derive(Default, Clone)]
 pub struct Animal {
     ageable_mob: AgeableMob,
 }

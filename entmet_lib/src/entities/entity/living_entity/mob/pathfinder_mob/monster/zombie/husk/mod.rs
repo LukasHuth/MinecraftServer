@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Zombie;
 
+/// An instance of a husk
 #[derive(Default)]
 pub struct Husk {
     zombie: Zombie,

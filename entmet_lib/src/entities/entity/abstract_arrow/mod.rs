@@ -1,30 +1,41 @@
 use std::ops::{Deref, DerefMut};
 
+use crate::datatypes::Mask;
+
 use super::Entity;
 
-pub mod arrow;
-pub mod spectral_arrow;
-pub mod thrown_trident;
+mod arrow;
+pub use arrow::*;
+mod spectral_arrow;
+pub use spectral_arrow::*;
+mod thrown_trident;
+pub use thrown_trident::*;
 
+/// An enum of the Arrow data
+#[derive(Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum ArrowInfo {
+    /// Whether it is a critical hit or not
+    IsCritical = 0x01,
+    /// Whether it has no clip
+    ///
+    /// # Note
+    ///
+    /// Used for loyality tridents when they return
+    IsNoclip = 0x02,
+}
+impl Into<u8> for ArrowInfo {
+    fn into(self) -> u8 {
+        self as u8
+    }
+}
+
+/// An interface to hold data for arrows
+#[derive(Default)]
 pub struct AbstractArrow {
     entity: Entity,
-    color: i32,
-}
-impl AbstractArrow {
-    pub fn get_color(&self) -> i32 {
-        self.color
-    }
-    pub fn set_color(&mut self, value: i32) {
-        self.color = value;
-    }
-}
-impl Default for AbstractArrow {
-    fn default() -> Self {
-        Self {
-            entity: Entity::default(),
-            color: -1,
-        }
-    }
+    /// A `Mask` holding potential data of the `AbstractArrow`
+    pub info: Mask<ArrowInfo>,
 }
 impl Deref for AbstractArrow {
     type Target = Entity;

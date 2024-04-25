@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::ItemFrame;
 
+/// An instance of an item frame that is glowing
 #[derive(Default)]
 pub struct GlowingItemFrame {
     item_frame: ItemFrame,

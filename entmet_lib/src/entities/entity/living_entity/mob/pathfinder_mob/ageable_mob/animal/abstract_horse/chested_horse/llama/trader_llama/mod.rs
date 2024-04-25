@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Llama;
 
+/// An instance of a llama that is owned by a wandering trader
 #[derive(Default)]
 pub struct TraderLlama {
     llama: Llama,

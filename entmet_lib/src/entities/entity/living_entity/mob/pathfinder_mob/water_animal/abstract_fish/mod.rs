@@ -1,14 +1,21 @@
 use std::ops::{Deref, DerefMut};
 
 use super::WaterAnimal;
-pub mod cod;
-pub mod puffer_fish;
-pub mod salmon;
-pub mod tropical_fish;
-pub mod tadpole;
+mod cod;
+pub use cod::*;
+mod puffer_fish;
+pub use puffer_fish::*;
+mod salmon;
+pub use salmon::*;
+mod tropical_fish;
+pub use tropical_fish::*;
+mod tadpole;
+pub use tadpole::*;
 
+/// An interface of a fish
 pub struct AbstractFish {
     water_animal: WaterAnimal,
+    /// whether the fish is from a bucket or not
     pub from_bucket: bool,
 }
 impl Deref for AbstractFish {

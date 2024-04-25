@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Guardian;
 
+/// An instance of an elder guardian
 #[derive(Default)]
 pub struct ElderGuardian {
     guardian: Guardian,

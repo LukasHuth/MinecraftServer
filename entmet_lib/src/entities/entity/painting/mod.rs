@@ -2,7 +2,16 @@ use std::ops::{Deref, DerefMut};
 
 use super::Entity;
 
-#[derive(Clone, Copy)]
+/// An enum of all the minecraft painting variants
+///
+/// # Example
+/// ```rust
+/// use entmet_lib::entities::entity::PaintingVariant;
+/// let var1 = PaintingVariant::Alban;
+/// assert_eq!(var1 as u8, 1);
+/// ```
+#[derive(Clone, Copy, Default)]
+#[allow(missing_docs)]
 #[repr(u8)]
 pub enum PaintingVariant {
     Alban = 1,
@@ -18,7 +27,7 @@ pub enum PaintingVariant {
     Fighters = 11,
     Fire = 12,
     Graham = 13,
-    Kebab = 14,
+    #[default] Kebab = 14,
     Match = 15,
     Pigscene = 16,
     Plant = 17,
@@ -36,8 +45,12 @@ pub enum PaintingVariant {
     Wind = 29,
     Wither = 30,
 }
+
+/// An instance of a painting
+#[derive(Default)]
 pub struct Painting {
     entity: Entity,
+    /// The variant of the painting
     pub var: PaintingVariant,
 }
 impl Deref for Painting {
@@ -50,13 +63,5 @@ impl Deref for Painting {
 impl DerefMut for Painting {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.entity
-    }
-}
-impl Default for Painting {
-    fn default() -> Self {
-        Self {
-            entity: Entity::default(),
-            var: PaintingVariant::Kebab,
-        }
     }
 }
