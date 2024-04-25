@@ -7,3 +7,4 @@ edition = "2021"
 nbt_lib = { path = "../nbt_lib" }
 datatypes = { path = "../datatypes" }
 binary_utils = { path = "../binary_utils" }
+flate2 = { version = "1.0.28", features = ["zlib"] }
