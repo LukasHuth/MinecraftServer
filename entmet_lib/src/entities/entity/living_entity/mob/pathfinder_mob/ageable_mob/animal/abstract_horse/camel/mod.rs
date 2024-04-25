@@ -2,10 +2,13 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractHorse;
 
+/// An instance of a camel
 #[derive(Default)]
 pub struct Camel {
     abstract_horse: AbstractHorse,
+    /// Wether it is dashing or not
     pub dashing: bool,
+    /// The last tick that the camel changed their pose
     pub last_pose_change_tick: i64,
 }
 impl Deref for Camel {

@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::Animal;
 
+/// An instance of a chicken
 #[derive(Default)]
 pub struct Chicken {
     animal: Animal,

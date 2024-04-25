@@ -2,9 +2,11 @@ use std::ops::{Deref, DerefMut};
 
 use super::Raider;
 
+/// An instance of a witch
 #[derive(Default)]
 pub struct Witch {
     raider: Raider,
+    /// Whether it is drinking a potion or not
     pub drinking_potion: bool,
 }
 impl Deref for Witch {

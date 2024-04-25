@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractFish;
 
+/// An instance of a cod
 #[derive(Default)]
 pub struct Cod {
     water_animal: AbstractFish,

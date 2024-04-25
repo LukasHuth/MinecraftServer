@@ -25,6 +25,13 @@ pub mod traits;
 /// type cast to give the NbtValue type id and undestandable name
 pub type NbtTypeId = u8;
 
+/// The id of the current nbt version
+///
+/// # Info
+///
+/// this number is according to [this article](https://minecraft.fandom.com/wiki/NBT_format#History)
+pub const NBT_VERSION: i32 = 19133;
+
 /// Enum storing NBT data
 #[derive(Debug, Clone)]
 pub enum NbtValue {

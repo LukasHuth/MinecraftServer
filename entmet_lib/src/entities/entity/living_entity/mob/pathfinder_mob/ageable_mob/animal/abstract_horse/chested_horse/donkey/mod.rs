@@ -2,10 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use super::ChestedHorse;
 
+/// An instance of a donkey
 #[derive(Default)]
 pub struct Donkey {
     chested_horse: ChestedHorse,
-    pub chest: bool,
 }
 impl Deref for Donkey {
     type Target = ChestedHorse;

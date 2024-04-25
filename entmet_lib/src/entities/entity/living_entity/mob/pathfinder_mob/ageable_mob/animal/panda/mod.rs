@@ -4,6 +4,8 @@ use crate::datatypes::Mask;
 
 use super::Animal;
 
+/// An enum of all gene variants
+#[allow(missing_docs)]
 #[repr(u8)]
 #[derive(Default)]
 pub enum PandaGene {
@@ -16,6 +18,8 @@ pub enum PandaGene {
     Aggressive = 6,
 }
 
+/// An enum of all states a panda can be in
+#[allow(missing_docs)]
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum PandaInfo {
@@ -30,14 +34,21 @@ impl Into<u8> for PandaInfo {
     }
 }
 
+/// An instance of a panda
 #[derive(Default)]
 pub struct Panda {
     animal: Animal,
+    /// the current breed timer
     pub breed_timer: i32,
+    /// The timer until the sneeze ends
     pub sneeze_timer: i32,
+    /// The timer until the eat animation ends
     pub eat_timer: i32,
+    /// The main gene of the Panda
     pub main_gene: PandaGene,
+    /// The hidden gene of the panda
     pub hidden_gene: PandaGene,
+    /// A mask of all states of the panda
     pub info: Mask<PandaInfo>,
 }
 impl Deref for Panda {

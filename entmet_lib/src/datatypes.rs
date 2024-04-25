@@ -214,6 +214,10 @@ pub struct Quaternion {
     pub w: f32,
 }
 /// An enum of Minecraft colors
+///
+/// # Sources
+/// - [minecraft.fandom.com/wiki/Tropical_Fish](https://minecraft.fandom.com/wiki/Tropical_Fish#Color)
+/// - [minecraft.fandom.com/wiki/Cat](https://minecraft.fandom.com/wiki/Cat#Collar_color)
 #[repr(u8)]
 #[derive(Default, Clone, Copy)]
 pub enum MinecraftColor {

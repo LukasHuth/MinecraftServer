@@ -2,9 +2,11 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractIllager;
 
+/// An instance of a pillager
 #[derive(Default)]
 pub struct Pillager {
     abstract_illager: AbstractIllager,
+    /// Whether it is charging or not
     pub charging: bool,
 }
 impl Deref for Pillager {

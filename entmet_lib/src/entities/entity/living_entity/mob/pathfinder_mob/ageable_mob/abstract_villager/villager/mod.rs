@@ -4,9 +4,13 @@ use crate::datatypes::VillagerData;
 
 use super::AbstractVillager;
 
+/// An instance of a villager
 #[derive(Default)]
 pub struct Villager {
     abstract_villager: AbstractVillager,
+    /// Specific villager data
+    ///
+    /// This data contains their `profession`, `variant` and `level`
     pub data: VillagerData,
 }
 impl Deref for Villager {

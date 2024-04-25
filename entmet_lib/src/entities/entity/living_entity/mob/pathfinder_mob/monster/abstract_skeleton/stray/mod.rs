@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractSkeleton;
 
+/// An instance of a stray
 #[derive(Default)]
 pub struct Stray {
     abstract_skeleton: AbstractSkeleton,

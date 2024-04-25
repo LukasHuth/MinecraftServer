@@ -9,6 +9,7 @@ pub use wither_skeleton::*;
 mod stray;
 pub use stray::*;
 
+/// An interface if a skeleton
 #[derive(Default)]
 pub struct AbstractSkeleton {
     monster: Monster,

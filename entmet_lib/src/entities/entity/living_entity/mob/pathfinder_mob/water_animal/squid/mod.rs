@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::WaterAnimal;
 
+/// An instance of a squid
 #[derive(Default)]
 pub struct Squid {
     water_animal: WaterAnimal,

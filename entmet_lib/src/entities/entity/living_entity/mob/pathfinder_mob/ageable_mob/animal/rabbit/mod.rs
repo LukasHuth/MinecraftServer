@@ -2,6 +2,8 @@ use std::ops::{Deref, DerefMut};
 
 use super::Animal;
 
+/// An enum of all rabbit variants
+#[allow(missing_docs)]
 #[repr(u8)]
 #[derive(Default)]
 pub enum RabbitVariant {
@@ -14,9 +16,11 @@ pub enum RabbitVariant {
     Evil = 99,
 }
 
+/// An instance of a rabbit
 #[derive(Default)]
 pub struct Rabbit {
     animal: Animal,
+    /// The variant of the rabbit
     pub variant: RabbitVariant,
 }
 impl Deref for Rabbit {

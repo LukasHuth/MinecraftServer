@@ -103,3 +103,8 @@ pub trait NbtRead {
     /// Returns a Result with the value of an Error, why the read failed
     fn from_reader_text_component(reader: NbtReader) -> NbtResult<NbtValue>;
 }
+/// A trait that allows structs to have a function that transrforms themself into a `NbtValue`
+pub trait IntoNbt {
+    /// Converts this struct into a `NbtValue`
+    fn to_nbt(&self) -> NbtValue;
+}

@@ -2,8 +2,10 @@ use std::ops::{Deref, DerefMut};
 
 use super::Mob;
 
+/// An instance of a slime
 pub struct Slime {
     mob: Mob,
+    /// The size of the slime
     pub size: i32,
 }
 impl Default for Slime {

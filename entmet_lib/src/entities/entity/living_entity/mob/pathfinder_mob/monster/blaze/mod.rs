@@ -2,9 +2,11 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
+/// An intance of a blaze
 #[derive(Default)]
 pub struct Blaze {
     monster: Monster,
+    /// Whether it is on fire or not
     pub on_fire: bool,
 }
 impl Deref for Blaze {

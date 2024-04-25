@@ -9,6 +9,7 @@ pub use pillager::*;
 mod spellcaster_illager;
 pub use spellcaster_illager::*;
 
+/// An interface of an illager
 #[derive(Default)]
 pub struct AbstractIllager {
     raider: Raider,

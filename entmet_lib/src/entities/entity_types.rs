@@ -1,4 +1,4 @@
-use crate::datatypes::{block_states::Axis2D, BlockStateIdentifier};
+use crate::datatypes::BlockStateIdentifier;
 
 use super::entity::{
     AreaEffectCloud, ArmorStand, Arrow, Axolotl, Bat, Bee, Blaze, BlockDisplay, Boat, Camel, Cat, ChestBoat, Chicken, Cod, Cow, Creeper, Dolphin, Donkey, DragonFireball, Drowned, ElderGuardian,

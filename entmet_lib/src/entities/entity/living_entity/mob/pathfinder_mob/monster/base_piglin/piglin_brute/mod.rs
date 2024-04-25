@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::BasePiglin;
 
+/// An instance of a piglin brute
 #[derive(Default)]
 pub struct PiglinBrute {
     base_piglin: BasePiglin,

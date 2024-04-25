@@ -11,6 +11,7 @@ pub use abstract_golem::*;
 mod monster;
 pub use monster::*;
 
+/// An interface for mobs using pathfinder
 #[derive(Default, Clone)]
 pub struct PathfinderMob {
     mob: Mob,

@@ -2,9 +2,11 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
+/// An instance of a zoglin
 #[derive(Default)]
 pub struct Zoglin {
     monster: Monster,
+    /// Whether it is a baby or not
     pub baby: bool,
 }
 impl Deref for Zoglin {

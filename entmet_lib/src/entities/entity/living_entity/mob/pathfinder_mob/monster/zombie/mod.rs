@@ -11,10 +11,17 @@ pub use drowned::*;
 mod zombified_piglin;
 pub use zombified_piglin::*;
 
+/// An instance of a zombie
+///
+/// # Note
+///
+/// Also used for inheritance of all other zombiefied monsters
 #[derive(Default)]
 pub struct Zombie {
     monster: Monster,
+    /// Whether it is a baby or not
     pub baby: bool,
+    /// Whether it is becomming a drowned or not
     pub becoming_a_drowned: bool,
 }
 impl Deref for Zombie {

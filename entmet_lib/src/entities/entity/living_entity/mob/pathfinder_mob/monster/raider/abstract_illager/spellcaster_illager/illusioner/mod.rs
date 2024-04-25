@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::SpellcasterIllager;
 
+/// An instance of an illusioner
 #[derive(Default)]
 pub struct Illusioner {
     spellcaster_illager: SpellcasterIllager,

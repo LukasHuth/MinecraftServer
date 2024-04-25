@@ -10,6 +10,7 @@ pub use snow_golem::*;
 mod shulker;
 pub use shulker::*;
 
+/// An interface for Golem like mobs
 #[derive(Default)]
 pub struct AbstractGolem {
     pathfinder_mob: PathfinderMob,

@@ -1,4 +1,4 @@
-// #![deny(missing_docs)]
+#![deny(missing_docs)]
 //! This crate provides structs for every entity in Minecraft
 //!
 //! # Example

@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::ChestedHorse;
 
+/// An instance of a mule
 #[derive(Default)]
 pub struct Mule {
     chested_horse: ChestedHorse,

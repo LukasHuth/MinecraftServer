@@ -9,11 +9,15 @@ pub use wolf::*;
 mod parrot;
 pub use parrot::*;
 
+/// An interface of a tameable amimal
 #[derive(Default)]
 pub struct TameableAnimal {
     animal: Animal,
+    /// Whether it is sitting or not
     pub sitting: bool,
+    /// Whether it is sitting or not
     pub tamed: bool,
+    /// The uuid of the owner, if it has one
     pub owner: Option<u128>,
 }
 impl Deref for TameableAnimal {

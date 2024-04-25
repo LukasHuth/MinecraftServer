@@ -41,6 +41,7 @@ pub use tameable_animal::*;
 mod goat;
 pub use goat::*;
 
+/// An interface of an animal
 #[derive(Default, Clone)]
 pub struct Animal {
     ageable_mob: AgeableMob,

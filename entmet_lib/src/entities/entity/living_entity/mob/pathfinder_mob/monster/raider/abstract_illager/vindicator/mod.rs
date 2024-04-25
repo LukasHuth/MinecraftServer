@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractIllager;
 
+/// An instance of a vindicator
 #[derive(Default)]
 pub struct Vindicator {
     abstract_illager: AbstractIllager

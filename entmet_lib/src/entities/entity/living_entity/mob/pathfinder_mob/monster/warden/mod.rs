@@ -2,9 +2,11 @@ use std::ops::{Deref, DerefMut};
 
 use super::Monster;
 
+/// An instance of a warden
 #[derive(Default)]
 pub struct Warden {
     monster: Monster,
+    /// The anger level of the warden
     pub anger_level: i32,
 }
 impl Deref for Warden {

@@ -7,6 +7,7 @@ pub use ghast::*;
 mod phantom;
 pub use phantom::*;
 
+/// An interface of a flying mob
 #[derive(Default)]
 pub struct Flying {
     mob: Mob,

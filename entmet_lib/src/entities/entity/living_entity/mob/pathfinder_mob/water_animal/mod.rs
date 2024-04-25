@@ -7,6 +7,8 @@ mod dolphin;
 pub use dolphin::*;
 mod abstract_fish;
 pub use abstract_fish::*;
+
+/// An interface of a water animal
 #[derive(Default)]
 pub struct WaterAnimal {
     pathfinder_mob: PathfinderMob,

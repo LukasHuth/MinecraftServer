@@ -5,6 +5,7 @@ use super::Animal;
 mod mooshroom;
 pub use mooshroom::*;
 
+/// An instance of a Cow
 #[derive(Default, Clone)]
 pub struct Cow {
     animal: Animal,

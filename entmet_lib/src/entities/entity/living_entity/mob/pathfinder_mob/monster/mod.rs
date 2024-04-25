@@ -33,6 +33,7 @@ pub use enderman::*;
 mod guardian;
 pub use guardian::*;
 
+/// An interface of a monster
 #[derive(Default)]
 pub struct Monster {
     pathfinder_mob: PathfinderMob,

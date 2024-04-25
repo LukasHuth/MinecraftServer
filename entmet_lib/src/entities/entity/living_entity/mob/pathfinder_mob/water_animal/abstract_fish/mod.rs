@@ -12,8 +12,10 @@ pub use tropical_fish::*;
 mod tadpole;
 pub use tadpole::*;
 
+/// An interface of a fish
 pub struct AbstractFish {
     water_animal: WaterAnimal,
+    /// whether the fish is from a bucket or not
     pub from_bucket: bool,
 }
 impl Deref for AbstractFish {

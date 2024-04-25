@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::AbstractSkeleton;
 
+/// An instance of a wither skeleton
 #[derive(Default)]
 pub struct WitherSkeleton {
     abstract_skeleton: AbstractSkeleton,

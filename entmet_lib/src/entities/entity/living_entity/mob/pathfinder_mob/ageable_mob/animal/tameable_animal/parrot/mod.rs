@@ -2,6 +2,8 @@ use std::ops::{Deref, DerefMut};
 
 use super::TameableAnimal;
 
+/// An enum of all parrot variants
+#[allow(missing_docs)]
 #[repr(u8)]
 #[derive(Default)]
 pub enum ParrotVariant {
@@ -12,9 +14,11 @@ pub enum ParrotVariant {
     Grey = 4,
 }
 
+/// An instance of a parrot
 #[derive(Default)]
 pub struct Parrot {
     tameable_animal: TameableAnimal,
+    /// The variant of the parrot
     pub variant: ParrotVariant,
 }
 impl Deref for Parrot {

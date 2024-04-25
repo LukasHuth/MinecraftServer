@@ -2,9 +2,11 @@ use std::ops::{Deref, DerefMut};
 
 use super::Animal;
 
+/// An instance of a Polarbear
 #[derive(Default)]
 pub struct Polarbear {
     animal: Animal,
+    /// Whether it is statnding or not
     pub standing_up: bool,
 }
 impl Deref for Polarbear {
