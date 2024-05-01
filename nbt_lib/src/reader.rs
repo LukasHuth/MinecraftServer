@@ -33,7 +33,7 @@ impl NbtReader {
         if let Err(err) = decoder.read_to_end(&mut data) {
             println!("Error: {}", err);
         }
-        println!("{:?}", data);
+        // println!("{:?}", data);
         Self { data, cursor: 0 }
     }
     /// function to read an u8
