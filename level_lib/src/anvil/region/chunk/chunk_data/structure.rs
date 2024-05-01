@@ -1,23 +1,145 @@
 //! Module for structure data inside of a chunk
 
+use std::ops::Deref;
+
+use self::end_city_element::EndCityElement;
+
+/// Module of an end city element
+pub mod end_city_element;
+/// Module for a jungle temple
+pub mod jungle_temple;
+/// Module for a strunghold
+pub mod stronghold;
+/// Module for an igloo
+pub mod igloo;
+/// Module for a nether fortress
+pub mod nether_fortress;
+/// Module for a mineshaft
+pub mod mineshaft;
+/// Module for an ocean monument
+pub mod ocean_monument;
+/// Module for an ocean ruin
+pub mod ocean_ruin;
+/// Module for a shipwrack
+pub mod ship_wrack;
+/// Module for a swarmp hut
+pub mod swarmp_hut;
+/// Module for a burried trasure
+pub mod burried_treasure;
+/// Module for a woodland mansion
+pub mod woodland_mansion;
+/// Module for a dessert temple
+pub mod dessert_temple;
+// Bastion ???
+
+
+/// An enum of the differenct types of structure data
+pub enum StructureData {
+    /// Structure data of an end city
+    EndCity {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+        /// All elements of the end city
+        children: Vec<EndCityElement>,
+    },
+    /// Structure data of a `JungleTemple`
+    JungleTemple {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `Stronghold`
+    Stronghold {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `Igloo`
+    Igloo {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `NetherFortress`
+    NetherFortress {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `Mineshaft`
+    Mineshaft {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `OceanMonument`
+    OceanMonument {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `OceanRuin`
+    OceanRuin {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `ShipWrack`
+    ShipWrack {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `SwarmpHut`
+    SwarmpHut {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `BurriedTreasure`
+    BurriedTreasure {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `WoodlandMansion`
+    WoodlandMansion {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `DessertTemple`
+    DessertTemple {
+        /// The basic data of a structure
+        basic_data: BasicStructureData,
+    },
+    /// Structure data of a `Bastion`
+    Bastion {}
+}
+impl Deref for StructureData {
+    type Target = BasicStructureData;
+
+    fn deref(&self) -> &Self::Target {
+        match self {
+            Self::EndCity { basic_data, .. } => basic_data,
+            Self::JungleTemple { basic_data } => basic_data,
+            Self::Stronghold { basic_data } => basic_data,
+            Self::Igloo { basic_data } => basic_data,
+            Self::NetherFortress { basic_data } => basic_data,
+            Self::Mineshaft { basic_data } => basic_data,
+            Self::OceanMonument { basic_data } => basic_data,
+            Self::OceanRuin { basic_data } => basic_data,
+            Self::ShipWrack { basic_data } => basic_data,
+            Self::SwarmpHut { basic_data } => basic_data,
+            Self::BurriedTreasure { basic_data } => basic_data,
+            Self::WoodlandMansion { basic_data } => basic_data,
+            Self::DessertTemple { basic_data } => basic_data,
+            Self::Bastion { .. } => unimplemented!(),
+        }
+    }
+}
+
 /// A struct for structure data
-pub struct StructureData {
+pub struct BasicStructureData {
     /// The six coordinated of the bounding box lower x, y, z and upper x, y, z
     pub bounding_box: [i32;6],
     /// The biome id the structure is in
     pub biome: String,
-    /// A list of all structure pieces
-    pub children: Vec<StructurePiece>,
     /// The chunk x coordinate of this structure
     pub chunk_x: i32,
     /// The chunk z coordinate of this structure
     pub chunk_z: i32,
     /// The id of the structure
     pub id: String,
-    /// A list where the structure already generated. Only used in monument
-    pub processed: Option<Vec<(i32, i32)>>,
-    /// (Village only) Whether the village generated at least 3 non-roads.
-    pub valid: Option<bool>,
 }
 /// A struct for a piece of a structure
 ///
