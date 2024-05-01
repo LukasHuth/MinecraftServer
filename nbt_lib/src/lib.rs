@@ -1,6 +1,11 @@
 #![deny(missing_docs)]
 //! This crate allows reading and writing minecraft NBT (Named Binary Tag) data
 
+/// Module for Deserialization
+pub mod de;
+/// Module for Serialization
+pub mod ser;
+
 /// Module that implements the functions to read NBT data
 pub mod reader;
 
