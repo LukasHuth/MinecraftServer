@@ -105,7 +105,7 @@ pub struct ChunkData {
     ///  Structures that are yet to be generated, stored by general type. Some parts of the
     ///  structures may have already been generated. Completely generated structures are removed by
     ///  setting their id to "INVALID" and removing all other tags.
-    pub starts: Vec<(String, Option<structure::StructureData>)>,
+    pub starts: Vec<(String, ChunkDataHolder)>,
 }
 /// This enum is to determine, if a structure is in a chunk or not
 pub enum ChunkDataHolder {
