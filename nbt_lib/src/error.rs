@@ -42,3 +42,63 @@ impl std::fmt::Display for NbtError {
         }
     }
 }
+
+/// An error enum for nbt serialization
+#[derive(Debug)]
+#[allow(missing_docs)]
+pub enum Error {
+    Message(String),
+    Eof,
+    Syntax,
+    ExpectedBoolean,
+    ExpectedByte,
+    ExpectedShort,
+    ExpectedInteger,
+    ExpectedLong,
+    ExpectedFloat,
+    ExpectedDouble,
+    ExpectedByteArray,
+    ExpectedIntArray,
+    ExpectedLongArray,
+    ExpectedString,
+    ExpectedList,
+    ExpectedMap,
+    TrailingCharacters,
+}
+/// A Result type for nbt serialization
+pub type NbtSerializeResult<T> = std::result::Result<T, Error>;
+impl std::fmt::Display for Error {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Error::Message(msg) => formatter.write_str(msg),
+            Error::Eof => formatter.write_str("unexpected end of input"),
+            Error::Syntax => formatter.write_str("unexpected syntax"),
+            Error::ExpectedBoolean => formatter.write_str("expected boolean"),
+            Error::ExpectedByte => formatter.write_str("expected byte"),
+            Error::ExpectedShort => formatter.write_str("expected short"),
+            Error::ExpectedInteger => formatter.write_str("expected integer"),
+            Error::ExpectedLong => formatter.write_str("expected long"),
+            Error::ExpectedFloat => formatter.write_str("expected float"),
+            Error::ExpectedDouble => formatter.write_str("expected double"),
+            Error::ExpectedString => formatter.write_str("expected string"),
+            Error::ExpectedList => formatter.write_str("expected list"),
+            Error::ExpectedMap => formatter.write_str("expected map"),
+            Error::ExpectedByteArray => formatter.write_str("expected byte array"),
+            Error::ExpectedIntArray => formatter.write_str("expected int array"),
+            Error::ExpectedLongArray => formatter.write_str("expected long array"),
+            Error::TrailingCharacters => formatter.write_str("found training characters")
+            /* and so forth */
+        }
+    }
+}
+impl std::error::Error for Error {}
+impl serde::de::Error for Error {
+    fn custom<T>(msg:T) -> Self where T:std::fmt::Display {
+        Error::Message(msg.to_string())
+    }
+}
+impl serde::ser::Error for Error {
+    fn custom<T>(msg:T) -> Self where T:std::fmt::Display {
+        Error::Message(msg.to_string())
+    }
+}
