@@ -23,7 +23,7 @@ pub enum NbtError {
     /// This error occurs, if a specific type is expected, but an other one is found
     IncorrectType(NbtTypeId, NbtTypeId),
 }
-/// A type declaration to store data `T` or return an error of `NbtError`
+/// A type declaration to store data `T` or return an error of [`NbtError`]
 pub type NbtResult<T> = std::result::Result<T, NbtError>;
 impl std::error::Error for NbtError {}
 impl std::fmt::Display for NbtError {
@@ -65,8 +65,10 @@ pub enum Error {
     ExpectedMap,
     TrailingCharacters,
 }
-/// A Result type for nbt serialization
-pub type NbtSerializeResult<T> = std::result::Result<T, Error>;
+/// A Result type for nbt serialization with error type [`Error`]
+///
+/// [`Error`]: Error
+pub type Result<T> = std::result::Result<T, Error>;
 impl std::fmt::Display for Error {
     fn fmt(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
