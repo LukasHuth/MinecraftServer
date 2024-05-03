@@ -66,6 +66,9 @@ pub enum Error {
     TrailingCharacters,
 }
 impl Error {
+    /// Generate a [`Message`] with no root comound message
+    ///
+    /// [`Message`]: `Error::Message`
     pub fn no_root_compound() -> Self {
         Self::Message("The found element should have been an root compound, but it wasn't".to_string())
     }

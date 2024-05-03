@@ -1,15 +1,12 @@
 use std::io::Write;
 
-use serde::{ser, Serialize, Serializer };
-use serde::ser::{Impossible, SerializeSeq, SerializeStruct};
+use serde::{ser, Serialize };
+use serde::ser::{Impossible, SerializeSeq};
 
 use byteorder::{BigEndian, WriteBytesExt};
 
 use crate::error::{Error, Result};
-use crate::version::Java;
-use crate::{NbtTypeId, NbtValue};
-mod constants;
-pub use constants::*;
+use crate::NbtTypeId;
 
 mod write_nbt_trait;
 use write_nbt_trait::WriteNbt;
