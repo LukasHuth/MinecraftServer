@@ -59,5 +59,6 @@ Ensure to adjust these configurations according to your server requirements befo
 
 Shoutout to [shenjack](https://github.com/shenjackyuanjie) and [Yue Fei](https://github.com/InfyniteHeap) with their work on the crate [nbt-rust](https://github.com/shenjackyuanjie/nbt-rust).
 Their crate helped me out a lot to implement a fine tuned working NBT library.
+Also thanks to [Owen Gage](https://github.com/owengage) and their crate [fastnbt](https://github.com/owengage/fastnbt)
 More Informations [here](./nbt_lib/README.md)
 

@@ -1,9 +1,40 @@
+//! This module contains a serde implementation to serialize into NBT data.
+//!
+//! # Shoutout
+//!
+//! Big thanks to [Owen Gage](https://github.com/owengage) and their project [fastnbt](https://github.com/owengage/fastnbt/tree/master)
+//! it helped so much at implementing this version
+//!
+//! # To Do
+//! The structs and implementations inside of this module should get their own modules and files
+//!
+//! # Example
+//! ```
+//! use serde::Serialize;
+//!
+//! use nbt_lib::ser::to_bytes_with_opts;
+//!
+//! #[derive(Serialize, Debug)]
+//! struct HelloWorld {
+//!     name: String
+//! }
+//!
+//! #[test]
+//! fn test_ser() {
+//!     let test = HelloWorld { name: "Bananrama".to_string() };
+//!     let test_data = to_bytes_with_opts(&test, "hello world".into()).unwrap();
+//!     let expected_data = include_bytes!("../test_data/hello_world.nbt");
+//!     assert_eq!(test_data, expected_data);
+//! }
+//! ```
 use std::io::Write;
 
 use serde::{ser, Serialize };
 use serde::ser::{Impossible, SerializeSeq};
 
 use byteorder::{BigEndian, WriteBytesExt};
+
+use std::fmt::Debug;
 
 use crate::error::{Error, Result};
 use crate::NbtTypeId;
@@ -13,8 +44,59 @@ use write_nbt_trait::WriteNbt;
 
 mod name_serializer;
 
+/// Serialize some `T` into NBT data.
+#[inline]
+pub fn to_bytes<T: Serialize + Debug>(v: &T) -> Result<Vec<u8>> {
+    to_bytes_with_opts(v, Default::default())
+}
+
+/// Options for customizing serialization.
+#[derive(Default, Debug, Clone)]
+pub struct SerOpts {
+    root_name: String,
+}
+
+impl SerOpts {
+    /// Create new options. This object follows a builder pattern.
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    /// Set the root name (top level) of the compound. In most Minecraft data
+    /// structures this is the empty string. The [`ser`][`crate::ser`] module
+    /// contains an example.
+    pub fn root_name(mut self, root_name: impl Into<String>) -> Self {
+        self.root_name = root_name.into();
+        self
+    }
+}
+impl From<&str> for SerOpts {
+    fn from(value: &str) -> Self {
+        value.to_string().into()
+    }
+}
+impl From<String> for SerOpts {
+    fn from(root_name: String) -> Self {
+        Self { root_name }
+    }
+}
+
+/// converts data implementing [`Serialize`] into NBT data bytes
+///
+/// [`Serialize`]: `serde::Serialize`
+pub fn to_bytes_with_opts<T: Serialize + Debug>(v: &T, opts: SerOpts) -> Result<Vec<u8>> {
+    let mut result = vec![];
+    let mut serializer = Serializer {
+        writer: &mut result,
+        root_name: opts.root_name
+    };
+    v.serialize(&mut serializer)?;
+    Ok(result)
+}
+
 /// 
 #[warn(missing_docs)]
+#[derive(Debug)]
 pub struct Serializer<W: std::io::Write> {
     pub(crate) writer: W,
 
@@ -23,12 +105,14 @@ pub struct Serializer<W: std::io::Write> {
     pub(crate) root_name: String,
 }
 #[warn(missing_docs)]
-pub struct SerializerTuple<'a, W: std::io::Write> {
+#[derive(Debug)]
+pub struct SerializerTuple<'a, W: std::io::Write> where W: Debug {
     pub(crate) ser: &'a mut Serializer<W>,
     pub(crate) len: usize,
     pub(crate) first: bool,
 }
 #[warn(missing_docs)]
+#[derive(Debug)]
 pub struct SerializerMap<'a, W: std::io::Write> {
     ser: &'a mut Serializer<W>,
     key: Option<Vec<u8>>,
@@ -36,12 +120,14 @@ pub struct SerializerMap<'a, W: std::io::Write> {
     trailer: Option<NbtTypeId>,
 }
 #[warn(missing_docs)]
+#[derive(Debug)]
 struct Delayed<'a, W: std::io::Write + 'a> {
     ser: &'a mut Serializer<W>,
     header: Option<DelayedHeader>,
     is_list: bool,
 }
 #[warn(missing_docs)]
+#[derive(Debug)]
 enum DelayedHeader {
     List { len: usize },
     MapEntry { outer_name: Vec<u8> },
@@ -68,7 +154,7 @@ macro_rules! generate_no_root_function {
     };
 }
 
-impl<'a, W: 'a + std::io::Write> serde::ser::Serializer for &'a mut Serializer<W> {
+impl<'a, W: 'a + std::io::Write + std::fmt::Debug> serde::ser::Serializer for &'a mut Serializer<W> {
     type Ok = ();
 
     type Error = crate::error::Error;
@@ -96,6 +182,7 @@ impl<'a, W: 'a + std::io::Write> serde::ser::Serializer for &'a mut Serializer<W
 
     fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap> {
         let root_name = self.root_name.clone();
+        self.root_name = "".to_string(); 
         Ok(SerializerMap {
             ser: self,
             key: None,
@@ -161,7 +248,7 @@ fn write_header(writer: &mut impl std::io::Write, header: DelayedHeader, actual_
     }
     Ok(())
 }
-impl<'a, W: Write> serde::ser::SerializeMap for SerializerMap<'a, W> {
+impl<'a, W: Write + std::fmt::Debug> serde::ser::SerializeMap for SerializerMap<'a, W> {
     type Ok = ();
 
     type Error = crate::error::Error;
@@ -181,7 +268,6 @@ impl<'a, W: Write> serde::ser::SerializeMap for SerializerMap<'a, W> {
         let name = self.key.take().ok_or_else(|| {
             crate::error::Error::Message("failed to get key".to_string())
         })?;
-        dbg!(&name);
         let outer_tag = match std::str::from_utf8(&name) {
             _ => NbtTypeId::Compound,
         };
@@ -210,7 +296,7 @@ impl<'a, W: Write> serde::ser::SerializeMap for SerializerMap<'a, W> {
         Ok(())
     }
 }
-impl<'a, W: Write> serde::ser::SerializeStruct for SerializerMap<'a, W> {
+impl<'a, W: Write + std::fmt::Debug> serde::ser::SerializeStruct for SerializerMap<'a, W> {
     type Ok = ();
 
     type Error = Error;
@@ -225,7 +311,7 @@ impl<'a, W: Write> serde::ser::SerializeStruct for SerializerMap<'a, W> {
         ser::SerializeMap::end(self)
     }
 }
-impl<'a, W: 'a + Write> serde::ser::SerializeSeq for SerializerTuple<'a, W> {
+impl<'a, W: 'a + Write> serde::ser::SerializeSeq for SerializerTuple<'a, W> where W: Debug {
     type Ok = ();
 
     type Error = Error;
@@ -240,7 +326,7 @@ impl<'a, W: 'a + Write> serde::ser::SerializeSeq for SerializerTuple<'a, W> {
         <Self as serde::ser::SerializeTuple>::end(self)
     }
 }
-impl<'a, W: 'a + Write> serde::ser::SerializeTuple for SerializerTuple<'a, W> {
+impl<'a, W: 'a + Write + std::fmt::Debug> serde::ser::SerializeTuple for SerializerTuple<'a, W> {
     type Ok = ();
 
     type Error = Error;
@@ -262,7 +348,7 @@ impl<'a, W: 'a + Write> serde::ser::SerializeTuple for SerializerTuple<'a, W> {
     }
 }
 
-impl<'a, W: 'a + Write> serde::ser::SerializeTupleStruct for SerializerTuple<'a, W> {
+impl<'a, W: 'a + Write + Debug> serde::ser::SerializeTupleStruct for SerializerTuple<'a, W> {
     type Ok = ();
 
     type Error = Error;
@@ -277,7 +363,7 @@ impl<'a, W: 'a + Write> serde::ser::SerializeTupleStruct for SerializerTuple<'a,
         Ok(())
     }
 }
-impl<'a, W: 'a + Write> serde::ser::SerializeTupleVariant for SerializerTuple<'a, W> {
+impl<'a, W: 'a + Write + Debug> serde::ser::SerializeTupleVariant for SerializerTuple<'a, W> {
     type Ok = ();
 
     type Error = Error;
@@ -300,7 +386,7 @@ impl<'a, W: 'a + Write> Delayed<'a, W> {
         Ok(())
     }
 }
-impl<'a, W: 'a + Write> serde::ser::Serializer for &'a mut Delayed<'a, W> {
+impl<'a, W: 'a + Write + std::fmt::Debug> serde::ser::Serializer for &'a mut Delayed<'a, W> {
     type Ok = ();
 
     type Error = Error;
@@ -546,14 +632,4 @@ impl<'a, W: 'a + Write> serde::ser::Serializer for &'a mut Delayed<'a, W> {
 
 #[cfg(test)]
 mod test{
-    use serde::Serialize;
-
-    use crate::{reader::NbtReader, traits::NbtRead, version::Java};
-
-    #[test]
-    fn test_ser() {
-        let data = include_bytes!("../test_data/hello_world.nbt");
-        let nbt_reader = NbtReader::new(data.to_vec());
-        let nbt_data = Java::from_reader(nbt_reader).expect("This should have loaded");
-    }
 }
