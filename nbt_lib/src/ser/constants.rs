@@ -1,0 +1,13 @@
+pub const END_TAG: u8 = 0;
+pub const BYTE_TAG: u8 = 1;
+pub const SHORT_TAG: u8 = 2;
+pub const INT_TAG: u8 = 3;
+pub const LONG_TAG: u8 = 4;
+pub const FLOAT_TAG: u8 = 5;
+pub const DOUBLE_TAG: u8 = 6;
+pub const BYTE_ARRAY_TAG: u8 = 7;
+pub const STRING_TAG: u8 = 8;
+pub const LIST_TAG: u8 = 9;
+pub const COMPOUND_TAG: u8 = 10;
+pub const INT_ARRAY_TAG: u8 = 11;
+pub const LONG_ARRAY_TAG: u8 = 12;

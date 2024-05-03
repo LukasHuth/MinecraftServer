@@ -10,6 +10,8 @@ tokio = { version = "1.37.0", features = ["io-util"] }
 datatypes = { path = "../datatypes" }
 serde = { version = "1.0.200", features = ["derive"] }
 paste = "1.0.14"
+byteorder = "1.5.0"
+cesu8 = "1.1.0"
 
 [features]
 # comment this out if the files are getting too big ( remove unneccessary inline )

@@ -1,6 +1,8 @@
 #![deny(missing_docs)]
 //! This crate allows reading and writing minecraft NBT (Named Binary Tag) data
 
+use std::fmt::LowerHex;
+
 /// Module for Deserialization
 pub mod de;
 /// Module for Serialization
@@ -28,7 +30,35 @@ mod tests;
 pub mod traits;
 
 /// type cast to give the NbtValue type id and undestandable name
-pub type NbtTypeId = u8;
+#[repr(u8)]
+#[allow(missing_docs)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+pub enum NbtTypeId {
+    End = 0,
+    Byte = 1,
+    Short = 2,
+    Int = 3,
+    Long = 4,
+    Float = 5,
+    Double = 6,
+    ByteArray = 7,
+    String = 8,
+    List = 9,
+    Compound = 10,
+    IntArray = 11,
+    LongArray = 12,
+}
+
+impl std::fmt::Display for NbtTypeId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_fmt(format_args!("{}", *self as u8))
+    }
+}
+impl LowerHex for NbtTypeId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_fmt(format_args!("{:x}", *self as u8))
+    }
+}
 
 /// The id of the current nbt version
 ///

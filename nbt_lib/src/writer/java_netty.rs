@@ -35,9 +35,9 @@ impl NbtWrite for JavaNetty {
     fn write_to(value: &crate::NbtValue, buff: &mut Vec<u8>) -> crate::error::NbtResult<()> {
         match value {
             NbtValue::Compound(_, data) => {
-                buff.push(value.tag());
+                buff.push(value.tag() as u8);
                 for (key, value) in data {
-                    buff.push(value.tag());
+                    buff.push(value.tag() as u8);
                     Self::write_nbt_string(buff, key);
                     match value {
                         NbtValue::Byte(v) => buff.push(*v as u8),
@@ -59,7 +59,7 @@ impl NbtWrite for JavaNetty {
                 buff.push(0);
                 Ok(())
             }
-            v => Err(NbtError::WrongRootType(v.tag()))
+            v => Err(NbtError::WrongRootType(v.tag() as u8))
         }
     }
 
@@ -81,7 +81,7 @@ impl NbtWrite for JavaNetty {
         match value {
             NbtValue::String(str) => Ok(Java::write_nbt_string(writer, str)),
             NbtValue::Compound(_, _) => JavaNetty::write_to(value, writer),
-            x => Err(NbtError::WrongRootType(x.tag())),
+            x => Err(NbtError::WrongRootType(x.tag() as u8)),
         }
     }
 }

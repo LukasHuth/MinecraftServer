@@ -5,11 +5,11 @@ pub enum NbtError {
     /// Variant for unknown errors
     UnknownErr(String),
     /// This error occures if the root of the nbt data is not a `Compound`
-    WrongRootType(NbtTypeId),
+    WrongRootType(u8),
     /// This error occures if the root of the nbt data has no name but the name is required
     RootWithoutName,
     /// This error occures if the parsing reads and unknown type id
-    UnknownType(NbtTypeId),
+    UnknownType(u8),
     /// This error occurs, if the parsing fails to read a name
     NameRead(String),
     /// This error occurs, if the parsing tries to read more data than supplied
@@ -64,6 +64,11 @@ pub enum Error {
     ExpectedList,
     ExpectedMap,
     TrailingCharacters,
+}
+impl Error {
+    pub fn no_root_compound() -> Self {
+        Self::Message("The found element should have been an root compound, but it wasn't".to_string())
+    }
 }
 /// A Result type for nbt serialization with error type [`Error`]
 ///
