@@ -18,14 +18,12 @@ pub struct Serializer<W: std::io::Write> {
     // NOTE: This is `mem:take`en, so is only valid at the start of serialization!
     pub(crate) root_name: String,
 }
-#[warn(missing_docs)]
 #[derive(Debug)]
 pub struct SerializerTuple<'a, W: std::io::Write> where W: Debug {
     pub(crate) ser: &'a mut Serializer<W>,
     pub(crate) len: usize,
     pub(crate) first: bool,
 }
-#[warn(missing_docs)]
 #[derive(Debug)]
 pub struct SerializerMap<'a, W: std::io::Write> {
     ser: &'a mut Serializer<W>,
@@ -33,14 +31,12 @@ pub struct SerializerMap<'a, W: std::io::Write> {
     header: Option<DelayedHeader>,
     trailer: Option<NbtTypeId>,
 }
-#[warn(missing_docs)]
 #[derive(Debug)]
 struct Delayed<'a, W: std::io::Write + 'a> {
     ser: &'a mut Serializer<W>,
     header: Option<DelayedHeader>,
     is_list: bool,
 }
-#[warn(missing_docs)]
 #[derive(Debug)]
 enum DelayedHeader {
     List { len: usize },
@@ -189,9 +185,15 @@ impl<'a, W: Write + std::fmt::Debug> serde::ser::SerializeMap for SerializerMap<
             write_header(&mut self.ser.writer, header, outer_tag)?;
         }
         match std::str::from_utf8(&name) {
-            /* byte_array */
-            /* int array */
-            /* long array */
+            Ok("__byte_array") => {
+                self.trailer = None;
+                value.serialize(ArraySerializer {
+                    ser: self.ser,
+                    tag: NbtTypeId::ByteArray
+                })
+            }
+            Ok("__int_array") => {}
+            Ok("__long_array") => {}
             _ => value.serialize(&mut Delayed {
                 ser: &mut *self.ser,
                 header: Some(DelayedHeader::MapEntry { outer_name: name }),

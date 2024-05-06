@@ -33,6 +33,8 @@ mod write_nbt_trait;
 
 mod name_serializer;
 
+mod array_serializer;
+
 /// Module fot the basic nbt serializer
 mod serializer;
 pub use serializer::Serializer;
