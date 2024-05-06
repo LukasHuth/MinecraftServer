@@ -4,9 +4,9 @@ use super::Mob;
 
 /// Ender Dragon Phase
 /// for more info refer to this:
-/// https://minecraft.wiki/w/Ender_Dragon#Data_values
+/// <https://minecraft.wiki/w/Ender_Dragon#Data_values>
 /// and this:
-/// https://wiki.vg/Entity_metadata#Ender_Dragon
+/// <https://wiki.vg/Entity_metadata#Ender_Dragon>
 ///
 #[allow(missing_docs)]
 #[repr(u8)]
