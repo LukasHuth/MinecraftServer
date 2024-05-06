@@ -23,12 +23,12 @@ mod test {
     }
     #[test]
     fn test() {
-        let test_data = include_bytes!("../../test_data/hello_world.nbt");
-        let reader = NbtReader::new(test_data.to_vec());
-        let data = Java::from_reader(reader).unwrap();
-        let test_instance = dbg!(Test::deserialize(&data)).expect("This should not fail, because the loaded file is a valid nbt file");
+        let test_nbt_data = include_bytes!("../../test_data/hello_world.nbt");
+        let reader = NbtReader::new(test_nbt_data.to_vec());
+        let nbt_data = Java::from_reader(reader).unwrap();
+        let result = dbg!(Test::deserialize(&nbt_data)).expect("This should not fail, because the loaded file is a valid nbt file");
         let expected_result = Test { name: "Bananrama".to_string() };
-        assert_eq!(test_instance, expected_result);
+        assert_eq!(result, expected_result);
     }
 }
 
