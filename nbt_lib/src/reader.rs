@@ -1,3 +1,5 @@
+//! This Module contains functions and datatypes that are needed to read NBT data from a byte
+//! stream
 use std::io::{Read, Cursor};
 
 use flate2::read::GzDecoder;
@@ -33,7 +35,7 @@ impl NbtReader {
         if let Err(err) = decoder.read_to_end(&mut data) {
             println!("Error: {}", err);
         }
-        println!("{:?}", data);
+        // println!("{:?}", data);
         Self { data, cursor: 0 }
     }
     /// function to read an u8

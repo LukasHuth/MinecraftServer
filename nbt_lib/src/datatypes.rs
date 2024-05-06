@@ -1,3 +1,4 @@
+//! A module for Datastructs that are important and need Nbtvalue's
 use binary_utils::{DataWriter, write_bytes, DataReader};
 use datatypes::ImportantFunctions;
 use tokio::io::{AsyncWrite, AsyncRead, BufReader};
@@ -12,7 +13,11 @@ use crate::{NbtValue, version::JavaNetty, traits::{NbtWrite, NbtRead}, reader::N
 pub struct TextComponent(NbtValue);
 impl Default for TextComponent {
     fn default() -> Self {
-        Self(NbtValue::Compound(Some("".to_string()), vec![("text".to_string(), NbtValue::String("".to_string()))]))
+        Self(NbtValue::Compound(
+            Some("".to_string()),
+            vec![("text".to_string(), NbtValue::String("".to_string()))]
+                .into_iter().collect()
+        ))
     }
 }
 /// Struct to hold a `NbtValue`

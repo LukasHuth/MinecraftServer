@@ -1,6 +1,6 @@
 [package]
 name = "nbt_lib"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 [dependencies]
@@ -8,6 +8,11 @@ flate2 = "1.0"
 binary_utils = { path = "../binary_utils" }
 tokio = { version = "1.37.0", features = ["io-util"] }
 datatypes = { path = "../datatypes" }
+serde = { version = "1.0.200", features = ["derive"] }
+paste = "1.0.14"
+byteorder = "1.5.0"
+cesu8 = "1.1.0"
+serde_bytes = "0.11.14"
 
 [features]
 # comment this out if the files are getting too big ( remove unneccessary inline )

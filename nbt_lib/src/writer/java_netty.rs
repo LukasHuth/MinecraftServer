@@ -27,7 +27,7 @@ impl NbtWrite for JavaNetty {
     }
 
     #[inline]
-    fn write_compound(writer: &mut Vec<u8>, name: Option<&String>, data: &[(String, crate::NbtValue)]) -> crate::error::NbtResult<()> {
+    fn write_compound(writer: &mut Vec<u8>, name: Option<&String>, data: Vec<(&String, &crate::NbtValue)>) -> crate::error::NbtResult<()> {
         Java::write_compound(writer, name, data)
     }
 
@@ -35,9 +35,9 @@ impl NbtWrite for JavaNetty {
     fn write_to(value: &crate::NbtValue, buff: &mut Vec<u8>) -> crate::error::NbtResult<()> {
         match value {
             NbtValue::Compound(_, data) => {
-                buff.push(value.tag());
+                buff.push(value.tag() as u8);
                 for (key, value) in data {
-                    buff.push(value.tag());
+                    buff.push(value.tag() as u8);
                     Self::write_nbt_string(buff, key);
                     match value {
                         NbtValue::Byte(v) => buff.push(*v as u8),
@@ -52,14 +52,14 @@ impl NbtWrite for JavaNetty {
                         NbtValue::String(v) => Self::write_nbt_string(buff, v),
                         NbtValue::List(v) => Self::write_list(buff, v)?,
                         NbtValue::Compound(name, v) => {
-                            Self::write_compound(buff, name.as_ref(), v)?
+                            Self::write_compound(buff, name.as_ref(), v.iter().collect())?
                         }
                     }
                 }
                 buff.push(0);
                 Ok(())
             }
-            v => Err(NbtError::WrongRootType(v.tag()))
+            v => Err(NbtError::WrongRootType(v.tag() as u8))
         }
     }
 
@@ -81,7 +81,7 @@ impl NbtWrite for JavaNetty {
         match value {
             NbtValue::String(str) => Ok(Java::write_nbt_string(writer, str)),
             NbtValue::Compound(_, _) => JavaNetty::write_to(value, writer),
-            x => Err(NbtError::WrongRootType(x.tag())),
+            x => Err(NbtError::WrongRootType(x.tag() as u8)),
         }
     }
 }

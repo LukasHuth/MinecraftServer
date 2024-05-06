@@ -1,3 +1,4 @@
+//! This module contains all error related datatypes and their implementations
 use crate::NbtTypeId;
 /// Error enum to describe an error that occurs while reading/writing NBT data
 #[derive(Debug, PartialEq, Eq)]
@@ -5,11 +6,11 @@ pub enum NbtError {
     /// Variant for unknown errors
     UnknownErr(String),
     /// This error occures if the root of the nbt data is not a `Compound`
-    WrongRootType(NbtTypeId),
+    WrongRootType(u8),
     /// This error occures if the root of the nbt data has no name but the name is required
     RootWithoutName,
     /// This error occures if the parsing reads and unknown type id
-    UnknownType(NbtTypeId),
+    UnknownType(u8),
     /// This error occurs, if the parsing fails to read a name
     NameRead(String),
     /// This error occurs, if the parsing tries to read more data than supplied
@@ -23,7 +24,7 @@ pub enum NbtError {
     /// This error occurs, if a specific type is expected, but an other one is found
     IncorrectType(NbtTypeId, NbtTypeId),
 }
-/// A type declaration to store data `T` or return an error of `NbtError`
+/// A type declaration to store data `T` or return an error of [`NbtError`]
 pub type NbtResult<T> = std::result::Result<T, NbtError>;
 impl std::error::Error for NbtError {}
 impl std::fmt::Display for NbtError {
@@ -40,5 +41,86 @@ impl std::fmt::Display for NbtError {
             NbtError::ListTypeNotSame(types) => write!(f, "Could not create list, because following list types are not the same: {:?}", types),
             NbtError::WrongRootType(type_id) => write!(f, "The Root has to be an type id 0x0A, but is an {:02x}", type_id),
         }
+    }
+}
+
+/// An error enum for nbt serialization
+#[derive(Debug)]
+#[allow(missing_docs)]
+pub enum Error {
+    Message(String),
+    Eof,
+    Syntax,
+    ExpectedBoolean,
+    ExpectedByte,
+    ExpectedShort,
+    ExpectedInteger,
+    ExpectedLong,
+    ExpectedFloat,
+    ExpectedDouble,
+    ExpectedByteArray,
+    ExpectedIntArray,
+    ExpectedLongArray,
+    ExpectedString,
+    ExpectedList,
+    ExpectedMap,
+    TrailingCharacters,
+}
+impl Error {
+    /// Generate a [`Message`] with no root comound message
+    ///
+    /// [`Message`]: `Error::Message`
+    pub fn no_root_compound() -> Self {
+        Self::Message("The found element should have been an root compound, but it wasn't".to_string())
+    }
+    /// Generate a [`Message`] with array as other message
+    ///
+    /// [`Message`]: `Error::Message`
+    pub fn array_as_other() -> Self {
+        Self::Message("The found element should have been an array, but it wasn't".to_string())
+    }
+}
+impl From<std::io::Error> for Error {
+    fn from(e: std::io::Error) -> Self {
+        Error::Message(format!("io error: {}", e))
+    }
+}
+/// A Result type for nbt serialization with error type [`Error`]
+///
+/// [`Error`]: Error
+pub type Result<T> = std::result::Result<T, Error>;
+impl std::fmt::Display for Error {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Error::Message(msg) => formatter.write_str(msg),
+            Error::Eof => formatter.write_str("unexpected end of input"),
+            Error::Syntax => formatter.write_str("unexpected syntax"),
+            Error::ExpectedBoolean => formatter.write_str("expected boolean"),
+            Error::ExpectedByte => formatter.write_str("expected byte"),
+            Error::ExpectedShort => formatter.write_str("expected short"),
+            Error::ExpectedInteger => formatter.write_str("expected integer"),
+            Error::ExpectedLong => formatter.write_str("expected long"),
+            Error::ExpectedFloat => formatter.write_str("expected float"),
+            Error::ExpectedDouble => formatter.write_str("expected double"),
+            Error::ExpectedString => formatter.write_str("expected string"),
+            Error::ExpectedList => formatter.write_str("expected list"),
+            Error::ExpectedMap => formatter.write_str("expected map"),
+            Error::ExpectedByteArray => formatter.write_str("expected byte array"),
+            Error::ExpectedIntArray => formatter.write_str("expected int array"),
+            Error::ExpectedLongArray => formatter.write_str("expected long array"),
+            Error::TrailingCharacters => formatter.write_str("found training characters")
+            /* and so forth */
+        }
+    }
+}
+impl std::error::Error for Error {}
+impl serde::de::Error for Error {
+    fn custom<T>(msg:T) -> Self where T:std::fmt::Display {
+        Error::Message(msg.to_string())
+    }
+}
+impl serde::ser::Error for Error {
+    fn custom<T>(msg:T) -> Self where T:std::fmt::Display {
+        Error::Message(msg.to_string())
     }
 }

@@ -7,6 +7,8 @@ This crate was created in need of one when i was working on a Minecraft Server i
 # Disclaimer
 
 This crate is heavily inspired by the work of [shenjack](https://github.com/shenjackyuanjie) and [Yue Fei](https://github.com/InfyniteHeap) in their crate [nbt-rust](https://github.com/shenjackyuanjie/nbt-rust).
+Same goes for [Owen Gage](https://github.com/owengage) and their crate [fastnbt](https://github.com/owengage/fastnbt/tree/master), it helped a lot, when i was stuck, how to
+implement the serde Serializer and Deserializer.
 Because this library draws from their work, it is not intended for standalone release.
 
 ## Data Sources
@@ -17,6 +19,9 @@ Because this library draws from their work, it is not intended for standalone re
     with their documentation some times. Please check out their amazing work. Sadly i couldn't just
     use their crate, because i need the possibility for adjustment to implement it into my server
     and the Chinese documentation makes this hard to archieve.
+- [fastnbt](https://github.com/owengage/fastnbt)
+  - big thanks to [Owen Gage](https://github.com/owengage) for their work, since serde is pretty poorly documented in the case of Serializing and Deserializing
+  the crate helped a lot to archive this
 
 ## Features
 

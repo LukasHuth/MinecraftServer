@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{NbtValue, error::{NbtResult, NbtError}, traits::{NbtRead, NbtWrite}, reader::NbtReader, NbtTypeId};
 
 impl NbtValue {
@@ -9,18 +11,18 @@ impl NbtValue {
     /// function to get the tag of the NbtValue
     pub fn tag(&self) -> NbtTypeId {
         match self {
-            NbtValue::Byte(_) => 1,
-            NbtValue::Short(_) => 2,
-            NbtValue::Int(_) => 3,
-            NbtValue::Long(_) => 4,
-            NbtValue::Float(_) => 5,
-            NbtValue::Double(_) => 6,
-            NbtValue::ByteArray(_) => 7,
-            NbtValue::String(_) => 8,
-            NbtValue::List(_) => 9,
-            NbtValue::Compound(_, _) => 10,
-            NbtValue::IntArray(_) => 11,
-            NbtValue::LongArray(_) => 12,
+            NbtValue::Byte(_) => NbtTypeId::Byte,
+            NbtValue::Short(_) => NbtTypeId::Short,
+            NbtValue::Int(_) => NbtTypeId::Int,
+            NbtValue::Long(_) => NbtTypeId::Long,
+            NbtValue::Float(_) => NbtTypeId::Float,
+            NbtValue::Double(_) => NbtTypeId::Double,
+            NbtValue::ByteArray(_) => NbtTypeId::ByteArray,
+            NbtValue::String(_) => NbtTypeId::String,
+            NbtValue::List(_) => NbtTypeId::List,
+            NbtValue::Compound(_, _) => NbtTypeId::Compound,
+            NbtValue::IntArray(_) => NbtTypeId::IntArray,
+            NbtValue::LongArray(_) => NbtTypeId::LongArray,
         }
     }
     /// function to write nbt data to a type that implements `NbtWrite`
@@ -41,7 +43,7 @@ impl NbtValue {
     pub fn as_i8(&self) -> NbtResult<i8> {
         match self {
             NbtValue::Byte(v) => Ok(*v),
-            _ => Err(NbtError::IncorrectType(2, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::Byte, self.tag())),
         }
     }
     /// function to get the `NbtValue` as an i16
@@ -49,7 +51,7 @@ impl NbtValue {
     pub fn as_i16(&self) -> NbtResult<i16> {
         match self {
             NbtValue::Short(v) => Ok(*v),
-            _ => Err(NbtError::IncorrectType(2, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::Short, self.tag())),
         }
     }
     /// function to get the `NbtValue` as an i32
@@ -57,7 +59,7 @@ impl NbtValue {
     pub fn as_i32(&self) -> NbtResult<i32> {
         match self {
             NbtValue::Int(v) => Ok(*v),
-            _ => Err(NbtError::IncorrectType(3, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::Int, self.tag())),
         }
     }
     /// function to get the `NbtValue` as an i64
@@ -65,7 +67,7 @@ impl NbtValue {
     pub fn as_i64(&self) -> NbtResult<i64> {
         match self {
             NbtValue::Long(v) => Ok(*v),
-            _ => Err(NbtError::IncorrectType(4, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::Long, self.tag())),
         }
     }
     /// function to get the `NbtValue` as a f32
@@ -73,7 +75,7 @@ impl NbtValue {
     pub fn as_f32(&self) -> NbtResult<f32> {
         match self {
             NbtValue::Float(v) => Ok(*v),
-            _ => Err(NbtError::IncorrectType(5_u8, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::Float, self.tag())),
         }
     }
     /// function to get the `NbtValue` as a f64
@@ -81,7 +83,7 @@ impl NbtValue {
     pub fn as_f64(&self) -> NbtResult<f64> {
         match self {
             NbtValue::Double(v) => Ok(*v),
-            _ => Err(NbtError::IncorrectType(6_u8, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::Double, self.tag())),
         }
     }
     /// function to get the `NbtValue` as a list of i8's
@@ -89,7 +91,7 @@ impl NbtValue {
     pub fn as_i8_array(&self) -> NbtResult<Vec<i8>> {
         match self {
             NbtValue::ByteArray(v) => Ok(v.clone()),
-            _ => Err(NbtError::IncorrectType(7_u8, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::ByteArray, self.tag())),
         }
     }
     /// function to get the `NbtValue` as a list of i32's
@@ -97,7 +99,7 @@ impl NbtValue {
     pub fn as_i32_array(&self) -> NbtResult<Vec<i32>> {
         match self {
             NbtValue::IntArray(v) => Ok(v.clone()),
-            _ => Err(NbtError::IncorrectType(11_u8, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::IntArray, self.tag())),
         }
     }
     /// function to get the `NbtValue` as a list of i64's
@@ -105,7 +107,7 @@ impl NbtValue {
     pub fn as_i64_array(&self) -> NbtResult<Vec<i64>> {
         match self {
             NbtValue::LongArray(v) => Ok(v.clone()),
-            _ => Err(NbtError::IncorrectType(12_u8, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::LongArray, self.tag())),
         }
     }
     /// function to get the `NbtValue` as a string
@@ -113,7 +115,7 @@ impl NbtValue {
     pub fn as_string(&self) -> NbtResult<String> {
         match self {
             NbtValue::String(v) => Ok(v.clone()),
-            _ => Err(NbtError::IncorrectType(8_u8, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::String, self.tag())),
         }
     }
     /// function to get the `NbtValue` as a list of `NbtValue`'s
@@ -121,15 +123,15 @@ impl NbtValue {
     pub fn as_list(&self) -> NbtResult<Vec<NbtValue>> {
         match self {
             NbtValue::List(v) => Ok(v.clone()),
-            _ => Err(NbtError::IncorrectType(9_u8, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::List, self.tag())),
         }
     }
     /// function to get the `NbtValue` as a list of named `NbtValue`'s
     #[inline]
-    pub fn as_compound(&self) -> NbtResult<(Option<&String>, Vec<(String, NbtValue)>)> {
+    pub fn as_compound(&self) -> NbtResult<(Option<&String>, HashMap<String, NbtValue>)> {
         match self {
             NbtValue::Compound(name, v) => Ok((name.as_ref(), v.clone())),
-            _ => Err(NbtError::IncorrectType(10_u8, self.tag())),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::Compound, self.tag())),
         }
     }
     /// function to determine, if the `NbtValue` is a `i8`

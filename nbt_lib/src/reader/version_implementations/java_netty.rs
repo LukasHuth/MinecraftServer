@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{traits::NbtRead, version::{JavaNetty, Java}, NbtValue, error::NbtError};
 
 impl NbtRead for JavaNetty {
@@ -22,7 +24,7 @@ impl NbtRead for JavaNetty {
         Java::read_list(reader)
     }
 
-    fn read_compound(reader: &mut crate::reader::NbtReader) -> crate::error::NbtResult<Vec<(String, crate::NbtValue)>> {
+    fn read_compound(reader: &mut crate::reader::NbtReader) -> crate::error::NbtResult<HashMap<String, crate::NbtValue>> {
         Java::read_compound(reader)
     }
 

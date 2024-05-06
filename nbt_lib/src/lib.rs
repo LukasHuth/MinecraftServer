@@ -1,29 +1,80 @@
 #![deny(missing_docs)]
 //! This crate allows reading and writing minecraft NBT (Named Binary Tag) data
 
-/// Module that implements the functions to read NBT data
+use std::fmt::LowerHex;
+
+pub mod de;
+pub mod ser;
+
 pub mod reader;
 
-/// Module that implements the functions to write NBT data
 pub mod writer;
 
-/// Module containing all structs neccessary for error handling
 pub mod error;
 
-/// Module defining the different version that can be used the read and write NBT
 pub mod version;
 
-/// Module defining NBT specific datatypes
 pub mod datatypes;
+
+mod nbt_implementation;
 
 #[cfg(test)]
 mod tests;
 
-/// Module containing all trait declarations
 pub mod traits;
 
 /// type cast to give the NbtValue type id and undestandable name
-pub type NbtTypeId = u8;
+#[repr(u8)]
+#[allow(missing_docs)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+pub enum NbtTypeId {
+    End = 0,
+    Byte = 1,
+    Short = 2,
+    Int = 3,
+    Long = 4,
+    Float = 5,
+    Double = 6,
+    ByteArray = 7,
+    String = 8,
+    List = 9,
+    Compound = 10,
+    IntArray = 11,
+    LongArray = 12,
+}
+impl TryFrom<u8> for NbtTypeId {
+    type Error = crate::error::Error;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(NbtTypeId::End),
+            1 => Ok(NbtTypeId::Byte),
+            2 => Ok(NbtTypeId::Short),
+            3 => Ok(NbtTypeId::Int),
+            4 => Ok(NbtTypeId::Long),
+            5 => Ok(NbtTypeId::Float),
+            6 => Ok(NbtTypeId::Double),
+            7 => Ok(NbtTypeId::ByteArray),
+            8 => Ok(NbtTypeId::String),
+            9 => Ok(NbtTypeId::List),
+            10 => Ok(NbtTypeId::Compound),
+            11 => Ok(NbtTypeId::IntArray),
+            12 => Ok(NbtTypeId::LongArray),
+            13.. => Err(error::Error::Message(format!("Failed to convert tag id('{value}') into tag")))
+        }
+    }
+}
+
+impl std::fmt::Display for NbtTypeId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_fmt(format_args!("{}", *self as u8))
+    }
+}
+impl LowerHex for NbtTypeId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_fmt(format_args!("{:x}", *self as u8))
+    }
+}
 
 /// The id of the current nbt version
 ///
@@ -32,38 +83,10 @@ pub type NbtTypeId = u8;
 /// this number is according to [this article](https://minecraft.fandom.com/wiki/NBT_format#History)
 pub const NBT_VERSION: i32 = 19133;
 
-/// Enum storing NBT data
-#[derive(Debug, Clone)]
-pub enum NbtValue {
-    /// Data wrapper to store a signed 8-bit integer
-    Byte(i8),
-    /// Data wrapper to store a signed 16-bit integer
-    Short(i16),
-    /// Data wrapper to store a signed 32-bit integer
-    Int(i32),
-    /// Data wrapper to store a signed 64-bit integer
-    Long(i64),
-    /// Data wrapper to store a signed 32-bit floating-point value
-    Float(f32),
-    /// Data wrapper to store a signed 64-bit floating-point value
-    Double(f64),
-    /// Data wrapper to store a list of signed 8-bit integers
-    ByteArray(Vec<i8>),
-    /// Data wrapper to store a string
-    String(String),
-    /// Data wrapper to store a list of NBT values
-    List(Vec<NbtValue>),
-    /// Data wrapper to store a named list of NBT values
-    ///
-    /// # Note
-    ///
-    /// This struct can also have a name
-    Compound(Option<String>, Vec<(String, NbtValue)>),
-    /// Data wrapper to store a list of signed 32-bit integers
-    IntArray(Vec<i32>),
-    /// Data wrapper to store a list of signed 64-bit integers
-    LongArray(Vec<i64>),
-}
+pub mod nbt_value;
+pub use nbt_value::NbtValue;
+pub use nbt_value::to_nbt_value;
+
 macro_rules! assert_return_IEEE754 {
     ($v0:expr, $v1:expr) => {
         if $v0 != $v1 {
@@ -99,7 +122,8 @@ impl PartialEq for NbtValue {
                 if v0.len() != v1.len() { return false }
                 if name0 != name1 { return false }
                 for value in v0 {
-                    if !v1.contains(value) { return false }
+                    if !v1.contains_key(value.0) { return false }
+                    if value.1 != v1.get(value.0).unwrap() { return false }
                 }
                 true
             }
@@ -107,4 +131,3 @@ impl PartialEq for NbtValue {
         }
     }
 }
-mod nbt_implementation;
