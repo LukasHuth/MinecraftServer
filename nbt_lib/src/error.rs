@@ -1,3 +1,4 @@
+//! This module contains all error related datatypes and their implementations
 use crate::NbtTypeId;
 /// Error enum to describe an error that occurs while reading/writing NBT data
 #[derive(Debug, PartialEq, Eq)]
@@ -71,6 +72,17 @@ impl Error {
     /// [`Message`]: `Error::Message`
     pub fn no_root_compound() -> Self {
         Self::Message("The found element should have been an root compound, but it wasn't".to_string())
+    }
+    /// Generate a [`Message`] with array as other message
+    ///
+    /// [`Message`]: `Error::Message`
+    pub fn array_as_other() -> Self {
+        Self::Message("The found element should have been an array, but it wasn't".to_string())
+    }
+}
+impl From<std::io::Error> for Error {
+    fn from(e: std::io::Error) -> Self {
+        Error::Message(format!("io error: {}", e))
     }
 }
 /// A Result type for nbt serialization with error type [`Error`]

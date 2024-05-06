@@ -27,7 +27,7 @@ impl NbtWrite for JavaNetty {
     }
 
     #[inline]
-    fn write_compound(writer: &mut Vec<u8>, name: Option<&String>, data: &[(String, crate::NbtValue)]) -> crate::error::NbtResult<()> {
+    fn write_compound(writer: &mut Vec<u8>, name: Option<&String>, data: Vec<(&String, &crate::NbtValue)>) -> crate::error::NbtResult<()> {
         Java::write_compound(writer, name, data)
     }
 
@@ -52,7 +52,7 @@ impl NbtWrite for JavaNetty {
                         NbtValue::String(v) => Self::write_nbt_string(buff, v),
                         NbtValue::List(v) => Self::write_list(buff, v)?,
                         NbtValue::Compound(name, v) => {
-                            Self::write_compound(buff, name.as_ref(), v)?
+                            Self::write_compound(buff, name.as_ref(), v.iter().collect())?
                         }
                     }
                 }

@@ -26,7 +26,7 @@ impl NbtWrite for Java {
     }
 
     #[cfg_attr(feature = "inline_read", inline)]
-    fn write_compound(writer: &mut Vec<u8>, name: Option<&String>, data: &[(String, NbtValue)]) -> NbtResult<()> {
+    fn write_compound(writer: &mut Vec<u8>, name: Option<&String>, data: Vec<(&String, &NbtValue)>) -> NbtResult<()> {
         Self::write_nbt_string(writer, name.unwrap_or(&"".to_string()));
         for (key, value) in data {
             writer.push(value.tag() as u8);
@@ -44,7 +44,9 @@ impl NbtWrite for Java {
                 NbtValue::String(v) => Self::write_nbt_string(writer, v),
                 NbtValue::List(v) => Self::write_list(writer, v)?,
                 NbtValue::Compound(name, v) => {
-                    Self::write_compound(writer, name.as_ref(), v)?
+                    Self::write_compound(writer,
+                    name.as_ref(), v.iter().collect()
+                    )?
                 }
             }
         }
@@ -57,7 +59,7 @@ impl NbtWrite for Java {
         match value {
             NbtValue::Compound(name, data) => {
                 buff.push(value.tag() as u8);
-                Self::write_compound(buff, name.as_ref(), data)?
+                Self::write_compound(buff, name.as_ref(), data.iter().collect())?
             }
             v => return Err(NbtError::WrongRootType(v.tag() as u8)),
         }
@@ -98,7 +100,7 @@ impl NbtWrite for Java {
                 NbtValue::String(v) => Self::write_nbt_string(writer, v),
                 NbtValue::List(v) => Self::write_list(writer, v)?,
                 NbtValue::Compound(name, v) => {
-                    Self::write_compound(writer, name.as_ref(), v)?
+                    Self::write_compound(writer, name.as_ref(), v.iter().collect())?
                 }
             }
         }

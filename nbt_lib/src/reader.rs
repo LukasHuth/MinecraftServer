@@ -1,3 +1,5 @@
+//! This Module contains functions and datatypes that are needed to read NBT data from a byte
+//! stream
 use std::io::{Read, Cursor};
 
 use flate2::read::GzDecoder;

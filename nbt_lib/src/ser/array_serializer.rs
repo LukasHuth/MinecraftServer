@@ -1,3 +1,9 @@
+//! Module for array serialization
+//!
+//! The following code is copied and modified from fastnbt:
+//! <https://github.com/owengage/fastnbt/blob/da6d919ac3916d2a951ee79451497f4981802ca9/fastnbt/src/ser/array_serializer.rs>
+//!
+//! for which the license is MIT
 use std::io::Write;
 
 use serde::ser::Impossible;
@@ -52,7 +58,9 @@ impl<'a, W: Write> serde::Serializer for ArraySerializer<'a, W> {
         };
         let len = v.len() / stride;
         self.ser.writer.write_len(len)?;
-        self.ser.writer.write_all(v)?;
+        if let Err(_) = self.ser.writer.write_all(v) {
+            return Err(Error::Message("Failed to write".to_string()))
+        }
         Ok(())
     }
 

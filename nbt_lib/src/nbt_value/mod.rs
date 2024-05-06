@@ -1,6 +1,8 @@
 //! This module contains all important functions for nbt values
 
 use std::collections::HashMap;
+
+use serde::Serialize;
 /// Enum storing NBT data
 #[derive(Debug, Clone)]
 pub enum NbtValue {
@@ -33,6 +35,29 @@ pub enum NbtValue {
     /// Data wrapper to store a list of signed 64-bit integers
     LongArray(Vec<i64>),
 }
-pub mod ser;
+impl NbtValue {
+    pub(crate) fn number_as_be_bytes(&self) -> Option<Vec<u8>> {
+        match *self {
+            Self::Byte(v) => Some(vec![v as u8]),
+            Self::Short(v) => Some(v.to_be_bytes().to_vec()),
+            Self::Int(v) => Some(v.to_be_bytes().to_vec()),
+            Self::Long(v) => Some(v.to_be_bytes().to_vec()),
+            Self::Float(v) => Some(v.to_be_bytes().to_vec()),
+            Self::Double(v) => Some(v.to_be_bytes().to_vec()),
+            _ => None,
+        }
+    }
+}
+/// Function to try to convert any struct implementing [`Serialize`] into [`NbtValue`]
 ///
+/// [`Serialize`]: `serde::Serialize`
+/// [`NbtValue`]: `crate::NbtValue`
+pub fn to_nbt_value<T>(value: T) -> Result<NbtValue, crate::error::Error>
+where
+    T: Serialize,
+{
+    value.serialize(&mut ser::Serializer)
+}
+pub mod ser;
 pub mod de;
+pub mod array_serializer;

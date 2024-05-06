@@ -3,30 +3,24 @@
 
 use std::fmt::LowerHex;
 
-/// Module for Deserialization
 pub mod de;
-/// Module for Serialization
 pub mod ser;
 
-/// Module that implements the functions to read NBT data
 pub mod reader;
 
-/// Module that implements the functions to write NBT data
 pub mod writer;
 
-/// Module containing all structs neccessary for error handling
 pub mod error;
 
-/// Module defining the different version that can be used the read and write NBT
 pub mod version;
 
-/// Module defining NBT specific datatypes
 pub mod datatypes;
+
+mod nbt_implementation;
 
 #[cfg(test)]
 mod tests;
 
-/// Module containing all trait declarations
 pub mod traits;
 
 /// type cast to give the NbtValue type id and undestandable name
@@ -47,6 +41,28 @@ pub enum NbtTypeId {
     Compound = 10,
     IntArray = 11,
     LongArray = 12,
+}
+impl TryFrom<u8> for NbtTypeId {
+    type Error = crate::error::Error;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(NbtTypeId::End),
+            1 => Ok(NbtTypeId::Byte),
+            2 => Ok(NbtTypeId::Short),
+            3 => Ok(NbtTypeId::Int),
+            4 => Ok(NbtTypeId::Long),
+            5 => Ok(NbtTypeId::Float),
+            6 => Ok(NbtTypeId::Double),
+            7 => Ok(NbtTypeId::ByteArray),
+            8 => Ok(NbtTypeId::String),
+            9 => Ok(NbtTypeId::List),
+            10 => Ok(NbtTypeId::Compound),
+            11 => Ok(NbtTypeId::IntArray),
+            12 => Ok(NbtTypeId::LongArray),
+            13.. => Err(error::Error::Message(format!("Failed to convert tag id('{value}') into tag")))
+        }
+    }
 }
 
 impl std::fmt::Display for NbtTypeId {
@@ -69,6 +85,7 @@ pub const NBT_VERSION: i32 = 19133;
 
 pub mod nbt_value;
 pub use nbt_value::NbtValue;
+pub use nbt_value::to_nbt_value;
 
 macro_rules! assert_return_IEEE754 {
     ($v0:expr, $v1:expr) => {
@@ -105,7 +122,8 @@ impl PartialEq for NbtValue {
                 if v0.len() != v1.len() { return false }
                 if name0 != name1 { return false }
                 for value in v0 {
-                    if !v1.contains(value) { return false }
+                    if !v1.contains_key(value.0) { return false }
+                    if value.1 != v1.get(value.0).unwrap() { return false }
                 }
                 true
             }
@@ -113,4 +131,3 @@ impl PartialEq for NbtValue {
         }
     }
 }
-mod nbt_implementation;

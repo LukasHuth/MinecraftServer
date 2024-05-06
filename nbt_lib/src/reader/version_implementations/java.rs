@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{traits::NbtRead, version::Java, reader::NbtReader, error::{NbtResult, NbtError}, NbtValue};
 
 impl NbtRead for Java {
@@ -54,8 +56,8 @@ impl NbtRead for Java {
     }
 
     #[cfg_attr(feature = "inline_read", inline)]
-    fn read_compound(reader: &mut NbtReader) -> NbtResult<Vec<(String, NbtValue)>> {
-        let mut compound = Vec::with_capacity(1);
+    fn read_compound(reader: &mut NbtReader) -> NbtResult<HashMap<String, NbtValue>> {
+        let mut compound = HashMap::new();
         loop {
             let tag_id = reader.read_u8()?;
             if tag_id == 0 { break }
@@ -76,7 +78,7 @@ impl NbtRead for Java {
                 0 => unreachable!("Should be caught before"),
                 13..=u8::MAX => return Err(NbtError::UnknownType(tag_id)),
             };
-            compound.push((name, value));
+            compound.insert(name, value);
         }
         Ok(compound)
     }
