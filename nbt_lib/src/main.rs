@@ -6,9 +6,6 @@ fn main() -> Result<(), io::Error> {
     let args: Vec<String> = std::env::args().collect();
     let uncompress: bool = args.iter().any(is_uncompress_str);
     let args: Vec<String> = args.iter().map(|e|e.clone()).filter(is_not_uncompress_str).map(|e|e.clone()).collect();
-    if args.len() < 2 {
-        return Err(io::Error::new(io::ErrorKind::InvalidInput, "Please specify a file to open"));
-    }
     let filename = args[1].clone();
     let file_content = std::fs::read(filename)?;
     let reader = if uncompress {
