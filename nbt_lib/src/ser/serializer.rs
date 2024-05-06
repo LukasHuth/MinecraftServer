@@ -1,7 +1,13 @@
+//! This module contains datastructs to serialize data into the binary representation of NBT
+//!
+//! The following code is copied and modified from fastnbt:
+//! <https://github.com/owengage/fastnbt/blob/da6d919ac3916d2a951ee79451497f4981802ca9/fastnbt/src/ser/serializer.rs>
+//!
+//! for which the license is MIT
 use std::fmt::Debug;
 use std::io::Write;
 
-use super::write_nbt_trait::WriteNbt;
+use super::{array_serializer::ArraySerializer, write_nbt_trait::WriteNbt};
 use byteorder::{BigEndian, WriteBytesExt};
 
 use serde::{Serialize, ser::{self, Impossible,SerializeSeq} };
@@ -192,8 +198,20 @@ impl<'a, W: Write + std::fmt::Debug> serde::ser::SerializeMap for SerializerMap<
                     tag: NbtTypeId::ByteArray
                 })
             }
-            Ok("__int_array") => {}
-            Ok("__long_array") => {}
+            Ok("__int_array") => {
+                self.trailer = None;
+                value.serialize(ArraySerializer {
+                    ser: self.ser,
+                    tag: NbtTypeId::IntArray
+                })
+            }
+            Ok("__long_array") => {
+                self.trailer = None;
+                value.serialize(ArraySerializer {
+                    ser: self.ser,
+                    tag: NbtTypeId::LongArray
+                })
+            }
             _ => value.serialize(&mut Delayed {
                 ser: &mut *self.ser,
                 header: Some(DelayedHeader::MapEntry { outer_name: name }),
@@ -518,7 +536,7 @@ impl<'a, W: 'a + Write + std::fmt::Debug> serde::ser::Serializer for &'a mut Del
         self.serialize_seq(Some(len))
     }
 
-    fn serialize_map(self, len: Option<usize>) -> std::prelude::v1::Result<Self::SerializeMap, Self::Error> {
+    fn serialize_map(self, _len: Option<usize>) -> std::prelude::v1::Result<Self::SerializeMap, Self::Error> {
         Ok( SerializerMap { 
             ser: self.ser,
             key: None,

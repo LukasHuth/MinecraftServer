@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{NbtValue, error::{NbtResult, NbtError}, traits::{NbtRead, NbtWrite}, reader::NbtReader, NbtTypeId};
 
 impl NbtValue {
@@ -126,7 +128,7 @@ impl NbtValue {
     }
     /// function to get the `NbtValue` as a list of named `NbtValue`'s
     #[inline]
-    pub fn as_compound(&self) -> NbtResult<(Option<&String>, Vec<(String, NbtValue)>)> {
+    pub fn as_compound(&self) -> NbtResult<(Option<&String>, HashMap<String, NbtValue>)> {
         match self {
             NbtValue::Compound(name, v) => Ok((name.as_ref(), v.clone())),
             _ => Err(NbtError::IncorrectType(NbtTypeId::Compound, self.tag())),

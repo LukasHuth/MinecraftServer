@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use byteorder::{BigEndian, ByteOrder, WriteBytesExt};
+use byteorder::{BigEndian, WriteBytesExt};
 
 use crate::{error::{Error, Result}, NbtTypeId};
 

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{reader::NbtReader, version::Java, traits::NbtRead, NbtValue};
 
 #[test]
@@ -28,7 +30,7 @@ fn test_big_test() {
     let value = Java::from_reader(reader);
     assert!(value.is_ok());
     let value = value.unwrap();
-    let expected_values = vec![
+    let expected_values: HashMap<String, NbtValue> = vec![
         ("stringTest".to_string(), NbtValue::String("HELLO WORLD THIS IS A TEST STRING ÅÄÖ!".to_string())),
         ("intTest".to_string(), NbtValue::Int(2147483647)),
         ("byteTest".to_string(), NbtValue::Byte(127)),
@@ -46,11 +48,11 @@ fn test_big_test() {
             NbtValue::Compound(None, vec![
                 ("created-on".to_string(), NbtValue::Long(1264099775885)),
                 ("name".to_string(), NbtValue::String("Compound tag #0".to_string())),
-            ]),
+            ].into_iter().collect()),
             NbtValue::Compound(None, vec![
                 ("created-on".to_string(), NbtValue::Long(1264099775885)),
                 ("name".to_string(), NbtValue::String("Compound tag #1".to_string())),
-            ]),
+            ].into_iter().collect()),
         ])),
         ("shortTest".to_string(), NbtValue::Short(32767)),
         ("byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))".to_string(), NbtValue::ByteArray(
@@ -60,13 +62,13 @@ fn test_big_test() {
             ("ham".to_string(), NbtValue::Compound(None, vec![
                 ("name".to_string(), NbtValue::String("Hampus".to_string())),
                 ("value".to_string(), NbtValue::Float(0.75)),
-            ])),
+            ].into_iter().collect())),
             ("egg".to_string(), NbtValue::Compound(None, vec![
                 ("name".to_string(), NbtValue::String("Eggbert".to_string())),
                 ("value".to_string(), NbtValue::Float(0.5)),
-            ])),
-        ])),
-    ];
+            ].into_iter().collect())),
+        ].into_iter().collect())),
+    ].into_iter().collect();
     let expected = NbtValue::Compound(Some("Level".to_string()), expected_values);
     assert_eq!(value, expected);
 }
@@ -101,7 +103,7 @@ fn test_player_nan_value() {
         ])),
         ("AttackTime".to_string(), NbtValue::Short(0)),
         ("Inventory".to_string(), NbtValue::List(vec![]))
-    ]);
+    ].into_iter().collect());
     println!("{:?}", value);
     assert!(value.is_ok());
     let value = value.unwrap();

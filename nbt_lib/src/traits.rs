@@ -1,3 +1,8 @@
+//! This Module contains all neccessary traits for [`NbtValue`]'s
+//!
+//! [`NbtValue`]: `crate::NbtValue`
+use std::collections::HashMap;
+
 use crate::{NbtValue, error::NbtResult, reader::NbtReader};
 
 /// Trait for every type that has to be write NBT data
@@ -13,7 +18,7 @@ pub trait NbtWrite {
     /// function to write a list of nbt values
     fn write_list(writer: &mut Vec<u8>, data: &[NbtValue]) -> NbtResult<()>;
     /// function to write a list of named nbt values
-    fn write_compound(writer: &mut Vec<u8>, name: Option<&String>, data: &[(String, NbtValue)]) -> NbtResult<()>;
+    fn write_compound(writer: &mut Vec<u8>, name: Option<&String>, data: Vec<(&String, &NbtValue)>) -> NbtResult<()>;
     /// function to write nbt data to an vector
     fn write_to(value: &NbtValue, buff: &mut Vec<u8>) -> NbtResult<()>;
     /// function to write nbt data to an vector with an name
@@ -83,7 +88,7 @@ pub trait NbtRead {
     /// # Returns
     ///
     /// Returns a Result with the value of an Error, why the read failed
-    fn read_compound(reader: &mut NbtReader) -> NbtResult<Vec<(String, NbtValue)>>;
+    fn read_compound(reader: &mut NbtReader) -> NbtResult<HashMap<String, NbtValue>>;
     /// function to read nbt data from a `NbtReader`
     ///
     /// # Arguments

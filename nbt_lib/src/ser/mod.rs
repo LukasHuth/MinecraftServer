@@ -22,9 +22,10 @@
 //! #[test]
 //! fn test_ser() {
 //!     let test = HelloWorld { name: "Bananrama".to_string() };
-//!     let test_data = to_bytes_with_opts(&test, "hello world".into()).unwrap();
+//!     let test_data = dbg!(to_bytes_with_opts(&test, "hello world".into()).unwrap());
 //!     let expected_data = include_bytes!("../test_data/hello_world.nbt");
 //!     assert_eq!(test_data, expected_data);
+//!     assert!(false);
 //! }
 //! ```
 
@@ -33,9 +34,8 @@ mod write_nbt_trait;
 
 mod name_serializer;
 
-mod array_serializer;
+pub mod array_serializer;
 
-/// Module fot the basic nbt serializer
 mod serializer;
 pub use serializer::Serializer;
 
