@@ -98,7 +98,7 @@ impl<'de> Deserialize<'de> for NbtValue {
                         while let Some((key, value)) = map.next_entry()? {
                             compound.insert(key, value);
                         }
-                        Ok(NbtValue::Compound(None, compound))
+                        Ok(NbtValue::Compound(Some("".to_string()), compound))
                     }
                     Some(KeyClass::ByteArray) => {
                         let data = map.next_value::<ByteBuf>()?;

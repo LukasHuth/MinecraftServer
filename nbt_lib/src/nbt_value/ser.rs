@@ -25,7 +25,7 @@ impl Serialize for NbtValue {
             Self::ByteArray(v) => v.serialize(serializer),
             Self::List(v) => v.serialize(serializer),
             // Info: name is only set on the root compound, it's stripped here for simplicity
-            Self::Compound(_name, v) => v.serialize(serializer),
+            Self::Compound(_name, v) => {v.serialize(serializer)},
             Self::IntArray(v) => v.serialize(serializer),
             Self::LongArray(v) => v.serialize(serializer),
         }

@@ -1,0 +1,11 @@
+[package]
+name = "memory_management"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nbt_lib = { path = "../nbt_lib" }
+level_lib = { path = "../level_lib" }
+flate2 = { version = "1.0.30", features = ["zlib"] }
+tokio = { version = "1.37.0", features = ["full"] }
+rand = "0.8.5"
