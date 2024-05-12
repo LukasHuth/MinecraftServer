@@ -10,3 +10,4 @@ binary_utils = { path = "../binary_utils" }
 flate2 = { version = "1.0.28", features = ["zlib"] }
 minecraft_assets = { path = "../minecraft_assets" }
 entmet_lib = { path = "../entmet_lib" }
+tokio = { version = "1.37.0", features = ["io-util", "io-std", "fs", "full"] }

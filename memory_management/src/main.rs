@@ -1,31 +1,24 @@
 #![feature(box_into_inner)]
-use std::{collections::HashMap, io::Read, path::Path, sync::Arc, time::{Duration, Instant, SystemTime}};
 
-use flate2::bufread::{GzDecoder, ZlibDecoder};
-use level_lib::anvil::region::CompressionScheme;
+use std::time::Instant;
+
 use memory_management::chunks::ChunkHolder;
-use nbt_lib::{reader::NbtReader, traits::NbtRead, NbtValue};
-use tokio::sync::Mutex;
 
-async fn load_chunks_around(chunk_holder: &Arc<Mutex<ChunkHolder>>, x: i64, z: i64, range: i64) {
-    let mut ch = chunk_holder.lock().await;
-    println!("{}", ch.data.lock().unwrap().keys().len());
+fn load_chunks_around(chunk_holder: &mut ChunkHolder, x: i64, z: i64, range: i64) {
     let mut counter = 0;
     for x in x-range..x+range {
         for z in z-range..z+range {
             // println!("({x},{z})");
-            if let Ok(_) = ch.get(x, z) {
+            if let Ok(_) = chunk_holder.get(x, z) {
                 counter += 1;
             }
         }
     }
-    println!("{}", ch.data.lock().unwrap().keys().len());
     println!("loaded {counter} chunks");
 }
 
 #[tokio::main]
 async fn main() {
-    let start = Instant::now();
     let mut chunk_holder: ChunkHolder = ChunkHolder::new("../nbt_lib/test_data/test_world/region");
     // chunk_holder.lock().await.load_region(0, 0).unwrap();
     // chunk_holder.lock().await.load_region(-1, -1).unwrap();
@@ -79,5 +72,5 @@ async fn main() {
             let _ = chunk_holder.cache_region(x, y, -1, -1);
     }}
     println!("Loaded all chunks in {:?}", loading_start_time.elapsed());
-    println!("uncompressed_chunks: {}", chunk_holder.count_uncompressed());
+    println!("uncompressed_chunks: {:?}", chunk_holder.count_uncompressed());
 }

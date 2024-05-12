@@ -1,15 +1,8 @@
+//! This is a crate that provides datastructs who manage different types of data
+//! to make it easier to safe memory and optimize loading time
+#![deny(missing_docs)]
+#![feature(test)]
 pub mod chunks;
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+mod test;

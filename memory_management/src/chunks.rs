@@ -1,14 +1,27 @@
+//! This module provides a datamanager for chunks
+//! is manages data loading, unloading and saving
+//!
+//! # Example
+//! ```rust
+//! use memory_management::chunks::ChunkHolder;
+//! let mut chunk_holder: ChunkHolder = ChunkHolder::new("../nbt_lib/test_data/test_world/region");
+//! let chunk = chunk_holder.get(17, 10);
+//! assert!(matches!(chunk, Ok(..)));
+//! ```
 use std::{collections::{HashMap, HashSet}, fmt::Display, io::Read as _, path::Path, rc::Rc, sync::Mutex, time::{Duration, Instant, SystemTime}};
 
 use flate2::read::{GzDecoder, ZlibDecoder, ZlibEncoder};
 use level_lib::anvil::region::{CompressionScheme, LocationAndTimestampTable, RegionData};
-use nbt_lib::{reader::NbtReader, traits::NbtRead as _, NbtValue};
+use nbt_lib::{reader::NbtReader, traits::{NbtRead as _, NbtWrite}, version::Java, NbtValue};
 use std::fmt::Debug;
 
+/// This datastruct holds information of a chunk
 #[derive(Clone)]
 pub enum ChunkDataHolder {
+    /// Raw chunks data
     Raw(CompressionScheme, Vec<u8>),
-    Data(Box<NbtValue>, Vec<u8>),
+    /// Interpreted chunk data
+    Data(Rc<NbtValue>),
 }
 impl Debug for ChunkDataHolder {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -18,16 +31,20 @@ impl Debug for ChunkDataHolder {
 impl Display for ChunkDataHolder {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Raw(_, _) => f.write_str("Raw chunk data"),
-            Self::Data(_, _) => f.write_str("Interpreted chunk data")
+            Self::Raw(..) => f.write_str("Raw chunk data"),
+            Self::Data(..) => f.write_str("Interpreted chunk data")
         }
     }
 }
 
 impl ChunkDataHolder {
+    /// Converts [`Self`] into a compressed version of itself
+    ///
+    /// [`Self`]: `memory_management::chunks::ChunkDataHolder`
     pub fn compress(&mut self) -> Result<(), ()> {
         match self {
-            ChunkDataHolder::Data(_, data) => {
+            ChunkDataHolder::Data(data) => {
+                let data = data.to_binary::<Java>().map_err(|_|())?;
                 let mut compressed_data = ZlibEncoder::new(data.as_slice(), flate2::Compression::best());
                 let mut data = Vec::new();
                 compressed_data.read_to_end(&mut data).map_err(|_|())?;
@@ -54,9 +71,9 @@ impl ChunkDataHolder {
         matches!(*data.0, Self::Data(..))
     }
 }
-// #[derive(Clone)]
+/// Struct that hold all chunkdata
 pub struct ChunkHolder {
-    pub data: Mutex<HashMap<(i64, i64), (Rc<ChunkDataHolder>, SystemTime)>>,
+    data: Mutex<HashMap<(i64, i64), (Rc<ChunkDataHolder>, SystemTime)>>,
     loaded_region: HashSet<(i64, i64)>,
     /// A list, when a specific chunk was last accessed
     last_accessed: HashMap<(i64, i64), Instant>,
@@ -65,9 +82,11 @@ pub struct ChunkHolder {
     region_file_location: &'static str,
 }
 impl ChunkHolder {
-    pub fn count_uncompressed(&self) -> usize {
-        self.data.lock().unwrap().values().filter(ChunkDataHolder::is_data_included).count()
+    /// returns the amount of uncompressed chunks that are being handled
+    pub fn count_uncompressed(&self) -> Result<usize, ()> {
+        Ok(self.data.lock().map_err(|_|())?.values().filter(ChunkDataHolder::is_data_included).count())
     }
+    /// creates a new instance of itself
     pub fn new(region_file_location: &'static str) -> Self {
         Self {
             data: Mutex::new(HashMap::new()),
@@ -78,15 +97,27 @@ impl ChunkHolder {
             region_file_location
         }
     }
+    /// loads a given chunk inside of a given region
+    ///
+    /// # Note
+    /// the x and z are 0 to 31 inside of every region
     #[inline]
-    pub fn cache_region(&mut self, x: u8, y: u8, r_x: i64, r_y: i64) -> Result<Box<NbtValue>, (i64, i64)> {
+    pub fn cache_region(&mut self, x: u8, y: u8, r_x: i64, r_y: i64) -> Result<Rc<NbtValue>, (i64, i64)> {
         self.get(x as i64 + r_x * 32, y as i64 + r_y * 32)
     }
+    /// returns a given chunk inside of a given region
+    ///
+    /// # Note
+    /// the x and z are 0 to 31 inside of every region
     #[inline]
-    pub fn get_from_region(&mut self, x: u8, y: u8, r_x: i64, r_y: i64) -> Result<Box<NbtValue>, (i64, i64)> {
+    pub fn get_from_region(&mut self, x: u8, y: u8, r_x: i64, r_y: i64) -> Result<Rc<NbtValue>, (i64, i64)> {
         self.get(x as i64 + r_x * 32, y as i64 + r_y * 32)
     }
-    pub fn load_region(&mut self, r_x: i64, r_y: i64) -> Result<(), ()> {
+    /// Loads a whole region from file into memory
+    ///
+    /// # Idea
+    /// maybe just memmap to make the access time faster
+    fn load_region(&mut self, r_x: i64, r_y: i64) -> Result<(), ()> {
         if self.loaded_region.contains(&(r_x, r_y)) { return Ok(()) }
         // let data = include_bytes!("../../nbt_lib/test_data/test_world/region/r.0.0.mca");
         let path_str = format!("{}/r.{}.{}.mca", self.region_file_location, r_x, r_y);
@@ -123,10 +154,11 @@ impl ChunkHolder {
         self.loaded_region.insert((r_x, r_y));
         Ok(())
     }
-    pub fn get<'a>(&'a mut self, x: i64, y: i64) -> Result<Box<NbtValue>, (i64, i64)> {
+    /// returns a given chunk
+    pub fn get(&mut self, x: i64, y: i64) -> Result<Rc<NbtValue>, (i64, i64)> {
         let started_loading = Instant::now();
         static HUNDRED_MS: Duration = Duration::from_millis(100);
-        if !self.data.lock().unwrap().contains_key(&(x, y)) { 
+        if !self.data.lock().map_err(|_|(x, y))?.contains_key(&(x, y)) { 
             // println!("{:?}", self.data.keys());
             if !self.loaded_region.contains(&(x, y)) {
                 self.load_region(x / 32, y / 32).map_err(|_|(x, y))?;
@@ -134,10 +166,10 @@ impl ChunkHolder {
                 return Err((x, y));
             }
         }
-        if self.data.lock().unwrap().contains_key(&(x, y)) { self.set_accessed(x, y) }
-        let generated_data: ((i64, i64), (Rc<ChunkDataHolder>, SystemTime));
+        if self.data.lock().map_err(|_|(x, y))?.contains_key(&(x, y)) { self.set_accessed(x, y) }
         self.set_accessed(x, y);
-        if let Some((chunk_data, chunk_data_timestamp)) = self.data.lock().unwrap().get(&(x, y)) {
+        let generated_chunk_data;
+        if let Some((chunk_data, chunk_data_timestamp)) = self.data.lock().map_err(|_|(x, y))?.get(&(x, y)) {
             match chunk_data.as_ref() {
                 ChunkDataHolder::Data(data, ..) => return Ok(data.clone()),
                 ChunkDataHolder::Raw(compression, raw_data) => {
@@ -165,15 +197,14 @@ impl ChunkHolder {
                         if started_loading.elapsed().gt(&HUNDRED_MS) {
                             println!("it took {:?} to load ({x:3}{y:3})", started_loading.elapsed());
                         }
-                        let chunk_data = Box::new(chunk_data);
-                        generated_data = ((x, y), (Rc::new(ChunkDataHolder::Data(chunk_data, uncompressed_chunk_data.to_owned())), *chunk_data_timestamp));
-                    } else { return Err((x, y)); }
+                        generated_chunk_data = ((x, y), (Rc::new(ChunkDataHolder::Data(Rc::new(chunk_data))), *chunk_data_timestamp));
+                    } else { return Err((x, y)) }
                 }
             }
         } else {
             return Err((x, y));
         }
-        self.data.lock().unwrap().insert(generated_data.0, generated_data.1);
+        self.data.lock().map_err(|_|(x, y))?.insert(generated_chunk_data.0, generated_chunk_data.1);
         self.get(x, y)
     }
     fn set_accessed(&mut self, x: i64, y: i64) {
@@ -185,13 +216,13 @@ impl ChunkHolder {
         self.insert(x as i64 + r_x * 32, y as i64 + r_y * 32, compression, data, timestamp)
     }
     fn insert(&mut self, x: i64, y: i64, compression: CompressionScheme, data: Vec<u8>, timestamp: SystemTime) -> Result<(), ()> {
-        if self.data.lock().unwrap().contains_key(&(x, y)) { return Err(()); }
-        self.data.lock().unwrap().insert((x, y), (Rc::new(ChunkDataHolder::Raw(compression, data)), timestamp));
+        if self.data.lock().map_err(|_|())?.contains_key(&(x, y)) { return Err(()); }
+        self.data.lock().map_err(|_|())?.insert((x, y), (Rc::new(ChunkDataHolder::Raw(compression, data)), timestamp));
         Ok(())
     }
     fn unload_region(&mut self, r_x: i64, r_y: i64) -> Result<(), ()>{
         /*
-        let mut test = self.data.lock().unwrap();
+        let mut test = self.data.lock().map_err(|_|())?;
         let mut chunks: Vec<((i64, i64), &mut (Rc<ChunkDataHolder>, SystemTime))> = test.iter_mut()
         .filter(|((x, y), (_,_))|(x / 32) == r_x && (y / 32) == r_y)
         .map(|((x, y), data)|((x & 31, y & 31), data))
@@ -203,22 +234,27 @@ impl ChunkHolder {
         */
         Ok(())
     }
-    pub async fn update(&mut self) {
+    /// Updated the chunkholder to save unused chunks to disk
+    ///
+    /// # WIP
+    /// This function is still in work
+    #[deprecated]
+    pub fn update(&mut self) -> Result<(), ()> {
         const UNLOAD_TIME: Duration = Duration::from_secs(10 * 60);
         const DISCARD_TIME: Duration = Duration::from_secs(1 * 60 * 60);
-        self.data.lock().unwrap().iter_mut().for_each(|(cords, e)| {
-            if let ChunkDataHolder::Data(_, raw_data) = e.0.as_ref() {
+        self.data.lock().map_err(|_|())?.iter_mut().for_each(|(cords, e)| {
+            if let ChunkDataHolder::Data(data) = e.0.as_ref() {
                 if self.last_accessed.get(cords).unwrap_or(&Instant::now()).elapsed().lt(&UNLOAD_TIME) { return; }
-                e.0 = Rc::new(ChunkDataHolder::Raw(CompressionScheme::None, raw_data.to_owned()));
+                e.0 = Rc::new(ChunkDataHolder::Raw(CompressionScheme::None, data.to_binary::<Java>().unwrap()));
             }
         });
         // TODO: Change the unwrap to some sort of error handling
         self.last_accessed_region.clone().iter().filter(|(_, i)|i.elapsed().ge(&DISCARD_TIME)).for_each(|(coords, _)|self.unload_region(coords.0, coords.1).unwrap());
-        if self.data.lock().unwrap().values().count() > LOADED_CHUNKS_LIMIT {
+        if self.data.lock().map_err(|_|())?.values().count() > LOADED_CHUNKS_LIMIT {
             let self_clone = self.last_accessed_region.clone();
             let mut lar: Vec<(&(i64, i64), &Instant)> = self_clone.iter().collect();
             lar.sort_by(|(_, i0),(_, i1)|i0.cmp(i1));
-            while self.data.lock().unwrap().keys().count() > LOADED_CHUNKS_LIMIT {
+            while self.data.lock().map_err(|_|())?.keys().count() > LOADED_CHUNKS_LIMIT {
                 let mut lar_iter = lar.iter();
                 loop {
                     let oldest_access = lar_iter.next().unwrap();
@@ -229,6 +265,7 @@ impl ChunkHolder {
             }
             println!("oldest_access: {:?}", lar.first().unwrap().1.elapsed());
         }
+        Ok(())
     }
 }
 const LOADED_CHUNKS_LIMIT: usize = 100_000;

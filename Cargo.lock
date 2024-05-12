@@ -213,9 +213,9 @@ checksum = "25cbce373ec4653f1a01a31e8a5e5ec0c622dc27ff9c4e6606eefef5cbbed4a5"
 
 [[package]]
 name = "flate2"
-version = "1.0.28"
+version = "1.0.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46303f565772937ffe1d394a4fac6f411c6013172fadde9dcdb1e147a086940e"
+checksum = "5f54427cfd1c7829e2a139fcefea601bf088ebca651d2bf53ebc600eac295dae"
 dependencies = [
  "crc32fast",
  "libz-sys",
@@ -492,6 +492,7 @@ dependencies = [
  "flate2",
  "minecraft_assets",
  "nbt_lib",
+ "tokio",
 ]
 
 [[package]]
@@ -538,6 +539,17 @@ name = "memchr"
 version = "2.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "523dc4f511e55ab87b694dc30d0f820d60906ef06413f93d4d7a1385599cc149"
+
+[[package]]
+name = "memory_management"
+version = "0.1.0"
+dependencies = [
+ "flate2",
+ "level_lib",
+ "nbt_lib",
+ "rand",
+ "tokio",
+]
 
 [[package]]
 name = "mime"
