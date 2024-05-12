@@ -22,10 +22,11 @@
 //! ```
 
 /// Converts raw nbt bytes directly into an struct
-pub fn from_bytes<'de, T: Deserialize<'static>>(v: &'static [u8]) -> Result<T> {
+pub fn from_bytes<'de, T: Deserialize<'de>>(v: &'de [u8]) -> Result<T> {
     let data: Slice = Slice { data: v };
     let mut test = Deserializer::new(data, DeOpts { max_seq_len: usize::MAX });
-    T::deserialize(&mut test)
+    let res = T::deserialize(&mut test);
+    res
 }
 
 #[cfg(test)]

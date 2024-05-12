@@ -3,6 +3,8 @@
 use std::collections::HashMap;
 
 use serde::Serialize;
+
+use crate::traits::SizeOf;
 /// Enum storing NBT data
 #[derive(Debug, Clone)]
 pub enum NbtValue {
@@ -45,6 +47,24 @@ impl NbtValue {
             Self::Float(v) => Some(v.to_be_bytes().to_vec()),
             Self::Double(v) => Some(v.to_be_bytes().to_vec()),
             _ => None,
+        }
+    }
+}
+impl SizeOf for NbtValue {
+    fn size_of(&self) -> usize {
+        match self {
+            Self::Byte(_) => std::mem::size_of::<i8>(),
+            Self::Short(_) => std::mem::size_of::<i16>(),
+            Self::Int(_) => std::mem::size_of::<i32>(),
+            Self::Long(_) => std::mem::size_of::<i64>(),
+            Self::Float(_) => std::mem::size_of::<f32>(),
+            Self::Double(_) => std::mem::size_of::<f64>(),
+            Self::ByteArray(v) => v.len() * std::mem::size_of::<i8>(),
+            Self::IntArray(v) => v.len() * std::mem::size_of::<i32>(),
+            Self::LongArray(v) => v.len() * std::mem::size_of::<i64>(),
+            Self::String(s) => std::mem::size_of_val(s),
+            Self::List(v) => v.iter().map(|v|v.size_of()).sum(),
+            Self::Compound(_, values) => values.iter().map(|(k,v)|std::mem::size_of_val(k) + v.size_of()).sum(),
         }
     }
 }

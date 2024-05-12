@@ -91,16 +91,16 @@ macro_rules! assert_return_IEEE754 {
     ($v0:expr, $v1:expr) => {
         if $v0 != $v1 {
             if $v0.is_nan() && $v1.is_nan() { return true }
-            eprintln!("Value {:?} and {:?} are not equal", $v0, $v1);
-            false
+            println!("Value {:?} and {:?} are not equal", $v0, $v1);
+            dbg!(false)
         } else { true }
     };
 }
 macro_rules! assert_return {
     ($v0:expr, $v1:expr) => {
         if $v0 != $v1 {
-            eprintln!("Value {:?} and {:?} are not equal", $v0, $v1);
-            false
+            println!("Value {:?} and {:?} are not equal", $v0, $v1);
+            dbg!(false)
         } else { true }
     };
 }
@@ -118,16 +118,15 @@ impl PartialEq for NbtValue {
             (Self::IntArray(v0), Self::IntArray(v1)) => assert_return!(v0, v1),
             (Self::LongArray(v0), Self::LongArray(v1)) => assert_return!(v0, v1),
             (Self::List(v0), Self::List(v1)) => assert_return!(v0, v1),
-            (Self::Compound(name0, v0), Self::Compound(name1, v1)) => {
-                if v0.len() != v1.len() { return false }
-                if name0 != name1 { return false }
+            (Self::Compound(_name0, v0), Self::Compound(_name1, v1)) => {
+                if v0.len() != v1.len() { return dbg!(false) }
                 for value in v0 {
-                    if !v1.contains_key(value.0) { return false }
-                    if value.1 != v1.get(value.0).unwrap() { return false }
+                    if !v1.contains_key(value.0) { return dbg!(false) }
+                    if value.1 != v1.get(value.0).unwrap() { return dbg!(false) }
                 }
                 true
             }
-            _ => false
+            _ => dbg!(false)
         }
     }
 }

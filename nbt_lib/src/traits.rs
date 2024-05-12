@@ -33,6 +33,12 @@ pub trait NbtWrite {
     }
 }
 
+/// A trait to determine the size of a struct
+pub trait SizeOf {
+    /// Get the size of a struct
+    fn size_of(&self) -> usize;
+}
+
 /// trait for every type that has to be read as NBT data
 pub trait NbtRead {
     /// function to read a signed 8-bit integer array
