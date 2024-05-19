@@ -347,6 +347,29 @@ pub struct StructureDataList {
     ///  setting their id to "INVALID" and removing all other tags.
     pub starts: Vec<(String, ChunkDataHolder)>,
 }
+impl FromNbtValue for StructureDataList {
+    fn from_nbt_value(value: NbtValue) -> Result<Self, ()> where Self: Sized {
+        let (_, data) = unwrap_to_empty!(Some(value), compound);
+        let structure_references: Vec<(String, Vec<[i32;2]>)> = unwrap_to_empty!(data.get("structure_references"), compound).1
+            .into_iter()
+            .map(|(s, d)|{
+                combine_result(s, d.as_i64_array().map_err(|_|()))
+            }).collect::<Result<Vec<(String, Vec<i64>)>, ()>>()?
+            .into_iter()
+            .map(|(s, data)|(s, data.into_iter().map(|data|[(data >> 32) as i32, (data & 0xFFFFFFFF) as i32]).collect()))
+            .collect();
+        let starts = unwrap_to_empty!(data.get("starts"), compound).1.into_iter()
+            .map(|(s, data)|(s, ChunkDataHolder::from(s, data)));
+        Err(())
+    }
+}
+#[inline]
+fn combine_result(s: String, data: Result<Vec<i64>, ()>) -> Result<(String, Vec<i64>), ()> {
+    match data {
+        Ok(data) => Ok((s, data)),
+        Err(()) => Err(()),
+    }
+}
 impl StructureDataList {
     /// creates a new structure data list
     pub fn new() -> Self {
@@ -385,6 +408,10 @@ impl FromNbtValue for ChunkData {
                 sections: convert_list_to!(data.get(Self::SECTIONS), ChunkSection),
                 block_entities: convert_list_to!(data.get(Self::BLOCK_ENTITIES), BlockEntity),
                 heightmaps: convert_list_to!(data.get(Self::HEIGHTMAPS), Heightmaps),
+                fluid_ticks: convert_list_to!(data.get(Self::FLUID_TICKS), TileTick),
+                block_ticks: convert_list_to!(data.get(Self::BLOCK_TICKS), TileTick),
+                inhabited_time: unwrap_to_empty!(data.get(Self::INHABITED_TIME), i64),
+                structure_data_list: StructureDataList::from_nbt_value(data.get(Self::STRUCTURES).ok_or(())?),
             })
         }
         Err(())
@@ -424,6 +451,15 @@ pub enum ChunkDataHolder {
     Empty {
         /// The id is INVALID, if it is absent, its only for parsing reasons included
         id: String,
+    }
+}
+impl ChunkDataHolder {
+    pub fn from(name: String, value: NbtValue) -> Result<Self, ()> where Self: Sized {
+        let (_, data) = unwrap_to_empty!(Some(value), compound);
+        if unwrap_to_empty!(data.get("id"), str) == "INVALID" {
+            return Ok(Self::Empty { id: String::from("INVALID") });
+        }
+        Ok(Self::Data(structure::StructureData::from(name, data)?))
     }
 }
 impl AsNbtValue for ChunkDataHolder {

@@ -1,8 +1,30 @@
 //! Module for structure data inside of a chunk
 
-use std::ops::Deref;
+use std::{collections::HashMap, ops::Deref};
 
-use self::end_city_element::EndCityElement;
+use nbt_lib::{traits::FromNbtValue, NbtValue};
+
+use crate::{convert_list_to, unwrap_to_empty};
+
+use self::{end_city_element::EndCityElement, jungle_temple::JungleTempleElement};
+
+pub enum Orientation {
+    North = 0,
+    East = 1,
+    South = 2,
+    West = 3,
+}
+impl Orientation {
+    pub fn from(value: i32) -> Self {
+        match value {
+            0 => Self::North,
+            1 => Self::East,
+            2 => Self::South,
+            3 => Self::West,
+            i32::MIN..=-1 | 4..=i32::MAX => Self::North,
+        }
+    }
+}
 
 /// Module of an end city element
 pub mod end_city_element;
@@ -34,6 +56,9 @@ pub mod dessert_temple;
 
 
 /// An enum of the differenct types of structure data
+///
+/// # Sources
+/// - [minecraft german fandom](https://minecraft.fandom.com/de/wiki/Bauwerksdaten#Basisdaten)
 pub enum StructureData {
     /// Structure data of an end city
     EndCity {
@@ -46,6 +71,7 @@ pub enum StructureData {
     JungleTemple {
         /// The basic data of a structure
         basic_data: BasicStructureData,
+        children: Vec<JungleTempleElement>
     },
     /// Structure data of a `Stronghold`
     Stronghold {
@@ -105,13 +131,21 @@ pub enum StructureData {
     /// Structure data of a `Bastion`
     Bastion {}
 }
+impl StructureData {
+    fn from(name: String, values: HashMap<String, nbt_lib::NbtValue>) -> Result<Self, ()> where Self: Sized {
+        let basic_data = BasicStructureData::from(values)?;
+        match name.as_str() {
+            "Jungle_Pyramid" => Ok(Self::JungleTemple { basic_data , children: convert_list_to!(values.get("Children"), JungleTempleElement) })
+        }
+    }
+}
 impl Deref for StructureData {
     type Target = BasicStructureData;
 
     fn deref(&self) -> &Self::Target {
         match self {
             Self::EndCity { basic_data, .. } => basic_data,
-            Self::JungleTemple { basic_data } => basic_data,
+            Self::JungleTemple { basic_data, .. } => basic_data,
             Self::Stronghold { basic_data } => basic_data,
             Self::Igloo { basic_data } => basic_data,
             Self::NetherFortress { basic_data } => basic_data,
@@ -140,6 +174,17 @@ pub struct BasicStructureData {
     pub chunk_z: i32,
     /// The id of the structure
     pub id: String,
+}
+impl BasicStructureData {
+    pub fn from(values: HashMap<String, NbtValue>) -> Result<Self, ()> {
+        Ok(Self {
+            biome: unwrap_to_empty!(values.get("biome"), string),
+            bounding_box: unwrap_to_empty!(values.get("BB"), i32_array).try_into().unwrap(),
+            chunk_x: unwrap_to_empty!(values.get("ChunkX"), i32),
+            chunk_z: unwrap_to_empty!(values.get("ChunkZ"), i32),
+            id: unwrap_to_empty!(values.get("id"), string),
+        })
+    }
 }
 /// A struct for a piece of a structure
 ///

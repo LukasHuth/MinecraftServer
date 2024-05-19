@@ -36,3 +36,9 @@ macro_rules! convert_list_to {
         unwrap_to_empty!($data, list).into_iter().map(|data| <$t>::from_nbt_value(data)).collect()?
     };
 }
+#[macro_export]
+macro_rules! convert_to_bool {
+    ($data:expr) => {
+        $data == 1
+    };
+}
