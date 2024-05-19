@@ -2,7 +2,7 @@ extern crate test;
 #[test]
 #[deprecated]
 fn test_chunk_loading() {
-    use crate::chunks::ChunkHolder;
+    use crate::world::chunks::ChunkHolder;
     let mut chunk_holder: ChunkHolder = ChunkHolder::new("../nbt_lib/test_data/test_world/region");
     let chunk = dbg!(chunk_holder.get(17, 10)).unwrap();
     use nbt_lib::NbtValue::{self, *};

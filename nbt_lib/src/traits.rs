@@ -33,6 +33,21 @@ pub trait NbtWrite {
     }
 }
 
+/// A trait, that allowes to convert the struct to the nbt representation
+pub trait AsNbtValue {
+    /// converts the struct to a [`NbtValue`]
+    ///
+    /// [`NbtValue`]: `nbt_lib::NbtValue`
+    fn as_nbt_value(&self) -> Result<NbtValue, ()>;
+}
+/// A trait, that allowes to convert the struct to the nbt representation
+pub trait FromNbtValue {
+    /// converts the struct to a [`NbtValue`]
+    ///
+    /// [`NbtValue`]: `nbt_lib::NbtValue`
+    fn from_nbt_value(value: NbtValue) -> Result<Self, ()> where Self: Sized;
+}
+
 /// A trait to determine the size of a struct
 pub trait SizeOf {
     /// Get the size of a struct

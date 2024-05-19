@@ -11,6 +11,7 @@ pub use banner_data::*;
 use datatypes::Position;
 use entmet_lib::entities::entity::Bee;
 use minecraft_assets::{effects::Effect, recipes::BlastFurnaceRecipe};
+use nbt_lib::traits::{AsNbtValue, FromNbtValue};
 
 /// A Struct for common struct data
 #[derive(Default)]
@@ -129,6 +130,16 @@ pub enum BlockEntity {
         /// A list of all used recipes to calculate the stored xp
         recepies_used: Vec<BlastFurnaceRecipe>,
     },
+}
+impl FromNbtValue for BlockEntity {
+    fn from_nbt_value(_value: nbt_lib::NbtValue) -> Result<Self, ()> where Self: Sized {
+        todo!()
+    }
+}
+impl AsNbtValue for BlockEntity {
+    fn as_nbt_value(&self) -> Result<nbt_lib::NbtValue, ()> {
+        todo!()
+    }
 }
 /// A struct holding bee data
 pub struct BeeData {

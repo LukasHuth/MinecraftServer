@@ -3,7 +3,7 @@
 //!
 //! # Example
 //! ```rust
-//! use memory_management::chunks::ChunkHolder;
+//! use memory_management::world::chunks::ChunkHolder;
 //! let mut chunk_holder: ChunkHolder = ChunkHolder::new("../nbt_lib/test_data/test_world/region");
 //! let chunk = chunk_holder.get(17, 10);
 //! assert!(matches!(chunk, Ok(..)));

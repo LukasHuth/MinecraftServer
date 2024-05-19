@@ -2,7 +2,7 @@
 //! to make it easier to safe memory and optimize loading time
 #![deny(missing_docs)]
 #![feature(test)]
-pub mod chunks;
+pub mod world;
 
 #[cfg(test)]
 mod test;
