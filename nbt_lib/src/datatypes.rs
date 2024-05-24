@@ -3,7 +3,7 @@ use binary_utils::{DataWriter, write_bytes, DataReader};
 use datatypes::ImportantFunctions;
 use tokio::io::{AsyncWrite, AsyncRead, BufReader};
 
-use crate::{NbtValue, version::JavaNetty, traits::{NbtWrite, NbtRead}, reader::NbtReader};
+use crate::{reader::NbtReader, traits::{FromNbtValue, NbtRead, NbtWrite}, version::JavaNetty, NbtValue};
 /// struct to hold and text component
 ///
 /// # Note

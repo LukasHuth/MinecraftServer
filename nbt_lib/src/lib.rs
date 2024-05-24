@@ -16,6 +16,8 @@ pub mod version;
 
 pub mod datatypes;
 
+pub mod macros;
+
 mod nbt_implementation;
 
 #[cfg(test)]
