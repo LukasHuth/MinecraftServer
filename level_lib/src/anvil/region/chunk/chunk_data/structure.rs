@@ -2,9 +2,9 @@
 
 use std::{collections::HashMap, ops::Deref};
 
-use nbt_lib::{traits::FromNbtValue, NbtValue};
+use nbt_lib::NbtValue;
 
-use crate::{convert_list_to, unwrap_to_empty};
+use nbt_lib::unwrap_to_empty;
 
 use self::{end_city_element::EndCityElement, jungle_temple::JungleTempleElement};
 
@@ -132,11 +132,14 @@ pub enum StructureData {
     Bastion {}
 }
 impl StructureData {
-    fn from(name: String, values: HashMap<String, nbt_lib::NbtValue>) -> Result<Self, ()> where Self: Sized {
+    pub fn from_nbt(name: String, values: HashMap<String, nbt_lib::NbtValue>) -> Result<Self, ()> where Self: Sized {
         let basic_data = BasicStructureData::from(values)?;
+        todo!();
+        /*
         match name.as_str() {
-            "Jungle_Pyramid" => Ok(Self::JungleTemple { basic_data , children: convert_list_to!(values.get("Children"), JungleTempleElement) })
+        "Jungle_Pyramid" => Ok(Self::JungleTemple { basic_data , children: convert_list_to!(values.get("Children"), JungleTempleElement) })
         }
+        */
     }
 }
 impl Deref for StructureData {

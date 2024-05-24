@@ -1,10 +1,11 @@
 //! This is a module containing all important data structs for storing the data of a chunk section
 
-use std::{collections::HashMap, slice};
+use std::collections::HashMap;
 
 use nbt_lib::{traits::{AsNbtValue, FromNbtValue}, NbtValue};
 
-use crate::{anvil::region::chunk::chunk_data::list_to_nbt_value_list, convert_list_to, create_compound_map, unwrap_to_empty};
+use crate::anvil::region::chunk::chunk_data::list_to_nbt_value_list;
+use nbt_lib::{create_compound_map, unwrap_to_empty};
 
 /// A struct with block data
 pub struct BlockData {

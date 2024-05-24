@@ -43,5 +43,4 @@ fn test() {
             let comp = dbg!( f64::round(offset + x_comp + z_comp) );
         }
     }
-    assert!(false)
 }

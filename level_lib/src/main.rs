@@ -9,5 +9,5 @@ pub fn get_height(x: i64, z: i64) -> i64 {
 }
 fn main() {
     let heightmap: [[u16; 16]; 16] = (0..16).map(|x| (0..16).map(|y| get_height(x, y) as u16).collect::<Vec<_>>().try_into().unwrap()).collect::<Vec<_>>().try_into().unwrap();
-    let test = level_lib::anvil::region::chunk::chunk_data::ChunkData::create_pregen(heightmap, "");
+    let test = level_lib::anvil::region::chunk::chunk_data::ChunkData::new(heightmap, "", 1, 1, 0);
 }

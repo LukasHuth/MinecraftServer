@@ -1,6 +1,6 @@
 use nbt_lib::traits::FromNbtValue;
 
-use crate::{convert_to_bool, unwrap_to_empty};
+use nbt_lib::{convert_to_bool, unwrap_to_empty};
 
 use super::Orientation;
 
