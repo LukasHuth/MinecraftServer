@@ -494,6 +494,7 @@ dependencies = [
  "nbt_lib",
  "paste",
  "serde",
+ "slot_lib",
  "tokio",
 ]
 

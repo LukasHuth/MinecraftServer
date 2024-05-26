@@ -5,7 +5,7 @@ use nbt_lib::datatypes::TextComponent;
 use super::AbstractMinecart;
 
 /// An instance of a minecart that carries a command block
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct MinecartCommandBlock {
     abstract_minecart: AbstractMinecart,
     /// The command of the command block

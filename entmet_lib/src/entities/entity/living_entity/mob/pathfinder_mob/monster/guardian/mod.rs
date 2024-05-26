@@ -6,7 +6,7 @@ mod elder_guardian;
 pub use elder_guardian::*;
 
 /// An instance of a Guardian
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Guardian {
     monster: Monster,
     /// Whether it is retracting its spikes or not

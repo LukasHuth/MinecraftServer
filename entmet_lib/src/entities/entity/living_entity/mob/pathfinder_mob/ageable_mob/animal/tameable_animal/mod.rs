@@ -10,7 +10,7 @@ mod parrot;
 pub use parrot::*;
 
 /// An interface of a tameable amimal
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct TameableAnimal {
     animal: Animal,
     /// Whether it is sitting or not

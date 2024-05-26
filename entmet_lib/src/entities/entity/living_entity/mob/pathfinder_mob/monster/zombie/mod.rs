@@ -16,7 +16,7 @@ pub use zombified_piglin::*;
 /// # Note
 ///
 /// Also used for inheritance of all other zombiefied monsters
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Zombie {
     monster: Monster,
     /// Whether it is a baby or not

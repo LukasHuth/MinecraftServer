@@ -10,6 +10,7 @@ pub use text_display::*;
 
 /// An enum of the billboard constraints
 #[repr(u8)]
+#[derive(PartialEq)]
 pub enum BillboardConstraints {
     /// Being fixed
     Fixed = 0,
@@ -21,6 +22,7 @@ pub enum BillboardConstraints {
     Center = 3,
 }
 /// An instance of a Display
+#[derive(PartialEq)]
 pub struct Display {
     entity: Entity,
     /// The interpolation delay

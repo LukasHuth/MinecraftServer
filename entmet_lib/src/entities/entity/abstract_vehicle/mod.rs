@@ -8,6 +8,7 @@ mod abstract_minecart;
 pub use abstract_minecart::*;
 
 /// An Interface to store vehicle data
+#[derive(PartialEq)]
 pub struct AbstractVehicle {
     entity: Entity,
     /// The amount of shaking of the vehicle

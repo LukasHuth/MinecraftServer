@@ -10,7 +10,7 @@ use super::Mob;
 ///
 #[allow(missing_docs)]
 #[repr(u8)]
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub enum EnderDragonPhase {
     Circling = 0,
     Strafing = 1,
@@ -26,7 +26,7 @@ pub enum EnderDragonPhase {
 }
 
 /// An instance of an ender dragon
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct EnderDragon {
     mob: Mob,
     /// The current phase of the ender dragon

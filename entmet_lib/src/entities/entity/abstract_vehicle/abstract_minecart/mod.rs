@@ -16,6 +16,7 @@ mod minecart_command_block;
 pub use minecart_command_block::*;
 
 /// An interface to store minecart data
+#[derive(PartialEq)]
 pub struct AbstractMinecart {
     abstract_vehicle: AbstractVehicle,
     /// The costom block id

@@ -7,7 +7,7 @@ use super::TameableAnimal;
 /// An enum of all cat variants
 #[allow(missing_docs)]
 #[repr(u8)]
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub enum CatVariant {
     White = 0,
     Tuxedo = 1,
@@ -23,7 +23,7 @@ pub enum CatVariant {
 }
 
 /// An instance of a cat
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Cat {
     tameable_animal: TameableAnimal,
     /// The variant of the cat

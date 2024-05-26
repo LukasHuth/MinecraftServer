@@ -7,6 +7,7 @@ edition = "2021"
 nbt_lib = { path = "../nbt_lib" }
 datatypes = { path = "../datatypes" }
 binary_utils = { path = "../binary_utils" }
+slot_lib = { path = "../slot_lib" }
 flate2 = { version = "1.0.28", features = ["zlib"] }
 minecraft_assets = { path = "../minecraft_assets" }
 entmet_lib = { path = "../entmet_lib" }

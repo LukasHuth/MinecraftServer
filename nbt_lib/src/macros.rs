@@ -197,6 +197,12 @@ macro_rules! convert_list_to {
             .map(|data| <$t>::from_nbt_value(data))
             .collect::<Result<Vec<_>, ()>>()?
     };
+    ($data:expr, $name:expr, $t:ty) => {
+        nbt_lib::unwrap_to_empty!($data, $name, list)
+            .into_iter()
+            .map(|data| <$t>::from_nbt_value(data))
+            .collect::<Result<Vec<_>, ()>>()?
+    };
 }
 /// Converts a list of [`NbtValue`]s to a `Result` with a vector of a specified type or an error.
 ///

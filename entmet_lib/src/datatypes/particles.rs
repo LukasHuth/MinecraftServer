@@ -1,4 +1,5 @@
 /// An enum of all Particle types
+#[derive(PartialEq, Eq)]
 pub enum ParticleType {
     /// A particle of type `AmbientEntityEffect`
     AmbientEntityEffect,

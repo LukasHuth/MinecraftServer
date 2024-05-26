@@ -13,6 +13,7 @@ mod tadpole;
 pub use tadpole::*;
 
 /// An interface of a fish
+#[derive(PartialEq)]
 pub struct AbstractFish {
     water_animal: WaterAnimal,
     /// whether the fish is from a bucket or not

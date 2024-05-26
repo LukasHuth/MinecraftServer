@@ -11,7 +11,7 @@ mod mob;
 pub use mob::*;
 
 /// An enum of the state of the hand of an entity
-#[derive(Clone, Default, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum HandStates {
     /// The hand does nothing
@@ -29,7 +29,7 @@ impl Into<u8> for HandStates {
     }
 }
 /// An interface if a living entity
-#[derive(Clone)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct LivingEntity {
     entity: Entity,
     /// The state of the hands of the entity

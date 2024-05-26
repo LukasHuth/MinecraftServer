@@ -8,14 +8,17 @@ use nbt_lib::unwrap_to_empty;
 
 use self::{end_city_element::EndCityElement, jungle_temple::JungleTempleElement};
 
+/// Represents the orientation of a structure
+#[allow(missing_docs)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum Orientation {
     North = 0,
     East = 1,
     South = 2,
     West = 3,
 }
-impl Orientation {
-    pub fn from(value: i32) -> Self {
+impl From<i32> for Orientation {
+    fn from(value: i32) -> Self {
         match value {
             0 => Self::North,
             1 => Self::East,
@@ -59,6 +62,7 @@ pub mod dessert_temple;
 ///
 /// # Sources
 /// - [minecraft german fandom](https://minecraft.fandom.com/de/wiki/Bauwerksdaten#Basisdaten)
+#[derive(PartialEq, Debug)]
 pub enum StructureData {
     /// Structure data of an end city
     EndCity {
@@ -71,6 +75,7 @@ pub enum StructureData {
     JungleTemple {
         /// The basic data of a structure
         basic_data: BasicStructureData,
+        /// The elements of the jungle temple (always one)
         children: Vec<JungleTempleElement>
     },
     /// Structure data of a `Stronghold`
@@ -132,6 +137,7 @@ pub enum StructureData {
     Bastion {}
 }
 impl StructureData {
+    /// creates basic structure data from the nbt data
     pub fn from_nbt(name: String, values: HashMap<String, nbt_lib::NbtValue>) -> Result<Self, ()> where Self: Sized {
         let basic_data = BasicStructureData::from(values)?;
         todo!();
@@ -166,6 +172,7 @@ impl Deref for StructureData {
 }
 
 /// A struct for structure data
+#[derive(PartialEq, Debug)]
 pub struct BasicStructureData {
     /// The six coordinated of the bounding box lower x, y, z and upper x, y, z
     pub bounding_box: [i32;6],
@@ -179,6 +186,7 @@ pub struct BasicStructureData {
     pub id: String,
 }
 impl BasicStructureData {
+    /// tries to build a `BasicStructureData` from a `HashMap`
     pub fn from(values: HashMap<String, NbtValue>) -> Result<Self, ()> {
         Ok(Self {
             biome: unwrap_to_empty!(values.get("biome"), string),

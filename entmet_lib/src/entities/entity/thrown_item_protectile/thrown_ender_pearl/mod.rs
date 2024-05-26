@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::ThrownItemProtectile;
 
 /// An instance of a thrown ender pearl
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct ThrownEnderPearl {
     thrown_item_protectile: ThrownItemProtectile,
 }

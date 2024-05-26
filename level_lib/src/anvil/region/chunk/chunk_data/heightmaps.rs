@@ -20,9 +20,10 @@ trait HeightMapIdentifier {
     fn get_default() -> Self;
 }
 /// A Struct holding all Heightmaps
+#[derive(PartialEq, Eq, Debug)]
 pub struct Heightmaps {
     /// A Heightmap of the heigest motion blocking block in the section
-    pub motion_blocking: HeightmapWrapper,
+    pub motion_blocking: Option<HeightmapWrapper>,
     /// A Heightmap of the heigest motion blocking block in the section, excluding leaves
     pub motion_blocking_no_leaves: Option<HeightmapWrapper>,
     /// A Heightmap of the heigest ocean floor block in the section
@@ -31,7 +32,7 @@ pub struct Heightmaps {
     /// unknown to me)
     pub ocean_floor_wg: Option<HeightmapWrapper>,
     /// A Heightmap of the heigest world surface block in the section
-    pub world_surface: HeightmapWrapper,
+    pub world_surface: Option<HeightmapWrapper>,
     /// A Heightmap of the heigest world surface block in the section (use case of this is currently
     /// unknown to me)
     pub world_surface_wg: Option<HeightmapWrapper>,
@@ -39,11 +40,11 @@ pub struct Heightmaps {
 impl FromNbtValue for Heightmaps {
     fn from_nbt_value(value: NbtValue) -> Result<Self, ()> where Self: Sized {
         let (_, data) = unwrap_to_empty!(Some(value), compound);
-        let motion_blocking = unwrap_to_empty!(data, "MOTION_BLOCKING_NO_LEAVES", i64_array).try_into().unwrap();
+        let motion_blocking = unwrap_to_empty_if_exists!(data, "MOTION_BLOCKING_NO_LEAVES", i64_array).map(|d|d.try_into().unwrap());
         let motion_blocking_no_leaves = unwrap_to_empty_if_exists!(data, "MOTION_BLOCKING_NO_LEAVES", i64_array).map(|d|d.try_into().unwrap());
         let ocean_floor = unwrap_to_empty_if_exists!(data, "MOTION_BLOCKING_NO_LEAVES", i64_array).map(|d|d.try_into().unwrap());
         let ocean_floor_wg = unwrap_to_empty_if_exists!(data, "MOTION_BLOCKING_NO_LEAVES", i64_array).map(|d|d.try_into().unwrap());
-        let world_surface = unwrap_to_empty!(data, "MOTION_BLOCKING_NO_LEAVES", i64_array).try_into().unwrap();
+        let world_surface = unwrap_to_empty_if_exists!(data, "MOTION_BLOCKING_NO_LEAVES", i64_array).map(|d|d.try_into().unwrap());
         let world_surface_wg = unwrap_to_empty_if_exists!(data, "MOTION_BLOCKING_NO_LEAVES", i64_array).map(|d|d.try_into().unwrap());
         Ok(Self {
             motion_blocking,
@@ -68,7 +69,7 @@ impl Default for Heightmaps {
     }
 }
 /// wrapper for heightmaps to be able to implement default and similar things
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct HeightmapWrapper {
     data: Heightmap
 }

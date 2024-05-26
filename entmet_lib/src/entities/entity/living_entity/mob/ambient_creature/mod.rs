@@ -5,7 +5,7 @@ mod bat;
 pub use bat::*;
 
 /// An interface of an ambient creature
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct AmbientCreature {
     mob: Mob,
 }

@@ -42,7 +42,7 @@ mod goat;
 pub use goat::*;
 
 /// An interface of an animal
-#[derive(Default, Clone)]
+#[derive(PartialEq, Debug, Default, Clone)]
 pub struct Animal {
     ageable_mob: AgeableMob,
 }

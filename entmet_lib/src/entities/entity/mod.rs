@@ -46,7 +46,7 @@ mod primed_tnt;
 pub use primed_tnt::*;
 
 /// An enum of the possible entity states
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum EntityState {
     /// The mob is on fire
@@ -109,7 +109,7 @@ impl EntityStatusHolder {
     }
 }
 /// An struct for a basic Entity
-#[derive(Clone)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Entity {
     /// The states of the entity
     pub status: Mask<EntityState>,

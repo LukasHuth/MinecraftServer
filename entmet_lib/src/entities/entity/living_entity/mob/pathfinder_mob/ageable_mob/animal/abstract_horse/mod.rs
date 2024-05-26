@@ -39,7 +39,7 @@ impl Into<u8> for HorseInfo {
 }
 
 /// An interface of a horse
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct AbstractHorse {
     animal: Animal,
     /// A mask of all options that can be toggled of a horse

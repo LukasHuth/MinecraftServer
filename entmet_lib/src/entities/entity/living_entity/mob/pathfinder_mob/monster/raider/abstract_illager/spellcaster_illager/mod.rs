@@ -10,7 +10,7 @@ pub use illusioner::*;
 /// An enum of all castable spells
 #[allow(missing_docs)]
 #[repr(u8)]
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub enum Spell {
     #[default] None = 0,
     SummonVex = 1,
@@ -21,7 +21,7 @@ pub enum Spell {
 }
 
 /// An interface of a spellcasting illager
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct SpellcasterIllager {
     abstract_illager: AbstractIllager,
     /// The spell that is being casted

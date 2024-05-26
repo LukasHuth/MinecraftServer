@@ -8,6 +8,7 @@ use super::ChunkDataHolder;
 
 
 /// Struct to hold all structure data of a Chunk
+#[derive(PartialEq, Debug)]
 pub struct StructureDataList {
     /// A list of the structure coordinates withing one chunk
     ///
@@ -24,7 +25,9 @@ pub struct StructureDataList {
 impl FromNbtValue for StructureDataList {
     fn from_nbt_value(value: NbtValue) -> Result<Self, ()> where Self: Sized {
         let (_, data) = unwrap_to_empty!(Some(value), compound);
-        let structure_references: Vec<(String, Vec<[u32;2]>)> = unwrap_to_empty!(data.get("structure_references"), compound).1
+        // TODO: Fix this
+        // The next dbg is already failing
+        let structure_references: Vec<(String, Vec<[u32;2]>)> = unwrap_to_empty!(data.get("References"), compound).1
             .into_iter()
             .map(|(s, d)|{
                 combine_result(s, d.as_i64_array().map_err(|_|()))

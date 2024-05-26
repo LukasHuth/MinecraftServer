@@ -15,7 +15,7 @@ mod snowball;
 pub use snowball::*;
 
 /// An iterface for a thrown projectile
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct ThrownItemProtectile {
     entity: Entity,
     /// The item data of the thrown protectile

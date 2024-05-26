@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 
 /// Enum of all Generation states
-#[derive(Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub enum GenerationStatus {
     /// Chunk is not generated
     #[serde(rename = "empty")]
@@ -86,8 +86,8 @@ impl FromStr for GenerationStatus {
             "spawn" => Ok(Self::Spawn),
             "heightmaps" => Ok(Self::Heightmaps),
             _ => {
-                if s.starts_with("minecraft:") {
-                    Self::from_str(&s[..10])
+                if s.len() > 10 && &s[..10] == "minecraft:" {
+                    Self::from_str(&s[10..])
                 } else {
                     Err(())
                 }

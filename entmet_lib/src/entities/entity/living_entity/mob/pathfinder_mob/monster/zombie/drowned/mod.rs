@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::Zombie;
 
 /// An instance of a drowned
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Drowned {
     zombie: Zombie,
 }

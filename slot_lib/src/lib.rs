@@ -8,6 +8,7 @@ pub mod datatypes;
 /// Enum of a slot
 ///
 /// This enum can either be `Empty` or hold data of an inventory slot
+#[derive(PartialEq)]
 pub enum Slot {
     /// This variant tells, that the slot is empty
     Empty,

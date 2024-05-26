@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::ChestedHorse;
 
 /// An instance of a donkey
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Donkey {
     chested_horse: ChestedHorse,
 }

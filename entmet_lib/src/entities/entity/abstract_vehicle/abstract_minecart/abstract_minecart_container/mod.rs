@@ -8,7 +8,7 @@ mod minecart_chest;
 pub use minecart_chest::*;
 
 /// An interface to store container minecart data
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct AbstractMinecartContainer {
     abstract_minecart: AbstractMinecart,
 }

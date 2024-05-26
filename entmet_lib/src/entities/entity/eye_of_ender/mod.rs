@@ -5,7 +5,7 @@ use slot_lib::Slot;
 use super::Entity;
 
 /// An instance of an eye of ender
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct EyeOfEnder {
     entity: Entity,
     /// an instance of the slot of the eye of ender

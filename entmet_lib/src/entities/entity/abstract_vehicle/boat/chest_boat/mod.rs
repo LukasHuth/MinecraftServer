@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::Boat;
 
 /// An instance of a boat carrying a chest
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct ChestBoat {
     boat: Boat,
 }

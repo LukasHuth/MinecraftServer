@@ -5,7 +5,7 @@ use crate::datatypes::BlockStateIdentifier;
 use super::Display;
 
 /// An instance of an item display
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct BlockDisplay<T: ?Sized + BlockStateIdentifier> {
     display: Display,
     /// The 

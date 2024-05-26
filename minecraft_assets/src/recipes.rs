@@ -4,6 +4,7 @@
 //! - [minecraft.fandom.com](https://minecraft.fandom.com/wiki/Recipe)
 
 /// A struct containing the common data that every recipe stores
+#[derive(PartialEq, Debug)]
 pub struct CommonRecipeData {
     /// The type of the recipe
     pub recipe_type: String,
@@ -12,6 +13,7 @@ pub struct CommonRecipeData {
 }
 
 /// A struct for a blast furnace recipe
+#[derive(PartialEq, Debug)]
 pub struct BlastFurnaceRecipe {
     /// The common recipe data
     pub common: CommonRecipeData,
@@ -32,6 +34,7 @@ pub struct BlastFurnaceRecipe {
 }
 
 /// A struct for ingredient data
+#[derive(PartialEq, Debug)]
 pub struct Ingredient {
     /// The id of the item
     pub item: String,

@@ -1,4 +1,5 @@
 /// An element of an end city
+#[derive(PartialEq, Debug)]
 pub struct EndCityElement {
     /// The bounding box of the element
     pub bounding_box: [i32;6],
@@ -34,6 +35,7 @@ pub struct EndCityElement {
     pub template: String,
 }
 /// A list of all rotation possibilities of an end city piece
+#[derive(PartialEq, Eq, Debug)]
 pub enum EndCityRotation {
     /// No rotation
     None,

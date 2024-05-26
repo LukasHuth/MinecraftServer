@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::ThrownItemProtectile;
 
 /// An instance of a thrown egg
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct ThrownEgg {
     thrown_item_protectile: ThrownItemProtectile,
 }

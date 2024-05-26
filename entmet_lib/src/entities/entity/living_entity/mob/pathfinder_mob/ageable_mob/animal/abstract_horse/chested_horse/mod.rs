@@ -10,7 +10,7 @@ mod mule;
 pub use mule::*;
 
 /// An interface for a rideable animal that is able to carry a chest
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct ChestedHorse {
     abstract_horse: AbstractHorse,
     /// Whether it has a chest or not

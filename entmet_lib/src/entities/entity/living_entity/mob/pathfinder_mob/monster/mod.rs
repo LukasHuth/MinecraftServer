@@ -34,7 +34,7 @@ mod guardian;
 pub use guardian::*;
 
 /// An interface of a monster
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Monster {
     pathfinder_mob: PathfinderMob,
 }

@@ -3,6 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::WaterAnimal;
 
 /// An instance of a dolphin
+#[derive(PartialEq)]
 pub struct Dolphin {
     water_animal: WaterAnimal,
     /// The position of its treasure
