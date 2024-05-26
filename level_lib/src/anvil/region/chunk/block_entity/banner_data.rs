@@ -8,6 +8,7 @@ use std::fmt::Display;
 ///   - banners
 ///     - pattern
 #[allow(missing_docs)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum BannerPatternVariant {
     Base,
     BottomStripe,
@@ -97,6 +98,7 @@ impl Display for BannerPatternVariant {
     }
 }
 /// A Struct managing one pattern of a banner
+#[derive(PartialEq, Debug)]
 pub struct BannerPattern {
     /// The color of the pattern
     pub color: minecraft_assets::color::Color,

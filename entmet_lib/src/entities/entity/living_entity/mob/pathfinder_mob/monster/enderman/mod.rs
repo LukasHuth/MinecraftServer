@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::Monster;
 
 /// An instance of an enderman
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Enderman {
     monster: Monster,
     /// The id of a carried block if a block is beeing carried

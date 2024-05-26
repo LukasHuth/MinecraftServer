@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::ThrownItemProtectile;
 
 /// An instance of a thrown experience bottle
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct ThrownExperienceBottle {
     thrown_item_protectile: ThrownItemProtectile,
 }

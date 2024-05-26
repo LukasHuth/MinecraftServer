@@ -10,7 +10,7 @@ mod witch;
 pub use witch::*;
 
 /// An interface of a raider
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Raider {
     monster: Monster,
     /// Whether it is celebrating ot not

@@ -6,7 +6,7 @@
 /// - [minecraft.fandom.com/wiki/Tropical_Fish](https://minecraft.fandom.com/wiki/Tropical_Fish#Color)
 /// - [minecraft.fandom.com/wiki/Cat](https://minecraft.fandom.com/wiki/Cat#Collar_color)
 #[repr(u8)]
-#[derive(Default, Clone, Copy)]
+#[derive(PartialEq, Eq, Debug, Default, Clone, Copy)]
 pub enum Color {
     /// White #F7FFFE
     White = 0,

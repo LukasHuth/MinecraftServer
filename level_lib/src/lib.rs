@@ -4,3 +4,4 @@
 pub mod structs;
 pub mod anvil;
 pub mod poi;
+mod macros;

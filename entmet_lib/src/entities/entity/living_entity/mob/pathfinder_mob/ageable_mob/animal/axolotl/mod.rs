@@ -5,7 +5,7 @@ use super::Animal;
 /// An enum of all axolotl variants
 #[repr(u8)]
 #[allow(missing_docs)]
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub enum AxolotlVariant {
     #[default] Lucy = 0,
     Wild = 1,
@@ -14,7 +14,7 @@ pub enum AxolotlVariant {
     Blue = 4,
 }
 /// An instance of an axolotl
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Axolotl {
     animal: Animal,
     /// The variant of the axolotl

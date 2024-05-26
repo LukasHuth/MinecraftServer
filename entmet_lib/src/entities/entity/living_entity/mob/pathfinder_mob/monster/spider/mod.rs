@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::Monster;
 
 /// An instance of a spider
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Spider {
     monster: Monster,
     /// Whether it is climbing or not

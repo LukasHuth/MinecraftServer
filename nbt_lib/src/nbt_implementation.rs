@@ -118,6 +118,14 @@ impl NbtValue {
             _ => Err(NbtError::IncorrectType(NbtTypeId::String, self.tag())),
         }
     }
+    /// function to get the `NbtValue` as a string
+    #[inline]
+    pub fn as_str(&self) -> NbtResult<&str> {
+        match self {
+            NbtValue::String(v) => Ok(&v),
+            _ => Err(NbtError::IncorrectType(NbtTypeId::String, self.tag())),
+        }
+    }
     /// function to get the `NbtValue` as a list of `NbtValue`'s
     #[inline]
     pub fn as_list(&self) -> NbtResult<Vec<NbtValue>> {

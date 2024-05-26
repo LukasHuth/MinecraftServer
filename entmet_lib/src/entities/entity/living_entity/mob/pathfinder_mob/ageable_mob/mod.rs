@@ -8,7 +8,7 @@ mod abstract_villager;
 pub use abstract_villager::*;
 
 /// An interface of a mab that can age
-#[derive(Default, Clone)]
+#[derive(PartialEq, Debug, Default, Clone)]
 pub struct AgeableMob {
     pathfinder_mob: PathfinderMob,
     /// Whether it is a baby or not

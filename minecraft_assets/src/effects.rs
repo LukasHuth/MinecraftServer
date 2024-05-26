@@ -3,7 +3,7 @@
 /// A list of all minecraft effects
 #[repr(u8)]
 #[allow(missing_docs)]
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Effect {
     Speed = 1,
     Slowness = 2,

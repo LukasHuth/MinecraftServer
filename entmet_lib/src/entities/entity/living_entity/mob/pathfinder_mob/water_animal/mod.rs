@@ -9,7 +9,7 @@ mod abstract_fish;
 pub use abstract_fish::*;
 
 /// An interface of a water animal
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct WaterAnimal {
     pathfinder_mob: PathfinderMob,
 }

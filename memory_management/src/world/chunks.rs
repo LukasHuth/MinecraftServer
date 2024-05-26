@@ -3,7 +3,7 @@
 //!
 //! # Example
 //! ```rust
-//! use memory_management::chunks::ChunkHolder;
+//! use memory_management::world::chunks::ChunkHolder;
 //! let mut chunk_holder: ChunkHolder = ChunkHolder::new("../nbt_lib/test_data/test_world/region");
 //! let chunk = chunk_holder.get(17, 10);
 //! assert!(matches!(chunk, Ok(..)));
@@ -11,8 +11,8 @@
 use std::{collections::{HashMap, HashSet}, fmt::Display, io::Read as _, path::Path, rc::Rc, sync::Mutex, time::{Duration, Instant, SystemTime}};
 
 use flate2::read::{GzDecoder, ZlibDecoder, ZlibEncoder};
-use level_lib::anvil::region::{CompressionScheme, LocationAndTimestampTable, RegionData};
-use nbt_lib::{reader::NbtReader, traits::{NbtRead as _, NbtWrite}, version::Java, NbtValue};
+use level_lib::anvil::region::{chunk::chunk_data::ChunkData, CompressionScheme, LocationAndTimestampTable, RegionData};
+use nbt_lib::{reader::NbtReader, traits::{FromNbtValue, NbtRead as _, NbtWrite}, version::Java, NbtValue};
 use std::fmt::Debug;
 
 /// This datastruct holds information of a chunk
@@ -21,7 +21,7 @@ pub enum ChunkDataHolder {
     /// Raw chunks data
     Raw(CompressionScheme, Vec<u8>),
     /// Interpreted chunk data
-    Data(Rc<NbtValue>),
+    Data(Rc<ChunkData>),
 }
 impl Debug for ChunkDataHolder {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -42,9 +42,10 @@ impl ChunkDataHolder {
     ///
     /// [`Self`]: `memory_management::chunks::ChunkDataHolder`
     pub fn compress(&mut self) -> Result<(), ()> {
+        use nbt_lib::traits::AsNbtValue as _;
         match self {
             ChunkDataHolder::Data(data) => {
-                let data = data.to_binary::<Java>().map_err(|_|())?;
+                let data = (**data).as_nbt_value()?.to_binary::<Java>().map_err(|_|())?;
                 let mut compressed_data = ZlibEncoder::new(data.as_slice(), flate2::Compression::best());
                 let mut data = Vec::new();
                 compressed_data.read_to_end(&mut data).map_err(|_|())?;
@@ -87,6 +88,9 @@ impl ChunkHolder {
         Ok(self.data.lock().map_err(|_|())?.values().filter(ChunkDataHolder::is_data_included).count())
     }
     /// creates a new instance of itself
+    ///
+    /// # Arguments
+    /// - region_file_location: the location to the region files
     pub fn new(region_file_location: &'static str) -> Self {
         Self {
             data: Mutex::new(HashMap::new()),
@@ -102,7 +106,7 @@ impl ChunkHolder {
     /// # Note
     /// the x and z are 0 to 31 inside of every region
     #[inline]
-    pub fn cache_region(&mut self, x: u8, y: u8, r_x: i64, r_y: i64) -> Result<Rc<NbtValue>, (i64, i64)> {
+    pub fn cache_region(&mut self, x: u8, y: u8, r_x: i64, r_y: i64) -> Result<Rc<ChunkData>, (i64, i64)> {
         self.get(x as i64 + r_x * 32, y as i64 + r_y * 32)
     }
     /// returns a given chunk inside of a given region
@@ -110,7 +114,7 @@ impl ChunkHolder {
     /// # Note
     /// the x and z are 0 to 31 inside of every region
     #[inline]
-    pub fn get_from_region(&mut self, x: u8, y: u8, r_x: i64, r_y: i64) -> Result<Rc<NbtValue>, (i64, i64)> {
+    pub fn get_from_region(&mut self, x: u8, y: u8, r_x: i64, r_y: i64) -> Result<Rc<ChunkData>, (i64, i64)> {
         self.get(x as i64 + r_x * 32, y as i64 + r_y * 32)
     }
     /// Loads a whole region from file into memory
@@ -155,7 +159,7 @@ impl ChunkHolder {
         Ok(())
     }
     /// returns a given chunk
-    pub fn get(&mut self, x: i64, y: i64) -> Result<Rc<NbtValue>, (i64, i64)> {
+    pub fn get(&mut self, x: i64, y: i64) -> Result<Rc<ChunkData>, (i64, i64)> {
         let started_loading = Instant::now();
         static HUNDRED_MS: Duration = Duration::from_millis(100);
         if !self.data.lock().map_err(|_|(x, y))?.contains_key(&(x, y)) { 
@@ -197,6 +201,8 @@ impl ChunkHolder {
                         if started_loading.elapsed().gt(&HUNDRED_MS) {
                             println!("it took {:?} to load ({x:3}{y:3})", started_loading.elapsed());
                         }
+                        // this is a big slowdown
+                        let chunk_data = ChunkData::from_nbt_value(chunk_data).map_err(|_|(x, y))?;
                         generated_chunk_data = ((x, y), (Rc::new(ChunkDataHolder::Data(Rc::new(chunk_data))), *chunk_data_timestamp));
                     } else { return Err((x, y)) }
                 }
@@ -245,7 +251,8 @@ impl ChunkHolder {
         self.data.lock().map_err(|_|())?.iter_mut().for_each(|(cords, e)| {
             if let ChunkDataHolder::Data(data) = e.0.as_ref() {
                 if self.last_accessed.get(cords).unwrap_or(&Instant::now()).elapsed().lt(&UNLOAD_TIME) { return; }
-                e.0 = Rc::new(ChunkDataHolder::Raw(CompressionScheme::None, data.to_binary::<Java>().unwrap()));
+                use nbt_lib::traits::AsNbtValue;
+                e.0 = Rc::new(ChunkDataHolder::Raw(CompressionScheme::None, data.as_nbt_value().unwrap().to_binary::<Java>().unwrap()));
             }
         });
         // TODO: Change the unwrap to some sort of error handling
@@ -265,6 +272,16 @@ impl ChunkHolder {
             }
             println!("oldest_access: {:?}", lar.first().unwrap().1.elapsed());
         }
+        Ok(())
+    }
+
+    pub(crate) fn insert_generated_chunk(&self, chunk: Rc<ChunkData>) -> Result<(), ()> {
+        let x = chunk.x_pos as i64;
+        let z = chunk.z_pos as i64;
+        let time = SystemTime::now();
+        let cdh = Rc::new(ChunkDataHolder::Data(chunk));
+        let value = (cdh, time);
+        self.data.lock().map_err(|_|())?.insert((x, z), value);
         Ok(())
     }
 }

@@ -21,6 +21,7 @@ use crate::entities::entity::{CatVariant, FrogVariant, PaintingVariant};
 /// assert_eq!(rotations.y, 30.0);
 /// assert_eq!(rotations.z, 60.0);
 /// ```
+#[derive(PartialEq)]
 pub struct Rotations {
     /// The rotation around the x-axis
     pub x: f32, 

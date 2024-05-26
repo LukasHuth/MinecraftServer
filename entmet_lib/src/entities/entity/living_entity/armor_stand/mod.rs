@@ -24,6 +24,7 @@ impl Into<u8> for ArmorStandInfo {
 }
 
 /// An instance of an armor stand
+#[derive(PartialEq)]
 pub struct ArmorStand {
     living_entity: LivingEntity,
     /// An vector of the armor stand options

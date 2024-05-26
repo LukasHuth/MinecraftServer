@@ -12,7 +12,7 @@ mod monster;
 pub use monster::*;
 
 /// An interface for mobs using pathfinder
-#[derive(Default, Clone)]
+#[derive(PartialEq, Debug, Default, Clone)]
 pub struct PathfinderMob {
     mob: Mob,
 }

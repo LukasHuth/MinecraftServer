@@ -32,6 +32,7 @@ pub struct VarLong(i64);
 /// - `x` ranging from -33554432 to 33554431.
 /// - `z` ranging from -33554432 to 33554431.
 /// - `y` ranging from -2048 to 2047.pub struct Position(i32, i32, i16);
+#[derive(PartialEq, Debug)]
 pub struct Position(i32, i32, i16);
 /// A wrapper struct representing a rotation angle in steps of 1/256 of a full turn.
 ///

@@ -5,6 +5,7 @@ use datatypes::Position;
 use super::Entity;
 
 /// An instance of an end crystal
+#[derive(PartialEq)]
 pub struct EndCrystal {
     entity: Entity,
     /// The target of the beam, if it is targetting something

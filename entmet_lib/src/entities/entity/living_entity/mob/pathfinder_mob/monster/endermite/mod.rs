@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::Monster;
 
 /// An instance of an endermite
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Endermite {
     monster: Monster,
 }

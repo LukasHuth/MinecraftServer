@@ -5,6 +5,7 @@ use crate::datatypes::particles::ParticleType;
 use super::Entity;
 
 /// An instance of an area effect cloud
+#[derive(PartialEq)]
 pub struct AreaEffectCloud {
     entity: Entity,
     /// The radius of the effect

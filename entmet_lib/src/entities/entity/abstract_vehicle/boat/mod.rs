@@ -6,7 +6,7 @@ mod chest_boat;
 pub use chest_boat::*;
 
 /// An enum of the wood types that a boat can consist of
-#[derive(Clone, Copy, Default)]
+#[derive(PartialEq, Clone, Copy, Default)]
 pub enum BoatWoodType {
     /// Oak wood
     #[default] Oak = 0,
@@ -22,7 +22,7 @@ pub enum BoatWoodType {
     DarkOak = 5,
 }
 /// An instance of a boat
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Boat {
     abstract_vehicle: AbstractVehicle,
     /// The wood type of the boat

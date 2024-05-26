@@ -3,6 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::Entity;
 
 /// An instance of a falling block
+#[derive(PartialEq)]
 pub struct FallingBlock {
     entity: Entity,
     /// Position of the falling block

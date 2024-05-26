@@ -1,64 +1,25 @@
-//! A module for chunk data
-use std::collections::HashMap;
+//! This module provides data structures to store all the data about a chunk
+use nbt_lib::{
+    convert_list_to,
+    traits::{AsNbtValue, FromNbtValue, IntoNbt},
+    NbtValue,
+};
 
-use nbt_lib::{traits::IntoNbt, NbtValue};
+use std::{collections::HashMap, str::FromStr};
+
+use crate::anvil::region::chunk::section::ChunkSection;
+use nbt_lib::{create_compound_map, unwrap_to, unwrap_to_empty};
 
 use super::block_entity::BlockEntity;
 
-/// Enum of all Generation states
-pub enum GenerationStatus {
-    /// Chunk is not generated
-    Empty,
-    /// The structures where started to being generated
-    StructureStarts,
-    /// IDK, hopefully i update this the moment i finished the world generation an know what step
-    /// this is
-    StructureReferences,
-    /// The biomes are started to being generated
-    Biomes,
-    /// The noise for the chunk is generated
-    Noise,
-    /// The surface of the chunk is generated
-    Surface,
-    /// The Caves of the chunk are generated? (guessing, because i didn't worked at the world
-    /// generation at the point of writing this code)
-    Carvers,
-    /// Liquid generation ig? 
-    LiquidCarvers,
-    /// Generating features?
-    Features,
-    /// Generating light information
-    Light,
-    /// Generation spawn information
-    Spawn,
-    /// Generating the heightmaps of the chunk
-    Heightmaps,
-    /// The cunk is fully generated
-    Full,
-}
-/// Definition of the layout of an heightmap
-///
-/// # Note
-///
-/// Every element(u64) stores 7 values each of them 9-bits long
-pub type Heightmap = [u64;37];
-/// A Struct holding all Heightmaps
-pub struct Heightmaps {
-    /// A Heightmap of the heigest motion blocking block in the section
-    pub motion_blocking: Heightmap,
-    /// A Heightmap of the heigest motion blocking block in the section, excluding leaves
-    pub motion_blocking_no_leaves: Heightmap,
-    /// A Heightmap of the heigest ocean floor block in the section
-    pub ocean_floor: Heightmap,
-    /// A Heightmap of the heigest ocean floor block in the section (use case of this is currently
-    /// unknown to me)
-    pub ocean_fllor_wg: Heightmap,
-    /// A Heightmap of the heigest world surface block in the section
-    pub world_surface: Heightmap,
-    /// A Heightmap of the heigest world surface block in the section (use case of this is currently
-    /// unknown to me)
-    pub world_surface_wg: Heightmap,
-}
+mod generation_status;
+
+pub use generation_status::*;
+
+mod heightmaps;
+
+pub use heightmaps::*;
+
 /// A struct holding all chunk data
 ///
 /// # Source
@@ -67,6 +28,7 @@ pub struct Heightmaps {
 /// # Info
 /// Everything, taged as "Not confirmed for 1.18 format" is not implemented, but will be if it
 /// turnes out to be neccessarry
+#[derive(PartialEq, Debug)]
 pub struct ChunkData {
     /// The real x position of the chunk
     pub x_pos: i32,
@@ -92,22 +54,200 @@ pub struct ChunkData {
     pub block_ticks: Vec<TileTick>,
     /// This variable increases tick by the amount of players inside of it
     pub inhabited_time: i64,
-    /// A list of 24 (the amount of sections) lists. Each one of them holding data for blocks that
-    /// have to be updated, this is only used in proto chunks
-    pub post_processing: [Vec<ToBeTicked>; 24],
-    /// A list of the structure coordinates withing one chunk
+    ///// A list of 24 (the amount of sections) lists. Each one of them holding data for blocks that
+    ///// have to be updated, this is only used in proto chunks
+    // pub post_processing: [Vec<ToBeTicked>; 24],
+    /// A list of all structures and their data
+    pub structure_data_list: StructureDataList,
+}
+impl ChunkData {
+    const X_POS: &'static str = "xPos";
+    const Y_POS: &'static str = "yPos";
+    const Z_POS: &'static str = "zPos";
+    const STATUS: &'static str = "Status";
+    const LAST_UPDATE: &'static str = "LastUpdate";
+    const SECTIONS: &'static str = "sections";
+    const BLOCK_ENTITIES: &'static str = "block_entities";
+    const HEIGHTMAPS: &'static str = "Heightmaps";
+    const FLUID_TICKS: &'static str = "fluid_ticks";
+    const BLOCK_TICKS: &'static str = "block_ticks";
+    const INHABITED_TIME: &'static str = "InhabitedTime";
+    const STRUCTURES: &'static str = "structures";
+    /// creates a new instance
+    pub fn new(
+        heightmap: [[u16; 16]; 16],
+        filler: &str,
+        x: i64,
+        z: i64,
+        current_tick: i64,
+    ) -> Self {
+        let mut s = Self {
+            x_pos: x as i32,
+            y_pos: -4,
+            z_pos: z as i32,
+            status: GenerationStatus::Empty,
+            last_update: current_tick,
+            sections: Vec::new(),
+            block_entities: Vec::new(),
+            block_ticks: Vec::new(),
+            heightmaps: dbg!(Heightmaps::default()),
+            fluid_ticks: Vec::new(),
+            inhabited_time: 0,
+            structure_data_list: StructureDataList::new(),
+        };
+        s.create_pregen(heightmap, filler);
+        s
+    }
+    /// creates a new instance of [`ChunkData`]
     ///
-    /// # Note
-    ///
-    /// In NBT it's represented as an i64
-    /// (x << 32) | y
-    pub structure_references: Vec<(String, [u32; 2])>,
-    ///  Structures that are yet to be generated, stored by general type. Some parts of the
-    ///  structures may have already been generated. Completely generated structures are removed by
-    ///  setting their id to "INVALID" and removing all other tags.
-    pub starts: Vec<(String, ChunkDataHolder)>,
+    /// [`ChunkData`]: `ChunkData`
+    fn create_pregen(&mut self, heightmap: [[u16; 16]; 16], filler: &str) {
+        let heightmap = heightmap.map(|map| map.map(|e| e.min(384)));
+        let heightmap_max = *heightmap
+            .iter()
+            .map(|map| map.iter().min().unwrap_or(&384))
+            .min()
+            .unwrap_or(&384) as i16
+            - 64;
+        let lowest_full_section = dbg!(heightmap_max / 16);
+        for y in -4..=lowest_full_section {
+            let section = ChunkSection::new_filled(y as i8, filler, false);
+            self.sections.push(section);
+        }
+        self.sections.push(ChunkSection::new_with_height_map(
+            lowest_full_section as i8 + 1,
+            filler,
+            true,
+            heightmap.map(|e| e.map(|e| (e as i16) - 64)),
+        ));
+        for y in lowest_full_section + 2..=19 {
+            let section = ChunkSection::new_filled(y as i8, filler, true);
+            self.sections.push(section);
+        }
+        let motion_blocking_vec: Vec<u16> = heightmap.to_vec().into_iter().flatten().collect();
+        let motion_blocking = Some(
+            motion_blocking_vec
+                .chunks(7)
+                .map(|chunk| {
+                    if chunk.len() == 7 {
+                        ((chunk[0] as u64) << (64 - 9))
+                            | ((chunk[1] as u64) << (64 - (9 * 2)))
+                            | ((chunk[2] as u64) << (64 - (9 * 3)))
+                            | ((chunk[3] as u64) << (64 - (9 * 4)))
+                            | ((chunk[4] as u64) << (64 - (9 * 5)))
+                            | ((chunk[5] as u64) << (64 - (9 * 6)))
+                            | ((chunk[6] as u64) << (64 - (9 * 7)))
+                    } else {
+                        (chunk[0] as u64) << (64 - 9)
+                    }
+                })
+                .collect::<Vec<_>>()
+                .try_into()
+                .unwrap(),
+        );
+        self.heightmaps = Heightmaps {
+            motion_blocking,
+            motion_blocking_no_leaves: None,
+            ocean_floor: None,
+            ocean_floor_wg: None,
+            world_surface: motion_blocking,
+            world_surface_wg: None,
+        };
+        /*
+                Self {
+                    x_pos: x as i32,
+                    y_pos: -4,
+                    z_pos: z as i32,
+                    status: GenerationStatus::Full,
+                    last_update: current_tick,
+                    sections,
+                    block_entities: Vec::new(),
+                    fluid_ticks: Vec::new(),
+                    block_ticks: Vec::new(),
+                    inhabited_time: 0,
+                    structure_data_list: StructureDataList { structure_references: Vec::new(), starts: Vec::new() },
+                    heightmaps,
+                }
+        */
+    }
+}
+
+mod structure_data_list;
+
+pub use structure_data_list::*;
+
+impl FromNbtValue for ChunkData {
+    fn from_nbt_value(value: NbtValue) -> Result<Self, ()>
+    where
+        Self: Sized,
+    {
+        use nbt_lib::NbtValue::*;
+        // use std::string::String as Str;
+        if let Compound(_, data) = value {
+            let (name, structure_data) = data
+                .get(Self::STRUCTURES)
+                .ok_or(())?
+                .as_compound()
+                .map_err(|_| ())?;
+            let structure_data_list_nbt =
+                NbtValue::Compound(name.map(|s| s.clone()), structure_data);
+            let structure_data_list = StructureDataList::from_nbt_value(structure_data_list_nbt)?;
+            return Ok(Self {
+                x_pos: unwrap_to_empty!(data.get(Self::X_POS), i32),
+                y_pos: unwrap_to_empty!(data.get(Self::Y_POS), i32),
+                z_pos: unwrap_to_empty!(data.get(Self::Z_POS), i32),
+                status: GenerationStatus::from_str(unwrap_to_empty!(data.get(Self::STATUS), str))?,
+                last_update: unwrap_to_empty!(data.get(Self::LAST_UPDATE), i64),
+                sections: convert_list_to!(data.get(Self::SECTIONS), ChunkSection),
+                block_entities: convert_list_to!(data.get(Self::BLOCK_ENTITIES), BlockEntity),
+                heightmaps: unwrap_to!(data.get(Self::HEIGHTMAPS), Heightmaps),
+                fluid_ticks: convert_list_to!(data.get(Self::FLUID_TICKS), TileTick),
+                block_ticks: convert_list_to!(data.get(Self::BLOCK_TICKS), TileTick),
+                inhabited_time: unwrap_to_empty!(data.get(Self::INHABITED_TIME), i64),
+                structure_data_list,
+            });
+        }
+        Err(())
+    }
+}
+pub(crate) fn list_to_nbt_value_list<T>(data: &Vec<T>) -> Result<NbtValue, ()>
+where
+    T: AsNbtValue,
+{
+    Ok(NbtValue::List(
+        data.iter()
+            .map(|i| i.as_nbt_value())
+            .collect::<Result<Vec<NbtValue>, _>>()?,
+    ))
+}
+impl AsNbtValue for ChunkData {
+    fn as_nbt_value(&self) -> Result<NbtValue, ()> {
+        use nbt_lib::NbtValue::*;
+        use std::string::String as Str;
+        // name is `Some("")` not `None`, because ChunkData is the outer most NbtValue
+        Ok(Compound(
+            Some(Str::new()),
+            create_compound_map!(
+                DataVersion: Int(nbt_lib::NBT_VERSION),
+                xPos: Int(self.x_pos),
+                zPos: Int(self.z_pos),
+                yPos: Int(self.y_pos),
+                Status: String(self.status.to_string()),
+                LastUpdate: Long(self.last_update),
+                sections: list_to_nbt_value_list(&self.sections)?,
+                block_entities: list_to_nbt_value_list(&self.block_entities)?,
+                Heightmaps: self.heightmaps.as_nbt_value()?,
+                fluid_ticks: list_to_nbt_value_list(&self.fluid_ticks)?,
+                block_ticks: list_to_nbt_value_list(&self.block_ticks)?,
+                InhabitedTime: Long(self.inhabited_time),
+                // PostProcessing: list_to_nbt_value_list(&self.po)
+                structures: self.structure_data_list.as_nbt_value()?
+            ),
+        ))
+    }
 }
 /// This enum is to determine, if a structure is in a chunk or not
+#[derive(PartialEq, Debug)]
 pub enum ChunkDataHolder {
     /// This option is used if the structure is in the chunk
     Data(structure::StructureData),
@@ -115,13 +255,79 @@ pub enum ChunkDataHolder {
     Empty {
         /// The id is INVALID, if it is absent, its only for parsing reasons included
         id: String,
+    },
+}
+impl ChunkDataHolder {
+    /// creates a `ChunkDataHolder` from its `NbtValue`
+    pub fn from(name: String, value: NbtValue) -> Result<Self, ()>
+    where
+        Self: Sized,
+    {
+        let (_, data) = unwrap_to_empty!(Some(value), compound);
+        if unwrap_to_empty!(data.get("id"), str) == "INVALID" {
+            return Ok(Self::Empty {
+                id: String::from("INVALID"),
+            });
+        }
+        Ok(Self::Data(structure::StructureData::from_nbt(name, data)?))
+    }
+}
+impl AsNbtValue for ChunkDataHolder {
+    fn as_nbt_value(&self) -> Result<NbtValue, ()> {
+        todo!()
     }
 }
 pub mod structure;
-#[deprecated]
-pub(crate) struct TileTick;
+/// This is data about ticks, that have been scheduled but not happened
+#[derive(PartialEq, Debug)]
+pub struct TileTick {
+    /// The id of the block
+    pub i: String,
+    /// The priority
+    ///
+    /// # Note
+    /// If multiple tile ticks are schedules, the ones with lower `p` are processed first,
+    /// the order of tile ticks with same `p` is not regulated and assumed to be random,
+    /// this is used for updates that do not interact with each other
+    pub p: i32,
+    /// the amount of ticks, until the processing should occur, this can be negativ if the
+    /// processing is overdue
+    pub t: i32,
+    /// The x coordinate of the tile that should be ticked
+    pub x: i32,
+    /// The y coordinate of the tile that should be ticked
+    pub y: i32,
+    /// The z coordinate of the tile that should be ticked
+    pub z: i32,
+}
+impl FromNbtValue for TileTick {
+    fn from_nbt_value(value: NbtValue) -> Result<Self, ()>
+    where
+        Self: Sized,
+    {
+        let (_, data) = unwrap_to_empty!(Some(value), compound);
+        Ok(Self {
+            i: unwrap_to_empty!(data.get("i"), string),
+            p: unwrap_to_empty!(data.get("p"), i32),
+            t: unwrap_to_empty!(data.get("t"), i32),
+            x: unwrap_to_empty!(data.get("x"), i32),
+            y: unwrap_to_empty!(data.get("y"), i32),
+            z: unwrap_to_empty!(data.get("z"), i32),
+        })
+    }
+}
+impl AsNbtValue for TileTick {
+    fn as_nbt_value(&self) -> Result<NbtValue, ()> {
+        todo!()
+    }
+}
 #[deprecated]
 pub(crate) struct ToBeTicked;
+impl AsNbtValue for ToBeTicked {
+    fn as_nbt_value(&self) -> Result<NbtValue, ()> {
+        todo!()
+    }
+}
 impl IntoNbt for ChunkData {
     fn to_nbt(&self) -> nbt_lib::NbtValue {
         let data_version = NbtValue::Int(nbt_lib::NBT_VERSION);

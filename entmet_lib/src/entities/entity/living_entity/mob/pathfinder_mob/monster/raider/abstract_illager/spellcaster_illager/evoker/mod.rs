@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::SpellcasterIllager;
 
 /// An instance of an evoker
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Evoker {
     spellcaster_illager: SpellcasterIllager,
 }

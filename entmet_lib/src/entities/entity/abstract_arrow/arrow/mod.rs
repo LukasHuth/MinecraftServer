@@ -5,7 +5,7 @@ use minecraft_assets::color::Color;
 use super::AbstractArrow;
 
 /// An instance of a minecraft arrow or tipped arrow
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Arrow {
     abstract_arrow: AbstractArrow,
     /// The color of the arrow

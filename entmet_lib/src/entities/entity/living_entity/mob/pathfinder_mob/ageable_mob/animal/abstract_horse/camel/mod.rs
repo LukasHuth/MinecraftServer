@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::AbstractHorse;
 
 /// An instance of a camel
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Camel {
     abstract_horse: AbstractHorse,
     /// Wether it is dashing or not

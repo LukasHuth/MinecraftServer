@@ -5,14 +5,14 @@ use super::Monster;
 /// An enum of all creeper states
 #[allow(missing_docs)]
 #[repr(i8)]
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub enum CreeperState {
     #[default] Idle = -1,
     Fuse = 1,
 }
 
 /// An instance of a creeper
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Creeper {
     monster: Monster,
     /// The state of the creeper

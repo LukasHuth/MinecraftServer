@@ -31,7 +31,7 @@ impl Into<u8> for ArrowInfo {
 }
 
 /// An interface to hold data for arrows
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct AbstractArrow {
     entity: Entity,
     /// A `Mask` holding potential data of the `AbstractArrow`

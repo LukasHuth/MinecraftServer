@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::Animal;
 
 /// An instance of a chicken
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct Chicken {
     animal: Animal,
 }

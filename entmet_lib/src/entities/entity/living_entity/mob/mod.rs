@@ -16,7 +16,7 @@ mod slime;
 pub use slime::*;
 
 /// An enum of mob options
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum MobInfo {
     /// Active if the mob should have no AI
@@ -33,7 +33,7 @@ impl Into<u8> for MobInfo {
 }
 
 /// An interface of a mob
-#[derive(Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default)]
 pub struct Mob {
     living_entity: LivingEntity,
     /// A list of the options that can be active on a mob

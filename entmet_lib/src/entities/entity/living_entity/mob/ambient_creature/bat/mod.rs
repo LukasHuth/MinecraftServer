@@ -3,6 +3,7 @@ use std::ops::{Deref, DerefMut};
 use super::AmbientCreature;
 
 /// An instance of a bat
+#[derive(PartialEq)]
 pub struct Bat {
     ambient_crature: AmbientCreature,
     /// Whether it is hanging or not

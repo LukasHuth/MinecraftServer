@@ -5,6 +5,7 @@ use super::Animal;
 /// The different states that a be can be in
 #[repr(u8)]
 #[allow(missing_docs)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum BeeState {
     IsAngry = 0x02,
     HasStung = 0x04,
@@ -12,7 +13,7 @@ pub enum BeeState {
 }
 
 /// An instance of a Bee
-#[derive(Default)]
+#[derive(PartialEq, Debug, Default)]
 pub struct Bee {
     animal: Animal,
     /// The state of the bee

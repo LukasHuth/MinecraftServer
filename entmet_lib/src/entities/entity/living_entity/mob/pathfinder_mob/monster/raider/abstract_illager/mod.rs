@@ -10,7 +10,7 @@ mod spellcaster_illager;
 pub use spellcaster_illager::*;
 
 /// An interface of an illager
-#[derive(Default)]
+#[derive(PartialEq, Default)]
 pub struct AbstractIllager {
     raider: Raider,
 }
