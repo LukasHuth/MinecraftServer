@@ -1,3 +1,4 @@
+//! This module contains all serverbound configuration packets
 mod implementations;
 mod important_functions;
 /// Enum of all the available Chat modes

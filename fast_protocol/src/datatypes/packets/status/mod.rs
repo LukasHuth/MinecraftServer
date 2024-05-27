@@ -1,3 +1,4 @@
+//! This module contaings all packets for the status state
 use binary_utils::{Result, DataWriter, write_bytes, PacketReader, DataReader as _};
 use datatypes::{Long, VarInt, ImportantFunctions as _};
 use tokio::io::{AsyncWrite, AsyncRead, BufWriter, AsyncWriteExt};

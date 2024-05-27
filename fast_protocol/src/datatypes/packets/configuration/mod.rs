@@ -1,4 +1,3 @@
-mod clientbound;
-pub use clientbound::*;
-mod serverbound;
-pub use serverbound::*;
+//! This module contains all packets for the configuration state
+pub mod clientbound;
+pub mod serverbound;

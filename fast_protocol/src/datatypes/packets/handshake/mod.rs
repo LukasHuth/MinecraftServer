@@ -1,3 +1,4 @@
+//! This module contains all packets for the handshake
 use binary_utils::{DataWriter, Result, write_bytes, DataReader, Error, consume_utf16be_char, PacketReader};
 use datatypes::{VarInt, UnsignedShort, Enum, String};
 use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite};

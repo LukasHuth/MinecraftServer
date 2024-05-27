@@ -1,3 +1,4 @@
+//! This module contains all clientbound configuration packets
 use nbt_lib::datatypes::{TextComponent, NBT};
 
 mod implementations;

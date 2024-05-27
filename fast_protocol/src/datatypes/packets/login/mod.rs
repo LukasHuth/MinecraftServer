@@ -1,3 +1,4 @@
+//! This module contains all packets for the login state
 use binary_utils::{DataWriter, Result, write_bytes, DataReader, ListDataReader as _};
 use datatypes::{JSONTextComponent, VarInt, String, ByteArray, Boolean, UUID, ImportantFunctions as _};
 use openssl::pkey::Private;

@@ -1,4 +1,4 @@
-use fast_protocol::datatypes::packets::{ChatMode, MainHand};
+use fast_protocol::datatypes::packets::configuration::serverbound::{ChatMode, MainHand};
 use tokio::sync::mpsc;
 
 /// Enum used for P2P (player to player) communication
