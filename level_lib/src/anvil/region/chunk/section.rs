@@ -1,9 +1,6 @@
 //! This is a module containing all important data structs for storing the data of a chunk section
 
-use std::{
-    collections::HashMap,
-    fmt::{Debug, Write},
-};
+use std::{collections::HashMap, fmt::Debug};
 
 use nbt_lib::{
     traits::{AsNbtValue, FromNbtValue},
@@ -146,7 +143,7 @@ impl ChunkSection {
     const BLOCK_LIGHT: &'static str = "BlockLight";
     const SKY_LIGHT: &'static str = "SkyLight";
     /// creates a new `ChunkSection` that is filled with a specified block
-    pub fn new_filled(y: i8, filler: &str, sees_sky: bool) -> Self {
+    pub fn new_filled(y: i8, filler: &str, _sees_sky: bool) -> Self {
         let block_palette = vec![BlockData {
             name: filler.to_owned(),
             properties: None,
@@ -173,7 +170,7 @@ impl ChunkSection {
     pub fn new_with_height_map(
         y: i8,
         filler: &str,
-        sees_sky: bool,
+        _sees_sky: bool,
         heightmap: [[i16; 16]; 16],
     ) -> Self {
         let block_palette = vec![
@@ -265,7 +262,7 @@ impl FromNbtValue for ChunkSection {
                         .flatten()
                         .collect::<Vec<i8>>()
                         .try_into()
-                        .unwrap()
+                        .unwrap(),
                 )
             } else {
                 None

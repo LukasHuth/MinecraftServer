@@ -2,11 +2,9 @@
 
 use std::{collections::HashMap, rc::Rc, time::SystemTime};
 
-use level_lib::anvil::region::chunk::{
-    chunk_data::{ChunkData, GenerationStatus},
-    Chunk,
-};
-use nbt_lib::NbtValue;
+use level_lib::anvil::region::chunk::
+    chunk_data::{ChunkData, GenerationStatus}
+;
 
 use self::chunks::ChunkHolder;
 pub mod chunks;
@@ -15,7 +13,7 @@ pub mod player;
 /// A struct to manage a world
 pub struct World {
     chunks: chunks::ChunkHolder,
-    players: HashMap<u128, player::Player>,
+    _players: HashMap<u128, player::Player>,
     generator: Generator,
 }
 /// A struct representing a terrain generator.
@@ -138,11 +136,11 @@ impl World {
     ///
     /// # See Also
     ///
-    /// * [Generator](memory_management::world::Generator)
-    /// * [ChunkHolder](memory_management::world::chunks::ChunkHolder)
+    /// * [Generator]
+    /// * [ChunkHolder]
     pub fn new(region_file_location: &'static str) -> Self {
         World {
-            players: HashMap::new(),
+            _players: HashMap::new(),
             generator: Generator::new(),
             chunks: ChunkHolder::new(region_file_location)
         }

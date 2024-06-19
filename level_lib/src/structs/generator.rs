@@ -115,7 +115,7 @@ pub struct FlatGenerator {
     pub lakes: bool,
     /// Whether to generate biome specific features
     pub features: bool,
-    /// Opptional structure generation overrides
+    /// Optional structure generation overrides
     pub structure_overrides: Option<ListIdOrTag<StructureOverride>>,
 }
 /// Placeholder struct for structure override tags

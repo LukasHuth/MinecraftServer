@@ -4,3 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+datatypes = { path = "../datatypes" }
+binary_utils = { path = "../binary_utils" }
+tokio = { version = "1.38.0", features = ["io-util"] }

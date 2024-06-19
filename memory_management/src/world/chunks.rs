@@ -11,8 +11,8 @@
 use std::{collections::{HashMap, HashSet}, fmt::Display, io::Read as _, path::Path, rc::Rc, sync::Mutex, time::{Duration, Instant, SystemTime}};
 
 use flate2::read::{GzDecoder, ZlibDecoder, ZlibEncoder};
-use level_lib::anvil::region::{chunk::chunk_data::ChunkData, CompressionScheme, LocationAndTimestampTable, RegionData};
-use nbt_lib::{reader::NbtReader, traits::{FromNbtValue, NbtRead as _, NbtWrite}, version::Java, NbtValue};
+use level_lib::anvil::region::{chunk::chunk_data::ChunkData, CompressionScheme, LocationAndTimestampTable};
+use nbt_lib::{reader::NbtReader, traits::{FromNbtValue, NbtRead as _}, version::Java};
 use std::fmt::Debug;
 
 /// This datastruct holds information of a chunk
@@ -40,7 +40,7 @@ impl Display for ChunkDataHolder {
 impl ChunkDataHolder {
     /// Converts [`Self`] into a compressed version of itself
     ///
-    /// [`Self`]: `memory_management::chunks::ChunkDataHolder`
+    /// [`Self`]: `crate::world::chunks::ChunkDataHolder`
     pub fn compress(&mut self) -> Result<(), ()> {
         use nbt_lib::traits::AsNbtValue as _;
         match self {

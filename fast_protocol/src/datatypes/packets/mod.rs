@@ -143,7 +143,10 @@ impl ServerboundPackets {
     /// # Returns
     ///
     /// Returns a result containing the read packet. If an error occurs it gets returned
-    pub async fn read<'a>(reader: &mut BufReader<ReadHalf<'a>>, state: &State) -> Result<Self> {
+    pub async fn read<'a>(reader: &mut BufReader<ReadHalf<'a>>, state: &State) -> Result<Self> 
+    where
+        Self: 'a
+    {
         if let Ok(vec) = reader.fill_buf().await {
             println!("vec: {:?}", vec);
             if vec.is_empty() {
@@ -161,7 +164,10 @@ impl ServerboundPackets {
             State::Playing => Self::playing(reader).await,
         }
     }
-    async fn handshake<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self> {
+    async fn handshake<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self>
+    where
+        Self: 'a
+    {
         // let mut reader = BufReader::new(reader);
         let mut first_two_bytes = bytes::BytesMut::with_capacity(2);
         match reader.read_buf(&mut first_two_bytes).await {
@@ -190,7 +196,10 @@ impl ServerboundPackets {
             }
         }
     }
-    async fn status<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self> {
+    async fn status<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self>
+    where
+        Self: 'a
+    {
         let length = VarInt::read(reader).await?.get_value();
         let packet_id = VarInt::read(reader).await?.get_value();
         match packet_id {
@@ -203,7 +212,10 @@ impl ServerboundPackets {
             _ => Error::InvalidId.into(),
         }
     }
-    async fn login<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self> {
+    async fn login<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self>
+    where
+        Self: 'a
+    {
         let _length = VarInt::read(reader).await?.get_value();
         let packet_id = VarInt::read(reader).await?.get_value();
         match packet_id {
@@ -213,7 +225,10 @@ impl ServerboundPackets {
             _ => todo!(),
         }
     }
-    async fn configuration<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self> {
+    async fn configuration<'a>(reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self>
+    where
+        Self: 'a
+    {
         reader.buffer();
         let length = VarInt::read(reader).await?.get_value();
         let packet_id = VarInt::read(reader).await?.get_value();
@@ -227,7 +242,10 @@ impl ServerboundPackets {
             i32::MIN..=-1 | 6..=i32::MAX => Err(Error::InvalidStructure),
         }
     }
-    async fn playing<'a>(_reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self> {
+    async fn playing<'a>(_reader: &mut BufReader<ReadHalf<'a>>) -> Result<Self>
+    where
+        Self: 'a
+    {
         todo!()
     }
 

@@ -138,8 +138,8 @@ pub enum StructureData {
 }
 impl StructureData {
     /// creates basic structure data from the nbt data
-    pub fn from_nbt(name: String, values: HashMap<String, nbt_lib::NbtValue>) -> Result<Self, ()> where Self: Sized {
-        let basic_data = BasicStructureData::from(values)?;
+    pub fn from_nbt(_name: String, values: HashMap<String, nbt_lib::NbtValue>) -> Result<Self, ()> where Self: Sized {
+        let _basic_data = BasicStructureData::from(values)?;
         todo!();
         /*
         match name.as_str() {

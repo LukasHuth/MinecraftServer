@@ -61,7 +61,10 @@ pub struct Array<T>(Vec<T>) where T: DataReader + DataWriter;
 /// S needs to implement `DataReader` + `GetU64`
 #[derive(Debug)]
 pub struct Enum<T, S>(pub(crate) T, pub(crate) S) where T: ImportantEnumTrait, S: DataReader + GetU64;
+/// Fixed point data
+pub struct FixedPoint<T, const S: u64>(T) where T: GetU64;
 /// A wrapper containing a List of unsigned 8-bit integers
 pub struct ByteArray(Vec<u8>);
 mod implementations;
 mod important_functions;
+mod special_functions;

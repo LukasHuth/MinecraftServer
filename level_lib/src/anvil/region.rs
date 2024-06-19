@@ -8,7 +8,7 @@ use std::{io::{BufWriter, Write}, ops::{Deref, DerefMut}, time::{Duration, Syste
 use binary_utils::SyncDataWriter;
 
 pub mod chunk;
-use self::chunk::{chunk_data::ChunkDataHolder, Chunk};
+use self::chunk::Chunk;
 
 /// The location table of the Region
 pub struct LocationAndTimestampTable {

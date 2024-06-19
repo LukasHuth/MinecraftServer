@@ -3,3 +3,4 @@
 pub mod effects;
 pub mod color;
 pub mod recipes;
+pub mod commands;

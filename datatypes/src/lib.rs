@@ -52,6 +52,13 @@ pub trait ImportantFunctions {
     /// A function that returns the hold data
     fn get_value(&self) -> Self::ReturnType;
 }
+/// A trait implemented by types to provide a `new` and `get_value` function
+pub trait TypedImportantFunctions<T> {
+    /// A function that constructs a new instance of the type
+    fn new(data: T) -> Self;
+    /// A function that returns the hold data
+    fn get_value(&self) -> T;
+}
 /// A trait needed for enum operations, implemented by types that have to be converted to `u64`
 pub trait GetU64 { 
     /// A function to get the hold value as `u64`

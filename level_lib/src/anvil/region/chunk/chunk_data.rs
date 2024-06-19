@@ -330,7 +330,7 @@ impl AsNbtValue for ToBeTicked {
 }
 impl IntoNbt for ChunkData {
     fn to_nbt(&self) -> nbt_lib::NbtValue {
-        let data_version = NbtValue::Int(nbt_lib::NBT_VERSION);
+        let _data_version = NbtValue::Int(nbt_lib::NBT_VERSION);
         todo!()
     }
 }

@@ -1,5 +1,5 @@
-use crate::ImportantFunctions;
 use super::*;
+use crate::{ImportantFunctions, TypedImportantFunctions};
 
 impl ImportantFunctions for VarInt {
     type InputType = i32;
@@ -40,7 +40,11 @@ impl ImportantFunctions for ByteArray {
         self.0.clone()
     }
 }
-impl<T, S> ImportantFunctions for Enum<T, S> where S: DataReader + GetU64, T: ImportantEnumTrait + Clone {
+impl<T, S> ImportantFunctions for Enum<T, S>
+where
+    S: DataReader + GetU64,
+    T: ImportantEnumTrait + Clone,
+{
     type InputType = (T, S);
 
     type ReturnType = T;
@@ -53,7 +57,29 @@ impl<T, S> ImportantFunctions for Enum<T, S> where S: DataReader + GetU64, T: Im
         self.0.clone()
     }
 }
-impl<T> ImportantFunctions for Array<T> where T: DataReader + DataWriter + Clone {
+impl<T, const S: u64> ImportantFunctions for FixedPoint<T, S>
+where
+    T: GetU64 + ImportantFunctions,
+    <T as ImportantFunctions>::InputType: From<u64>
+{
+    type InputType = f64;
+
+    type ReturnType = f64;
+
+    fn new(data: f64) -> Self where <T as ImportantFunctions>::InputType: From<u64>{
+        let data: u64 = (data * S as f64) as u64;
+        let data: T = T::new(data.into());
+        Self(data)
+    }
+
+    fn get_value(&self) -> f64 {
+        (self.0.get_u64() as f64) / S as f64
+    }
+}
+impl<T> ImportantFunctions for Array<T>
+where
+    T: DataReader + DataWriter + Clone,
+{
     type InputType = Vec<T>;
 
     type ReturnType = Vec<T>;
@@ -66,18 +92,57 @@ impl<T> ImportantFunctions for Array<T> where T: DataReader + DataWriter + Clone
         self.0.clone()
     }
 }
-impl ImportantFunctions for BitSet {
-    type InputType = Vec<u64>;
-
-    type ReturnType = Self::InputType;
-
-    fn new(data: Self::InputType) -> Self {
+impl TypedImportantFunctions<Vec<u64>> for BitSet {
+    fn new(data: Vec<u64>) -> Self {
         Self(data)
     }
 
-    fn get_value(&self) -> Self::ReturnType {
+    fn get_value(&self) -> Vec<u64> {
         self.0.clone()
     }
+}
+impl TypedImportantFunctions<Vec<bool>> for BitSet {
+    fn new(data: Vec<bool>) -> Self {
+        let data: Vec<u64> = data
+            .chunks(64)
+            .map(|bits| {
+                bits.into_iter().enumerate().fold(
+                    0u64,
+                    |acc, (i, &bit)| {
+                        if bit {
+                            acc | (1 << i)
+                        } else {
+                            acc
+                        }
+                    },
+                )
+            })
+            .collect();
+        Self::new(data)
+    }
+
+    fn get_value(&self) -> Vec<bool> {
+        let data = self
+            .0
+            .iter()
+            .map(|&value| {
+                let mut bits = [false; 64];
+                for i in 0..64 {
+                    bits[i] = if get_nth_bit(value, i) == 1 {
+                        true
+                    } else {
+                        false
+                    };
+                }
+                bits
+            })
+            .flatten()
+            .collect();
+        data
+    }
+}
+fn get_nth_bit(number: u64, n: usize) -> u64 {
+    (number >> n) & 1
 }
 impl ImportantFunctions for Angle {
     type InputType = u8;

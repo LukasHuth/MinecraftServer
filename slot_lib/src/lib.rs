@@ -26,3 +26,5 @@ impl Default for Slot {
         Self::Empty
     }
 }
+/// The new Slot data
+pub mod new;

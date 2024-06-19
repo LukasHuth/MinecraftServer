@@ -11,7 +11,7 @@ pub use chest_data::*;
 mod banner_data;
 pub use banner_data::*;
 use datatypes::Position;
-use entmet_lib::entities::{entity::Bee, entity_types::EntityEnum};
+use entmet_lib::entities::entity::Bee;
 use minecraft_assets::{effects::Effect, recipes::BlastFurnaceRecipe};
 use nbt_lib::{
     convert_to_bool,

@@ -1,4 +1,7 @@
 //! This module contains macros needed to work with a [`NbtValue`]
+//! `NbtValue`: `crate::nbt_value::NbtValue`
+#[allow(unused_imports)]
+use crate::NbtValue;
 /// creates a Compound for data inserted
 #[macro_export]
 macro_rules! create_compound_map {
@@ -7,7 +10,7 @@ macro_rules! create_compound_map {
             $(
                 (stringify!($name).to_string(), $data),
             )*
-        ].into_iter().collect::<HashMap<std::string::String, NbtValue>>()
+        ].into_iter().collect::<std::collections::HashMap<std::string::String, NbtValue>>()
     };
 }
 /// Unwraps an [`Option<NbtValue>`] and converts it to a specific type using a method named `as_<type>`.
@@ -118,7 +121,7 @@ macro_rules! unwrap_to_empty {
 ///
 /// Returns an error if the option is `None` or if the conversion fails.
 ///
-/// [`NbtValue`]: `nbt_lib::NbtValue`
+/// [`NbtValue`]: `crate::nbt_value::NbtValue`
 #[macro_export]
 macro_rules! unwrap_to {
     ($data:expr, $t:ty) => {
@@ -131,6 +134,7 @@ macro_rules! unwrap_to {
     };
 }
 /// Unwraps an [`Option<NbtValue>`] and converts it to a specific type if the key exists, otherwise returns `None`.
+/// [`NbtValue`]: `crate::nbt_value::NbtValue`
 ///
 /// # Examples
 ///
@@ -160,6 +164,7 @@ macro_rules! unwrap_to_empty_if_exists {
     };
 }
 /// Converts a list of [`NbtValue`]s to a vector of a specified type.
+/// [`NbtValue`]: `crate::nbt_value::NbtValue`
 ///
 /// # Examples
 ///
@@ -205,6 +210,7 @@ macro_rules! convert_list_to {
     };
 }
 /// Converts a list of [`NbtValue`]s to a `Result` with a vector of a specified type or an error.
+/// [`NbtValue`]: `crate::nbt_value::NbtValue`
 ///
 /// # Examples
 ///

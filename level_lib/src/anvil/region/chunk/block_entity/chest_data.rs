@@ -63,7 +63,7 @@ pub struct ChestData {
     /// # Info
     /// this could be changed to [`LootTable`]
     ///
-    /// [`LootTable`]: `level_lib::anvil::region::chunk::block_entry::chest_data::LootTable`
+    /// [`LootTable`]: `crate::anvil::region::chunk::block_entity::chest_data::LootTable`
     pub loottable: Option<String>,
     /// Optional seed for the loot table
     ///

@@ -1,5 +1,6 @@
 #[derive(Clone, Debug)]
 /// A wrapper holding string
+#[derive(PartialEq, Eq, Hash)]
 pub struct String(std::string::String);
 /// A wrapper holding a string that should be valid json
 pub struct JSONTextComponent(String); // TODO: As JSON;
@@ -19,6 +20,7 @@ pub struct JSONTextComponent(String); // TODO: As JSON;
 /// - Namespace: `[a-z0-9.-_]`
 /// - Value: `[a-z0-9.-_/]`
 #[derive(Clone)]
+#[derive(PartialEq, Eq, Hash)]
 pub struct Identifier(String);
 mod implementations;
 mod important_functions;
