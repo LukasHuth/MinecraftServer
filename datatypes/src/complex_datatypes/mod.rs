@@ -1,12 +1,14 @@
+use std::marker::PhantomData;
+
 use binary_utils::{DataReader, DataWriter};
 
-use crate::{ImportantEnumTrait, GetU64};
+use crate::{GetU64, ImportantEnumTrait, ToBitPos};
 
 #[derive(Debug, Clone)]
 /// A wrapper struct for a signed 32-bit value, typically used for implementing `DataReader` and `DataWriter`.
 /// But the writen size of this type can vary based on the size of the data.
 ///
-/// Variable-length format such that smaller numbers use fewer bytes. The 7 least significant bits are used to 
+/// Variable-length format such that smaller numbers use fewer bytes. The 7 least significant bits are used to
 /// encode the value and the most significant bit indicates whether there's another byte after it for the next
 /// part of the number. The least significant group is written first, followed by each of the more significant
 /// groups; thus, VarInts are effectively little endian (however, groups are 7 bits, not 8).
@@ -16,7 +18,7 @@ pub struct VarInt(i32);
 /// A wrapper struct for a signed 64-bit value, typically used for implementing `DataReader` and `DataWriter`.
 /// But the writen size of this type can vary based on the size of the data.
 ///
-/// Variable-length format such that smaller numbers use fewer bytes. The 7 least significant bits are used to 
+/// Variable-length format such that smaller numbers use fewer bytes. The 7 least significant bits are used to
 /// encode the value and the most significant bit indicates whether there's another byte after it for the next
 /// part of the number. The least significant group is written first, followed by each of the more significant
 /// groups; thus, VarLongs are effectively little endian (however, groups are 7 bits, not 8).
@@ -55,14 +57,49 @@ pub struct BitSet(Vec<u64>);
 pub struct FixedBitSet<const S: usize>([u8; S]); // INFO: S = ceil(size / 8)
 /// A wrapper containing a list of type `T` that implements `DataReader` and `DataWriter`
 #[derive(Clone)]
-pub struct Array<T>(Vec<T>) where T: DataReader + DataWriter;
+pub struct Array<T>(Vec<T>)
+where
+    T: DataReader + DataWriter;
 /// A wrapper containing an enum `T`, represented by the type `S`
 /// T needs to implement `ImportantEnumTrait`
 /// S needs to implement `DataReader` + `GetU64`
 #[derive(Debug)]
-pub struct Enum<T, S>(pub(crate) T, pub(crate) S) where T: ImportantEnumTrait, S: DataReader + GetU64;
-/// Fixed point data
-pub struct FixedPoint<T, const S: u64>(T) where T: GetU64;
+pub struct Enum<T, S>(pub(crate) T, pub(crate) S)
+where
+    T: ImportantEnumTrait,
+    S: DataReader + GetU64;
+/// A fixed-point number representation where `T` is the underlying integer type
+/// and `S` is the number of fractional bits.
+///
+/// This struct provides methods to convert between floating-point and fixed-point representations.
+///
+/// # Type Parameters
+///
+/// - `T`: The underlying integer type used to store the fixed-point number. This type must implement
+///   the `GetU64` trait, which provides a method to get the value as a `u64`.
+/// - `S`: A constant `u64` value representing the number of fractional bits.
+///
+/// # Examples
+///
+/// ```
+/// // Create a fixed-point number with 5 fractional bits (S = 5)
+/// let x_double: f64 = 3.75;
+/// let x_fixed: FixedPoint<i32, 5> = FixedPoint::from_double(x_double);
+///
+/// // Convert back to double
+/// let x_double_back: f64 = x_fixed.to_double();
+///
+/// assert_eq!(x_double, x_double_back);
+/// ```
+///
+/// # Notes
+///
+/// The number of fractional bits `S` determines the precision of the fixed-point representation.
+pub struct FixedPoint<T, const S: u64>(T)
+where
+    T: GetU64;
+/// 
+pub struct BitMask<T, S>(T, PhantomData<S>) where T: GetU64, S: ToBitPos;
 /// A wrapper containing a List of unsigned 8-bit integers
 pub struct ByteArray(Vec<u8>);
 mod implementations;

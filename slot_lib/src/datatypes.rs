@@ -40,4 +40,13 @@ impl ImportantFunctions for Slot {
     fn get_value(&self) -> Self::ReturnType {
         todo!()
     }
+    fn set_value(&mut self, value: Self::InputType) {
+        if let Some(data_0) = value.0 {
+            if let Some(data_1) = value.1 {
+                *self = Self::Data(data_0, data_1, value.2);
+                return;
+            }
+        }
+        *self = Self::Empty;
+    }
 }

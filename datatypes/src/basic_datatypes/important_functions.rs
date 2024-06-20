@@ -1,120 +1,37 @@
-use crate::ImportantFunctions;
 use super::*;
+use crate::ImportantFunctions;
 
-impl ImportantFunctions for Long {
-    type InputType = i64;
+macro_rules! create_important_functions {
+    ($($i:ident: $t:ty),*) => {
+        $(
+        impl ImportantFunctions for $i {
+            type InputType = $t;
 
-    type ReturnType = i64;
+            type ReturnType = Self::InputType;
 
-    fn new(data: Self::InputType) -> Self {
-        Self(data)
-    }
+            fn new(data: Self::InputType) -> Self {
+                Self(data)
+            }
 
-    fn get_value(&self) -> Self::ReturnType {
-        self.0
-    }
+            fn get_value(&self) -> Self::ReturnType {
+                self.0
+            }
+
+            fn set_value(&mut self, value: Self::InputType) {
+                self.0 = value;
+            }
+        }
+    )*
+    };
 }
-impl ImportantFunctions for Boolean {
-    type InputType = bool;
-
-    type ReturnType = bool;
-
-    fn new(data: Self::InputType) -> Self {
-        Self(data)
-    }
-
-    fn get_value(&self) -> Self::ReturnType {
-        self.0
-    }
-}
-impl ImportantFunctions for Byte {
-    type InputType = i8;
-
-    type ReturnType = i8;
-
-    fn new(data: Self::InputType) -> Self {
-        Self(data)
-    }
-
-    fn get_value(&self) -> Self::ReturnType {
-        self.0
-    }
-}
-impl ImportantFunctions for UnsignedByte {
-    type InputType = u8;
-
-    type ReturnType = u8;
-
-    fn new(data: Self::InputType) -> Self {
-        Self(data)
-    }
-
-    fn get_value(&self) -> Self::ReturnType {
-        self.0
-    }
-}
-impl ImportantFunctions for Short {
-    type InputType = i16;
-
-    type ReturnType = Self::InputType;
-
-    fn new(data: Self::InputType) -> Self {
-        Self(data)
-    }
-
-    fn get_value(&self) -> Self::ReturnType {
-        self.0
-    }
-}
-impl ImportantFunctions for UnsignedShort {
-    type InputType = u16;
-
-    type ReturnType = Self::InputType;
-
-    fn new(data: Self::InputType) -> Self {
-        Self(data)
-    }
-
-    fn get_value(&self) -> Self::ReturnType {
-        self.0
-    }
-}
-impl ImportantFunctions for Int {
-    type InputType = i32;
-
-    type ReturnType = Self::InputType;
-
-    fn new(data: Self::InputType) -> Self {
-        Self(data)
-    }
-
-    fn get_value(&self) -> Self::ReturnType {
-        self.0
-    }
-}
-impl ImportantFunctions for Float {
-    type InputType = f32;
-
-    type ReturnType = Self::InputType;
-
-    fn new(data: Self::InputType) -> Self {
-        Self(data)
-    }
-
-    fn get_value(&self) -> Self::ReturnType {
-        self.0
-    }
-}
-impl ImportantFunctions for Double {
-    type InputType = f64;
-
-    type ReturnType = Self::InputType;
-
-    fn new(data: Self::InputType) -> Self {
-        Self(data)
-    }
-
-    fn get_value(&self) -> Self::ReturnType {
-        self.0
-    }
-}
+create_important_functions!(
+    Boolean: bool,
+    Long: i64,
+    Byte: i8,
+    UnsignedByte: u8,
+    Short: i16,
+    UnsignedShort: u16,
+    Int: i32,
+    Float: f32,
+    Double: f64
+);

@@ -1,5 +1,7 @@
 #![deny(missing_docs)]
 //! This is a create for all the datatypes used across the whole project
+use std::slice::Iter;
+
 use binary_utils::Result;
 /// This trait is implemented by enums to be used in the artificial `Enum` struct
 pub trait ImportantEnumTrait : Sized {
@@ -51,6 +53,8 @@ pub trait ImportantFunctions {
     fn new(data: Self::InputType) -> Self;
     /// A function that returns the hold data
     fn get_value(&self) -> Self::ReturnType;
+    /// set the value
+    fn set_value(&mut self, value: Self::InputType);
 }
 /// A trait implemented by types to provide a `new` and `get_value` function
 pub trait TypedImportantFunctions<T> {
@@ -63,4 +67,11 @@ pub trait TypedImportantFunctions<T> {
 pub trait GetU64 { 
     /// A function to get the hold value as `u64`
     fn get_u64(&self) -> u64; 
+}
+/// A trait for enums used in the `Bitmask`
+pub trait ToBitPos {
+    /// returns the bit position of the element
+    fn to_bit_pos(&self) -> u64;
+    /// returns an iterator of themself
+    fn iterator<'a>() -> Iter<'a, Self> where Self: 'a + Sized;
 }

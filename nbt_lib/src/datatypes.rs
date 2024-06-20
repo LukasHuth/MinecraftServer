@@ -86,4 +86,7 @@ impl ImportantFunctions for NBT {
     fn get_value(&self) -> Self::ReturnType {
         self.0.clone()
     }
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = value;
+    }
 }

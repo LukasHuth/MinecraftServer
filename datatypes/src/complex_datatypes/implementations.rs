@@ -127,34 +127,51 @@ where
 }
 impl DataWriter for Position {
     async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
-        let value: i64 =
-            ((self.0 as i64 & 0x3FFFFFF) << 38) | ((self.1 as i64 & 0x3FFFFFF) << 12) | (self.2 as i64 & 0xFFF);
+        let value: i64 = ((self.0 as i64 & 0x3FFFFFF) << 38)
+            | ((self.1 as i64 & 0x3FFFFFF) << 12)
+            | (self.2 as i64 & 0xFFF);
         Long::new(value).write(writer).await
     }
 }
 impl DataReader for Position {
     async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
-        let value = reader.read_i64().await.map_err(|_|binary_utils::Error::InvalidStructure)?;
+        let value = reader
+            .read_i64()
+            .await
+            .map_err(|_| binary_utils::Error::InvalidStructure)?;
         let x = (value >> 38) & 0x3FFFFFF;
         let z = (value >> 12) & 0x3FFFFFF;
         let y = value & 0xFFF;
         Ok(Self(x as i32, z as i32, y as i16))
     }
 }
-impl<T, const S: u64> DataReader for FixedPoint<T, S> where T: GetU64 + DataReader {
+impl<T, const S: u64> DataReader for FixedPoint<T, S>
+where
+    T: GetU64 + DataReader,
+{
     async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
         Ok(Self(T::read(reader).await?))
     }
 }
-impl<T, const S: u64> DataWriter for FixedPoint<T, S> where T: GetU64 + DataWriter {
-    fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> impl std::future::Future<Output = Result<()>> {
+impl<T, const S: u64> DataWriter for FixedPoint<T, S>
+where
+    T: GetU64 + DataWriter,
+{
+    fn write(
+        &self,
+        writer: &mut (impl AsyncWrite + Unpin),
+    ) -> impl std::future::Future<Output = Result<()>> {
         self.0.write(writer)
     }
 }
 impl DataWriter for BitSet {
     async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
         VarInt::new(self.0.len() as i32).write(writer).await?;
-        let data = self.0.iter().map(|&element|Long::new(element as i64)).collect();
+        let data = self
+            .0
+            .iter()
+            .map(|&element| Long::new(element as i64))
+            .collect();
         Array::new(data).write(writer).await
     }
 }
@@ -162,7 +179,63 @@ impl DataReader for BitSet {
     async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
         let length = VarInt::read(reader).await?.0 as usize;
         let data = Array::<Long>::read_list(reader, length).await?.get_value();
-        let data = data.into_iter().map(|element|element.get_value() as u64).collect();
+        let data = data
+            .into_iter()
+            .map(|element| element.get_value() as u64)
+            .collect();
         Ok(Self(data))
+    }
+}
+impl<T, S> BitMask<T, S>
+where
+    T: GetU64 + ImportantFunctions,
+    S: ToBitPos + Copy,
+    <T as ImportantFunctions>::InputType: From<u64>,
+{
+    /// Turns on a flag
+    pub fn set_bit(&mut self, flag: S) {
+        let bit_pos = flag.to_bit_pos();
+        let get_u64 = self.0.get_u64();
+        self.0.set_value((get_u64 | (1 << bit_pos)).into())
+    }
+    /// returns whether an flag is enabled or not
+    pub fn is_enabled(&self, flag: S) -> bool {
+        (self.0.get_u64() & (1 << flag.to_bit_pos())) != 0
+    }
+    ///
+    pub fn get_enabled_flags(&self) -> Vec<S> {
+        S::iterator()
+            .filter(|&&element| ((1 << element.to_bit_pos()) & self.0.get_u64()) != 0)
+            .map(|&e| e)
+            .collect()
+    }
+    ///
+    pub fn enable(&mut self, flags: Vec<S>) {
+        for flag in flags {
+            self.set_bit(flag);
+        }
+    }
+}
+impl<T, S> DataWriter for BitMask<T, S>
+where
+    T: GetU64 + DataWriter,
+    S: ToBitPos,
+{
+    fn write(
+        &self,
+        writer: &mut (impl AsyncWrite + Unpin),
+    ) -> impl std::future::Future<Output = Result<()>> {
+        self.0.write(writer)
+    }
+}
+impl<T, S> DataReader for BitMask<T, S>
+where
+    T: GetU64 + DataReader,
+    S: ToBitPos,
+{
+    async fn read(
+        reader: &mut (impl AsyncRead + Unpin),
+    ) -> Result<Self> {
+        Ok(Self(T::read(reader).await?, PhantomData))
     }
 }

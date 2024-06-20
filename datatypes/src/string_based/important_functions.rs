@@ -14,6 +14,10 @@ impl ImportantFunctions for String {
     fn get_value(&self) -> Self::ReturnType {
         self.0.clone()
     }
+
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = value;
+    }
 }
 impl ImportantFunctions for Identifier {
     type InputType = std::string::String;
@@ -23,5 +27,9 @@ impl ImportantFunctions for Identifier {
     }
     fn get_value(&self) -> Self::ReturnType {
         self.0.get_value()
+    }
+
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = String::new(value);
     }
 }

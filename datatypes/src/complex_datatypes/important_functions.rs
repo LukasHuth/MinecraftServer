@@ -13,6 +13,10 @@ impl ImportantFunctions for VarInt {
     fn get_value(&self) -> Self::ReturnType {
         self.0
     }
+
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = value
+    }
 }
 impl ImportantFunctions for UUID {
     type InputType = u128;
@@ -26,6 +30,10 @@ impl ImportantFunctions for UUID {
     fn get_value(&self) -> Self::ReturnType {
         self.0
     }
+
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = value
+    }
 }
 impl ImportantFunctions for ByteArray {
     type InputType = Vec<u8>;
@@ -38,6 +46,10 @@ impl ImportantFunctions for ByteArray {
 
     fn get_value(&self) -> Self::ReturnType {
         self.0.clone()
+    }
+
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = value
     }
 }
 impl<T, S> ImportantFunctions for Enum<T, S>
@@ -56,24 +68,35 @@ where
     fn get_value(&self) -> Self::ReturnType {
         self.0.clone()
     }
+
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = value.0;
+        self.1 = value.1;
+    }
 }
 impl<T, const S: u64> ImportantFunctions for FixedPoint<T, S>
 where
     T: GetU64 + ImportantFunctions,
-    <T as ImportantFunctions>::InputType: From<u64>
+    <T as ImportantFunctions>::InputType: From<u64>,
 {
     type InputType = f64;
 
     type ReturnType = f64;
 
-    fn new(data: f64) -> Self where <T as ImportantFunctions>::InputType: From<u64>{
-        let data: u64 = (data * S as f64) as u64;
-        let data: T = T::new(data.into());
-        Self(data)
+    fn new(data: f64) -> Self
+    where
+        <T as ImportantFunctions>::InputType: From<u64>,
+    {
+        let data: u64 = (data * (1 << S) as f64) as u64;
+        Self(T::new(data.into()))
     }
 
     fn get_value(&self) -> f64 {
-        (self.0.get_u64() as f64) / S as f64
+        (self.0.get_u64() as f64) / (1 << S) as f64
+    }
+
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = T::new(((value * (1 << S) as f64) as u64).into());
     }
 }
 impl<T> ImportantFunctions for Array<T>
@@ -90,6 +113,10 @@ where
 
     fn get_value(&self) -> Self::ReturnType {
         self.0.clone()
+    }
+
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = value
     }
 }
 impl TypedImportantFunctions<Vec<u64>> for BitSet {
@@ -156,6 +183,10 @@ impl ImportantFunctions for Angle {
     fn get_value(&self) -> Self::ReturnType {
         self.0
     }
+
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = value
+    }
 }
 impl ImportantFunctions for Position {
     type InputType = (i32, i32, i16);
@@ -169,6 +200,12 @@ impl ImportantFunctions for Position {
     fn get_value(&self) -> Self::ReturnType {
         (self.0, self.1, self.2)
     }
+
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = value.0;
+        self.1 = value.1;
+        self.2 = value.2;
+    }
 }
 impl ImportantFunctions for VarLong {
     type InputType = i64;
@@ -181,5 +218,9 @@ impl ImportantFunctions for VarLong {
 
     fn get_value(&self) -> Self::ReturnType {
         self.0
+    }
+
+    fn set_value(&mut self, value: Self::InputType) {
+        self.0 = value
     }
 }
