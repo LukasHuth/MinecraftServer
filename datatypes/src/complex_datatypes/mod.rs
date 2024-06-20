@@ -83,11 +83,14 @@ where
 ///
 /// ```
 /// // Create a fixed-point number with 5 fractional bits (S = 5)
+/// use datatypes::FixedPoint;
+/// use datatypes::UnsignedShort;
+/// use datatypes::ImportantFunctions;
 /// let x_double: f64 = 3.75;
-/// let x_fixed: FixedPoint<i32, 5> = FixedPoint::from_double(x_double);
+/// let x_fixed: FixedPoint<UnsignedShort, 5> = FixedPoint::new(x_double);
 ///
 /// // Convert back to double
-/// let x_double_back: f64 = x_fixed.to_double();
+/// let x_double_back: f64 = x_fixed.get_value();
 ///
 /// assert_eq!(x_double, x_double_back);
 /// ```
@@ -98,8 +101,11 @@ where
 pub struct FixedPoint<T, const S: u64>(T)
 where
     T: GetU64;
-/// 
-pub struct BitMask<T, S>(T, PhantomData<S>) where T: GetU64, S: ToBitPos;
+///
+pub struct BitMask<T, S>(T, PhantomData<S>)
+where
+    T: GetU64,
+    S: ToBitPos;
 /// A wrapper containing a List of unsigned 8-bit integers
 pub struct ByteArray(Vec<u8>);
 mod implementations;

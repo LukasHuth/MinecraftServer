@@ -24,8 +24,25 @@ macro_rules! create_important_functions {
     )*
     };
 }
-create_important_functions!(
-    Boolean: bool,
+macro_rules! create_important_functions_and_from {
+    ($($i:ident: $t:ty),*) => {
+        $(
+        create_important_functions!($i: $t);
+        impl From<u64> for $i {
+            fn from(value: u64) -> Self {
+                Self::new(value as $t)
+            }
+        }
+        )*
+    };
+}
+impl From<u64> for Boolean {
+    fn from(value: u64) -> Self {
+        Self::new(value != 0)
+    }
+}
+create_important_functions!( Boolean: bool );
+create_important_functions_and_from!(
     Long: i64,
     Byte: i8,
     UnsignedByte: u8,

@@ -76,19 +76,15 @@ where
 }
 impl<T, const S: u64> ImportantFunctions for FixedPoint<T, S>
 where
-    T: GetU64 + ImportantFunctions,
-    <T as ImportantFunctions>::InputType: From<u64>,
+    T: GetU64 + ImportantFunctions + From<u64>,
 {
     type InputType = f64;
 
     type ReturnType = f64;
 
     fn new(data: f64) -> Self
-    where
-        <T as ImportantFunctions>::InputType: From<u64>,
     {
-        let data: u64 = (data * (1 << S) as f64) as u64;
-        Self(T::new(data.into()))
+        Self(T::from((data * (1 << S) as f64) as u64))
     }
 
     fn get_value(&self) -> f64 {
@@ -96,7 +92,7 @@ where
     }
 
     fn set_value(&mut self, value: Self::InputType) {
-        self.0 = T::new(((value * (1 << S) as f64) as u64).into());
+        self.0 = T::from((value * (1 << S) as f64) as u64);
     }
 }
 impl<T> ImportantFunctions for Array<T>
