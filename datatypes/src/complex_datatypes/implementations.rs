@@ -60,6 +60,23 @@ impl ListDataReader for ByteArray {
         }
     }
 }
+impl<const S: usize> DataReader for FixedByteArray<S> {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+        let mut data = [0; S];
+        match reader.read_exact(&mut data).await {
+            Ok(_) => Ok(Self(data)),
+            Err(_) => Error::NotEnoughtBytes(format!("{}:{}", file!(), line!())).into(),
+        }
+    }
+}
+impl<const S: usize> DataWriter for FixedByteArray<S> {
+    async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
+        match writer.write_all(&self.0).await {
+            Ok(_) => Ok(()),
+            Err(_) => Error::FailedToWrite.into(),
+        }
+    }
+}
 impl DataWriter for ByteArray {
     async fn write(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<()> {
         match writer.write_all(&self.0).await {

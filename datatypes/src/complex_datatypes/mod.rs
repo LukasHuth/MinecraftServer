@@ -108,6 +108,8 @@ where
     S: ToBitPos;
 /// A wrapper containing a List of unsigned 8-bit integers
 pub struct ByteArray(Vec<u8>);
+/// A byte array with a fixed size
+pub struct FixedByteArray<const S: usize>([u8; S]);
 mod implementations;
 mod important_functions;
 mod special_functions;
