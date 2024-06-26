@@ -95,3 +95,21 @@ macro_rules! implement_data_writer {
 }
 implement_get_u64!(UnsignedByte, Byte, UnsignedShort, Short, Int, Long);
 implement_data_writer!(UnsignedByte, Byte, UnsignedShort, Short, Int, Long, Float, Double);
+impl DataReader for Float {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+        let mut data = [0; 4];
+        match reader.read_exact(&mut data).await {
+            Ok(_) => Ok(Self(f32::from_be_bytes(data))),
+            Err(_) => Err(binary_utils::Error::InvalidStructure),
+        }
+    }
+}
+impl DataReader for Double {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
+        let mut data = [0; 8];
+        match reader.read_exact(&mut data).await {
+            Ok(_) => Ok(Self(f64::from_be_bytes(data))),
+            Err(_) => Err(binary_utils::Error::InvalidStructure),
+        }
+    }
+}
