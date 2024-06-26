@@ -67,7 +67,7 @@ where
 pub struct Enum<T, S>(pub(crate) T, pub(crate) S)
 where
     T: ImportantEnumTrait,
-    S: DataReader + GetU64;
+    S: GetU64;
 /// A fixed-point number representation where `T` is the underlying integer type
 /// and `S` is the number of fractional bits.
 ///

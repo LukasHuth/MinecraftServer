@@ -250,9 +250,19 @@ where
     T: GetU64 + DataReader,
     S: ToBitPos,
 {
-    async fn read(
-        reader: &mut (impl AsyncRead + Unpin),
-    ) -> Result<Self> {
+    async fn read(reader: &mut (impl AsyncRead + Unpin)) -> Result<Self> {
         Ok(Self(T::read(reader).await?, PhantomData))
+    }
+}
+impl<T, S> DataWriter for Enum<T, S>
+where
+    T: ImportantEnumTrait,
+    S: GetU64 + DataWriter,
+{
+    fn write(
+        &self,
+        writer: &mut (impl AsyncWrite + Unpin),
+    ) -> impl std::future::Future<Output = Result<()>> {
+        self.1.write(writer)
     }
 }
