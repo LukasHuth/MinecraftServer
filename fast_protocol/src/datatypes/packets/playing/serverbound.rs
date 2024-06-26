@@ -1,5 +1,7 @@
 //! A module for all serverbound packets that are beeing send while playing
 
+mod implementations;
+
 use datatypes::{
     BitMask, Boolean, Byte, ByteArray, Double, FixedBitSet, FixedByteArray, Float, Identifier, Int,
     Long, UnsignedByte, VarInt, UUID,
@@ -57,6 +59,8 @@ pub struct CommandSuggestionRequest {
     pub transaction_id: VarInt,
     pub text: datatypes::String,
 }
+/// Acklowledge Configuration
+pub struct AcknowledgeConfiguration;
 /// Click Container Button
 #[deprecated]
 pub struct ClickContainerButton;
@@ -98,6 +102,11 @@ pub struct Interact;
 /// More Information: <https://wiki.vg/Protocol#Jigsaw_Generate>
 #[deprecated]
 pub struct JigsawGenerate;
+/// Keep Alive
+pub struct KeepAlive {
+    /// The id
+    pub id: Long,
+}
 /// Lock Difficulty
 pub struct LockDifficulty {
     /// Whether it shold be locked or not
