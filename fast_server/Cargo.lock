@@ -70,6 +70,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ff69b9dd49fd426c69a0db9fc04dd934cdb6645ff000864d98f7e2af8830eaa"
 
 [[package]]
+name = "byteorder"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
+
+[[package]]
 name = "bytes"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -80,6 +86,12 @@ name = "cc"
 version = "1.0.90"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8cd6604a82acf3039f1144f54b8eb34e91ffba622051189e71b781822d5ee1f5"
+
+[[package]]
+name = "cesu8"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d43a04d8753f35258c91f8ec639f792891f748a1edbd759cf1dcea3382ad83c"
 
 [[package]]
 name = "cfg-if"
@@ -135,11 +147,13 @@ dependencies = [
 name = "entmet_lib"
 version = "0.1.0"
 dependencies = [
-  "binary_utils",
-  "datatypes",
-  "nbt_lib",
-  "slot_lib",
-  "tokio",
+ "binary_utils",
+ "datatypes",
+ "minecraft_assets",
+ "nbt_lib",
+ "num-traits",
+ "slot_lib",
+ "tokio",
 ]
 
 [[package]]
@@ -179,16 +193,16 @@ dependencies = [
 name = "fast_server"
 version = "0.1.0"
 dependencies = [
-  "binary_utils",
-  "datatypes",
-  "fast_protocol",
-  "nbt_lib",
-  "openssl",
-  "rand",
-  "reqwest",
-  "serde",
-  "tokio",
-  "toml",
+ "binary_utils",
+ "datatypes",
+ "fast_protocol",
+ "nbt_lib",
+ "openssl",
+ "rand",
+ "reqwest",
+ "serde",
+ "tokio",
+ "toml",
 ]
 
 [[package]]
@@ -508,6 +522,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
 
 [[package]]
+name = "minecraft_assets"
+version = "0.1.0"
+
+[[package]]
 name = "miniz_oxide"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -547,12 +565,26 @@ dependencies = [
 
 [[package]]
 name = "nbt_lib"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
-   "binary_utils",
+ "binary_utils",
+ "byteorder",
+ "cesu8",
  "datatypes",
  "flate2",
-  "tokio",
+ "paste",
+ "serde",
+ "serde_bytes",
+ "tokio",
+]
+
+[[package]]
+name = "num-traits"
+version = "0.2.19"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
+dependencies = [
+ "autocfg",
 ]
 
 [[package]]
@@ -582,9 +614,9 @@ checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
 
 [[package]]
 name = "openssl"
-version = "0.10.64"
+version = "0.10.66"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95a0481286a310808298130d22dd1fef0fa571e05a8f44ec801801e84b216b1f"
+checksum = "9529f4786b70a3e8c61e11179af17ab6188ad8d0ded78c5529441ed39d4bd9c1"
 dependencies = [
  "bitflags 2.5.0",
  "cfg-if",
@@ -614,9 +646,9 @@ checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
 
 [[package]]
 name = "openssl-sys"
-version = "0.9.101"
+version = "0.9.103"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dda2b0f344e78efc2facf7d195d098df0dd72151b26ab98da807afc26c198dff"
+checksum = "7f9e8deee91df40a943c71b917e5874b951d32a802526c85721ce3b776c929d6"
 dependencies = [
  "cc",
  "libc",
@@ -646,6 +678,12 @@ dependencies = [
  "smallvec",
  "windows-targets 0.48.5",
 ]
+
+[[package]]
+name = "paste"
+version = "1.0.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
 name = "percent-encoding"
@@ -870,18 +908,27 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.197"
+version = "1.0.210"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fb1c873e1b9b056a4dc4c0c198b24c3ffa059243875552b2bd0933b1aee4ce2"
+checksum = "c8e3592472072e6e22e0a54d5904d9febf8508f65fb8552499a1abc7d1078c3a"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
-name = "serde_derive"
-version = "1.0.197"
+name = "serde_bytes"
+version = "0.11.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7eb0b34b42edc17f6b7cac84a52a1c5f0e1bb2227e997ca9011ea3dd34e8610b"
+checksum = "387cc504cb06bb40a96c8e04e951fe01854cf6bc921053c954e4a606d9675c6a"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "serde_derive"
+version = "1.0.210"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "243902eda00fad750862fc144cea25caca5e20d615af0a81bee94ca738f1df1f"
 dependencies = [
  "proc-macro2",
  "quote",

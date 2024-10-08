@@ -11,6 +11,6 @@ fast_protocol = { path = "../fast_protocol" }
 binary_utils = { path = "../binary_utils" }
 datatypes = { path = "../datatypes" }
 nbt_lib = { path = "../nbt_lib" }
-openssl = "0.10.64"
+openssl = "0.10.66"
 rand = "0.8.5"
 reqwest = "0.12.1"
